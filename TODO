@@ -1,0 +1,29 @@
+Must
+----
+- vytvoreni testovacich vzorku (Wikipedie aj/cj nekolik malo clanku)
+- parsovani velkeho XML -> vytahovani jednotlivych clanku
+- parsovani clanku (wiki markup) -> prevertikal
+- tokenizace prevertikalu, pridani POS znacky a lemmatu
+- odhaleni dalsich vyskytu termu v textu
+- vytvoreni konfiguraku a kompilovani korpusu
+- stahovani dumpu
+- rozpoznavani datumu (zavest specialni strukturu?), ale vyuzit jiz oznacenych
+  dat (i datumy muzou mit na wiki svoje WURI)
+- sestaveni korpusu pro aj a cj a rozjeti na Sketch Engine
+
+Should
+------
+- stranky projektu (staci na GH) s odkazem na demo na Sketch Engine
+
+
+Could
+-----
+- existujici korpusy z Wikipedia, podobne projekty
+- projit svoje zalozky k projektu wikicorpora
+- rozpoznavani dalsich pojmenovanych entit (zrovna na wiki neni zasadni)
+
+
+Want
+----
+- prubezna aktualizace korpusu? (jednak wiki se porad rozsiruje/meni, jednak by
+  bylo dobre umet vytvaret korpus i z ostatnich jednou zpracovanych stranek)

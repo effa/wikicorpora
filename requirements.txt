@@ -1,5 +1,7 @@
 PyYAML==3.11
 argparse==1.2.1
+distribute==0.6.24
 mwparserfromhell==0.3.3
 nltk==2.0.4
 numpy==1.8.2
+wsgiref==0.1.2

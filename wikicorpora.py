@@ -1,11 +1,8 @@
 #!/usr/bin/env python
 # encoding: utf-8
 
-
-def download_dump(lang, path=None):
-    """ Downloads wikipedia dump for given language
-    """
-    raise NotImplementedError
+from system_utils import choose_path
+from wikidownloader import download_dump
 
 
 def create_sample_dump(lang, size=10, dump_path=None, sample_dump_path=None):
@@ -25,6 +22,8 @@ def dump_to_prevertical(lang, dump_path=None, prevertical_path=None):
 def tokenize_prevertical(lang, prevertical_path=None, vertical_path=None):
     """ Tokenizes given prevertical
     """
+    prevertical_path = prevertical_path or choose_path(lang, 'prevert')
+    vertical_path = vertical_path or choose_path(lang, 'vert')
     raise NotImplementedError
 
 

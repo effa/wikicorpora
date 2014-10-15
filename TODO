@@ -1,5 +1,8 @@
 Must
 ----
+- prubezne nacitani osy, kolik uz je stazeno (obecneji uz je hotovo z
+  provadeneho ukolu)
+- wikicorpora.py: objektovy vs. strukturalni pristup (rozmyslet pros/cons)
 - vytvoreni testovacich vzorku (Wikipedie aj/cj nekolik malo clanku)
 - parsovani velkeho XML -> vytahovani jednotlivych clanku
 - parsovani clanku (wiki markup) -> prevertikal
@@ -15,6 +18,8 @@ Should
 ------
 - volitelne logovani na standardni vystup / do souboru
 - stranky projektu (staci na GH) s odkazem na demo na Sketch Engine
+- vyresit namespacy poradne (pokud muzou byt vnorene)
+- unit testy
 
 
 Could
@@ -22,6 +27,8 @@ Could
 - existujici korpusy z Wikipedia, podobne projekty
 - projit svoje zalozky k projektu wikicorpora
 - rozpoznavani dalsich pojmenovanych entit (zrovna na wiki neni zasadni)
+- zvazit pouziti bezpecnejsich defused packages pro parsovani XML
+- vyzkouset jine pristupy parsovani xml
 
 
 Want

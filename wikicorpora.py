@@ -3,14 +3,7 @@
 
 from system_utils import choose_path
 from wikidownloader import download_dump
-
-
-def create_sample_dump(lang, size=10, dump_path=None, sample_dump_path=None):
-    """ Creates smaller sample dump from large dump of given language
-
-    (taking first N articles...)
-    """
-    raise NotImplementedError
+from wikisampler import create_sample_dump
 
 
 def dump_to_prevertical(lang, dump_path=None, prevertical_path=None):

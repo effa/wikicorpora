@@ -1,5 +1,16 @@
+Now
+---
+- parsovani voleb + spousteni jednotlivych algoritmu (bez jejich implementace);
+  zatim pouze standardni jmena souboru (volitelna pozdeji), ale v konfiguraku
+  * vychozi chovani skriptu: udelej toho co nejmene
+  * pokud mam vytvorit soubor, ktery jiz existuje, tak se zeptam, jestli ho mam
+    znovu vytvorit nebo preskocit (moznost preskocit tuto i vsechny
+    nasledujici) (moznost zmeny chovani volbami
+    --no-re-execution, --force-re-execution)
+
 Must
 ----
+- CLI (-> parsovani voleb)
 - prubezne nacitani osy, kolik uz je stazeno (obecneji uz je hotovo z
   provadeneho ukolu)
 - wikicorpora.py: objektovy vs. strukturalni pristup (rozmyslet pros/cons)
@@ -24,6 +35,8 @@ Should
 
 Could
 -----
+- volitelna jmena vstupu/vystupu pro skript wikicorpora.py, pripadne umozneni
+  nastaveni vychoziho adresare pro wiki korpusy (pres konfigurak)
 - existujici korpusy z Wikipedia, podobne projekty
 - projit svoje zalozky k projektu wikicorpora
 - rozpoznavani dalsich pojmenovanych entit (zrovna na wiki neni zasadni)

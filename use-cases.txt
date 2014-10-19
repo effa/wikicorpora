@@ -1,0 +1,67 @@
+.Stahnout dump pro ceskou wiki, pokud jeste neni stazeny
+$ ./wikicorpora.py --language=cs --soft-download
+- vystup: ./vert/wiki-cs/wiki-cs.dump.xml.bz2
+
+.Stahnout dump pro ceskou wiki (i pokud uz je stazeny)
+$ ./wikicorpora.py --language=cs --force-download
+- vystup: ./vert/wiki-cs/wiki-cs.dump.xml.bz2
+
+.Vytvorit vzorek z anglicke wiki
+$ ./wikicorpora.py --language=en --sample-size=10
+- vstup: ./vert/wiki-en/wiki-en.dump.xml.bz2
+- pokud neni dump k dispozici, oznami to a nic neudela
+- vystup: ./vert/wiki-en-sample-10/wiki-en-sample-10.xml
+- pokud jiz vystup existuje, nic neudela
+
+.Vytvorit vzorek z anglicke wiki, vcetne pripadneho stahnuti dumpu
+$ ./wikicorpora.py --language=en --sample-size=10 --soft-download
+- vstup: ./vert/wiki-en/wiki-en.dump.xml.bz2
+- pokud neni dump k dispozici, stahne ho
+- vystup: ./vert/wiki-en-sample-10/wiki-en-sample-10.xml
+- pokud jiz vystup existuje, nic neudela
+
+.Kompletne vytvorit korpus pro ceskou wiki, vcetne stazeni a zkompilovani
+$ ./wikicorpora.py --language=cs --force-download --all-phases --compile
+- provede stazeni dumpu, vsechny faze zpracovani a kompilaci
+- vystup: ./manatee/wiki-cs/*
+
+.Vytvorit korpus pro ceskou wiki, ale bez stahovani a kompilace
+$ ./wikicorpora.py --language=cs --all-phases
+- pokud neni dump k dispozici, oznami to a nic neudela
+- provede postupne vsechny faze (ale uz nekompiluje)
+- vystup: ./vert/wiki-cs/wiki-cs.vert
+
+.Totez jako predchozi, ale s logovanim do souboru
+$ ./wikicorpora.py --language=cs --all-phases --logfile='cs.log'
+
+.Pouze nektere faze: prevertikalizace, tokenizace, tagging
+$ ./wikicorpora.py --language=en --sample-size 10 -ptm
+nebo
+$ ./wikicorpora.py --language=en --sample-size 10 --prevertical --tokenization
+  --tagging
+
+.Vytvorit prevertikal ze slovenske wiki, vcetne pripadneho stahnuti
+$ ./wikicorpora.py --language=sk --soft-download --prevertical
+- vystup: ./vert/wiki-sk/wiki-sk.prevert
+
+.Provest tokenizaci prevertikalu ze slovenske wiki
+$ ./wikicorpora.py --language=sk --tokenization
+- vstup: ./vert/wiki-sk/wiki-sk.prevert
+- vystup: ./vert/wiki-sk/wiki-sk.vert
+
+.Provest inferenci pojmu na vertikalu ze slovenske wiki
+$ ./wikicorpora.py --language=sk --terms-inference
+- vstup/vystup: ./vert/wiki-sk/wiki-sk.vert
+
+.Zkompilovat vytvoreny vertikal 10 clankoveho vzorku anglicke wiki
+$ ./wikicorpora.py --language=en --sample-size=10 --compile
+- vstup: ./vert/wiki-en-sample-10/wiki-en-sample-10.vert
+- vystup: ./manatee/wiki-en-sample-10/*
+
+.Vypis informaci o korpusu
+$ ./wikicorpora.py --language=en --sample-size=10 --info
+$ ./wikicorpora.py --language=en --info
+  [totez je i $ ./wikicorpora.py --language=en]
+- vypise obsah vert/XXX, zda zkompilovano a prikazy, ktere lze dal pouzit
+- (nejak prehledne: stazeno, prevertikal, vertikal, zkompilovano: vzdy ANO/NE,
+  pripadne i seznam vytvorenych vzorku)

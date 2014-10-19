@@ -51,50 +51,64 @@ def main():
     """
     parser = argparse.ArgumentParser()
 
-    # requried arugments
-    required_group = parser.add_argument_group('required')
-    required_group.add_argument('-l', '--language', required=True,
-                        help='2-letter code of language (ISO-639-1)')
+    # language arguments
+    language_group = parser.add_argument_group('corpus language')
+    language_group.add_argument('-l', '--language', required=True,
+        help='2-letter code of language (ISO-639-1)')
+
+    # sample options
+    sample_group = parser.add_argument_group('sample options')
+    sample_group.add_argument('-s', '--sample-size',
+        help='create sample from first SAMPLE_SIZE articles')
 
     # general options
-    parser.add_argument('-s', '--sample-size',
-                        help='create sample from first SAMPLE_SIZE articles')
     parser.add_argument('--logfile',
-                        help='path to logfile')
+        help='path to logfile')
+    parser.add_argument('--info', action='store_true',
+        help='print corpus summary')
+
+    # download options
+    download_group = parser.add_argument_group('download options')
+    soft_or_force_group = download_group.add_mutually_exclusive_group()
+    soft_or_force_group.add_argument('--soft-download', action='store_true',
+        help='download dump if not already downloaded')
+    soft_or_force_group.add_argument('--force-download', action='store_true',
+        help='download dump (even if a dump already exists)')
 
     # options concerning phases
-    phases_group = parser.add_argument_group('phases',
-        description='You can specify phases to carry out. If no phase is'
-            + ' explicitly selected, all steps are executed.')
-    phases_group.add_argument('-d', '--download', action='store_true',
-                              help='download dump')
+    phases_group = parser.add_argument_group('corpus processing phases')
     phases_group.add_argument('-p', '--prevertical', action='store_true',
-                              help='process dump to prevertical')
+        help='process dump to prevertical')
     phases_group.add_argument('-t', '--tokenization', action='store_true',
-                              help='tokenize prevertical')
+        help='tokenize prevertical')
     phases_group.add_argument('-m', '--tagging', action='store_true',
-                              help='add morphological tag to each token')
+        help='add morphological tag to each token')
     phases_group.add_argument('-f', '--lemmatization', action='store_true',
-                              help='add lemma (canonical form) to each token')
+        help='add lemma (canonical form) to each token')
     phases_group.add_argument('-i', '--terms-inference', action='store_true',
-                              help='infere all terms occurences')
-    phases_group.add_argument('-c', '--compile', action='store_true',
-                              help='create configuration file and'
-                                   + ' compile corpus')
+        help='infere all terms occurences')
+    phases_group.add_argument('-a', '--all-phases', action='store_true',
+        help='execute all corpus processing steps')
 
-    # options concerning phases
-    reexecution_group = parser.add_argument_group('re-execution behaviour',
-        description='If required output file (of any phase) already exists,'
-            + ' default behaviour is to ask whether re-execute the phase.'
-            + ' You can change this behavious to either never re-execute'
-            + ' (--never-re-execute) or always re-execute'
-            + ' (--always-re-execute)')
-    reexecution_group.add_argument('--never-re-execute', action='store_true',
-                              help='if output file exists, do nothing')
-    reexecution_group.add_argument('--always-re-execute', action='store_true',
-                              help='force re-execution')
+    # compilaton options
+    compilation_group = parser.add_argument_group('compilation options')
+    compilation_group.add_argument('-c', '--compile', action='store_true',
+        help='create configuration file and compile corpus')
 
     args = parser.parse_args()
+
+    # if no action is specified, print corpus info
+    no_action = not any([args.force_download, args.soft_download,
+        args.sample_size, args.prevertical, args.tokenization, args.tagging,
+        args.lemmatization, args.terms_inference, args.compile])
+    if no_action:
+        args.info = True
+
+    #corpus_builder = WikiCorpusBuilder(args.language, args.sample_size)
+    #success = True
+    #if args.download or execute_all_phases:
+    #    success = corpus_builder.download_corpus()
+    #if success and (args.prevertical or execute_all_phases)
 
     print args
 

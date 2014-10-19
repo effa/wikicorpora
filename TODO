@@ -46,5 +46,7 @@ Could
 
 Want
 ----
+- pri moznosti predelavani jiz existujiciho korpusu brat v uvahu data zmen
+  prerekvizit a aktualniho souboru (jako make)
 - prubezna aktualizace korpusu? (jednak wiki se porad rozsiruje/meni, jednak by
   bylo dobre umet vytvaret korpus i z ostatnich jednou zpracovanych stranek)

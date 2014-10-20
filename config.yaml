@@ -1,0 +1,9 @@
+verticals-path:             './vert'
+compiled-corpora-path:      './manatee'
+corpus-name:                'wiki-{lang}'
+sample-corpus-name:         'wiki-{lang}-sample-{size}'
+extensions:
+    compressed-dump:        'dump.xml.bz2'
+    uncompressed-dump:      'dump.xml'
+    prevertical:            'prevert'
+    vertical:               'vert'

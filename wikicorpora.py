@@ -2,48 +2,15 @@
 # encoding: utf-8
 
 from __future__ import unicode_literals
-from system_utils import choose_path
 #from wikidownloader import download_dump
 #from wikisampler import create_sample_dump
+from wikicorpus import WikiCorpus
 import argparse
 
-
-def dump_to_prevertical(lang, dump_path=None, prevertical_path=None):
-    """ Parses dump (outer XML and inner Wiki Markup) and creates prevertical
-    """
-    # pomoci lxml prochazet velke xml clanek po clanku (viz wikiindexer.py)
-    # a parsovat jednotlive clanky viz puvodni wikicorpora.py, vysledny
-    # prevertikal prubezne zapisovat do vystupniho souboru
-    raise NotImplementedError
-
-
-def tokenize_prevertical(lang, prevertical_path=None, vertical_path=None):
-    """ Tokenizes given prevertical
-    """
-    prevertical_path = prevertical_path or choose_path(lang, 'prevert')
-    vertical_path = vertical_path or choose_path(lang, 'vert')
-    raise NotImplementedError
-
-
-def tag_and_lemmatize_vertical(lang, input_vertical_path=None,
-                               output_vertical_path=None):
-    """ Adds POS tag and lemma for each token in the vertical
-    """
-    raise NotImplementedError
-
-
-def terms_exploration(lang, input_vertical_path=None,
-                      output_vertical_path=None):
-    """ Labels all occurences of terms
-    """
-    raise NotImplementedError
-
-
-def compile_corpus(lang, vertical_path=None, compiled_corpus_path=None):
-    """ Compiles given corpora
-    """
-    # Creates configuration file, if it hasn't existed already
-    raise NotImplementedError
+"""
+This is a main file for wikicorpora command line application.
+It parses arguments and performes selected actions.
+"""
 
 
 def main():
@@ -104,7 +71,10 @@ def main():
     if no_action:
         args.info = True
 
-    #corpus_builder = WikiCorpusBuilder(args.language, args.sample_size)
+    sample_size = int(args.sample_size) if args.sample_size else None
+    corpus_builder = WikiCorpus(args.language, sample_size)
+    print corpus_builder
+
     #success = True
     #if args.download or execute_all_phases:
     #    success = corpus_builder.download_corpus()

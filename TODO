@@ -1,29 +1,20 @@
 Now
 ---
-- parsovani voleb + spousteni jednotlivych algoritmu (bez jejich implementace);
-  zatim pouze standardni jmena souboru (volitelna pozdeji), ale v konfiguraku
-  * vychozi chovani skriptu: udelej toho co nejmene
-  * pokud mam vytvorit soubor, ktery jiz existuje, tak se zeptam, jestli ho mam
-    znovu vytvorit nebo preskocit (moznost preskocit tuto i vsechny
-    nasledujici) (moznost zmeny chovani volbami
-    --no-re-execution, --force-re-execution)
+- presunout funkcionalitu ze skriptu wikidownloader.py a wikisampler.py do
+tridy WikiCorpus
 
 Must
 ----
-- CLI (-> parsovani voleb)
 - prubezne nacitani osy, kolik uz je stazeno (obecneji uz je hotovo z
   provadeneho ukolu)
-- wikicorpora.py: objektovy vs. strukturalni pristup (rozmyslet pros/cons)
-- vytvoreni testovacich vzorku (Wikipedie aj/cj nekolik malo clanku)
-- parsovani velkeho XML -> vytahovani jednotlivych clanku
 - parsovani clanku (wiki markup) -> prevertikal
 - tokenizace prevertikalu, pridani POS znacky a lemmatu
 - odhaleni dalsich vyskytu termu v textu
 - vytvoreni konfiguraku a kompilovani korpusu
-- stahovani dumpu
 - rozpoznavani datumu (zavest specialni strukturu?), ale vyuzit jiz oznacenych
   dat (i datumy muzou mit na wiki svoje WURI)
 - sestaveni korpusu pro aj a cj a rozjeti na Sketch Engine
+- dokumentace (jednotne), vcetne vygenerovani
 
 Should
 ------
@@ -50,3 +41,6 @@ Want
   prerekvizit a aktualniho souboru (jako make)
 - prubezna aktualizace korpusu? (jednak wiki se porad rozsiruje/meni, jednak by
   bylo dobre umet vytvaret korpus i z ostatnich jednou zpracovanych stranek)
+- WikiCorpus: kontrola, zda predany jazyk je mezi iso kody
+- WikiCorpus jako potomek obecnejsi tridy korpus (ktera se pozdeji taky bude
+  hodit)

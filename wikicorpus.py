@@ -2,6 +2,8 @@
 # encoding: utf-8
 
 from __future__ import unicode_literals
+#from lxml import etree
+#import bz2
 
 
 class WikiCorpus(object):
@@ -22,7 +24,8 @@ class WikiCorpus(object):
         if sample_size is None:
             self._sample_size = None
         else:
-            assert type(sample_size) == int and sample_size > 0
+            if not isinstance(sample_size, int) or sample_size <= 0:
+                raise CorpusException('Sample size has to be positive integer')
             self._sample_size = sample_size
 
         # TODO: logging
@@ -52,7 +55,21 @@ class WikiCorpus(object):
     #  corpus building methods
     # ------------------------------------------------------------------------
 
-    def create_prevertical():
+    def download_dump(self, force=False):
+        """ Downloads dump of Wikipedia
+
+        :force: Boolean
+            if True, downloads dump even if some dump with
+            target name is already downloaded
+        """
+        raise NotImplementedError
+
+    def create_sample_dump(self):
+        """ Creates smaller sample dump from large dump of given language
+        """
+        raise NotImplementedError
+
+    def create_prevertical(self):
         """ Parses dump (outer XML, inner Wiki Markup) and creates prevertical
         """
         # pomoci lxml prochazet velke xml clanek po clanku (viz wikiindexer.py)
@@ -60,22 +77,22 @@ class WikiCorpus(object):
         # prevertikal prubezne zapisovat do vystupniho souboru
         raise NotImplementedError
 
-    def tokenize_prevertical():
+    def tokenize_prevertical(self):
         """ Performes tokenization of prevertical
         """
         raise NotImplementedError
 
-    def morfologize_vertical(add_tags=True, add_lemmas=True):
+    def morfologize_vertical(self, add_tags=True, add_lemmas=True):
         """ Adds morfological tag and/or lemma for each token in the vertical
         """
         raise NotImplementedError
 
-    def infere_terms_occurence():
+    def infere_terms_occurences(self):
         """ Labels all occurences of terms in morfolgized vertical
         """
         raise NotImplementedError
 
-    def compile_corpus():
+    def compile_corpus(self):
         """ Compiles given corpora
         """
         # Creates configuration file, if it hasn't existed already
@@ -106,3 +123,9 @@ class WikiCorpus(object):
 
     def __unicode__(self):
         return repr(self)
+
+
+class CorpusException(Exception):
+    """ Class for exception reprezentation raised during building corpus
+    """
+    pass

@@ -4,7 +4,7 @@
 from __future__ import unicode_literals
 #from wikidownloader import download_dump
 #from wikisampler import create_sample_dump
-from wikicorpus import WikiCorpus
+from wikicorpus import WikiCorpus, CorpusException
 import argparse
 
 """
@@ -25,7 +25,7 @@ def main():
 
     # sample options
     sample_group = parser.add_argument_group('sample options')
-    sample_group.add_argument('-s', '--sample-size',
+    sample_group.add_argument('-s', '--sample-size', type=int,
         help='create sample from first SAMPLE_SIZE articles')
 
     # general options
@@ -71,16 +71,48 @@ def main():
     if no_action:
         args.info = True
 
-    sample_size = int(args.sample_size) if args.sample_size else None
-    corpus_builder = WikiCorpus(args.language, sample_size)
-    print corpus_builder
-
-    #success = True
-    #if args.download or execute_all_phases:
-    #    success = corpus_builder.download_corpus()
-    #if success and (args.prevertical or execute_all_phases)
-
+    # DEBUGGING:
     print args
+
+    # sample_size has to be either int or None
+    sample_size = int(args.sample_size) if args.sample_size else None
+
+    try:
+        # create corpus instance for given language (and sample_size)
+        corpus = WikiCorpus(args.language, sample_size)
+
+        # download dump
+        if args.soft_download or args.force_download:
+            corpus.download_dump(force=args.force_download)
+
+        # sampling
+        if args.sample_size:
+            corpus.create_sample_dump()
+
+        # parsing dump (preverticalization)
+        if args.prevertical or args.all_phases:
+            corpus.create_prevertical()
+
+        # tokenization
+        if args.tokenization or args.all_phases:
+            corpus.tokenize_prevertical()
+
+        # morfologization
+        if args.tagging or args.lemmatization or args.all_phases:
+            corpus.morfologize_vertical(
+                add_tags=args.tagging or args.all_phases,
+                add_lemmas=args.lemmatization or args.all_phases)
+
+        # terms occurences inference
+        if args.terms_inference or args.all_phases:
+            corpus.infere_terms_occurence()
+
+        # corpus information
+        if args.info:
+            corpus.print_info()
+
+    except CorpusException as e:
+        print 'Error during building corpus:', e.message
 
 
 if __name__ == '__main__':

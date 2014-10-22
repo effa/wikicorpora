@@ -67,12 +67,13 @@ def main():
     # if no action is specified, print corpus info
     no_action = not any([args.force_download, args.soft_download,
         args.sample_size, args.prevertical, args.tokenization, args.tagging,
-        args.lemmatization, args.terms_inference, args.compile])
+        args.lemmatization, args.terms_inference, args.all_phases,
+        args.compile])
     if no_action:
         args.info = True
 
     # DEBUGGING:
-    print args
+    #print args
 
     # sample_size has to be either int or None
     sample_size = int(args.sample_size) if args.sample_size else None
@@ -105,7 +106,11 @@ def main():
 
         # terms occurences inference
         if args.terms_inference or args.all_phases:
-            corpus.infere_terms_occurence()
+            corpus.infere_terms_occurences()
+
+        # corpus compilation
+        if args.compile:
+            corpus.compile_corpus()
 
         # corpus information
         if args.info:

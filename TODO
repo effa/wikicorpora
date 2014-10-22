@@ -26,6 +26,8 @@ Should
 
 Could
 -----
+- vyjasnit absolutni a relativni cesty (soubory korpusu, konfigurak, zdrojove
+  kody baliku/modulu)
 - volitelna jmena vstupu/vystupu pro skript wikicorpora.py, pripadne umozneni
   nastaveni vychoziho adresare pro wiki korpusy (pres konfigurak)
 - existujici korpusy z Wikipedia, podobne projekty
@@ -33,6 +35,10 @@ Could
 - rozpoznavani dalsich pojmenovanych entit (zrovna na wiki neni zasadni)
 - zvazit pouziti bezpecnejsich defused packages pro parsovani XML
 - vyzkouset jine pristupy parsovani xml
+- pohlidat, aby skript koncil slusne (napr. pokud neexistuje konfigurak, tak to
+  jasne prohlasit, misto vyhozeni top level vyjimky)
+- do dokumentace pridat popis, jak musi vypadat konfiguracni soubor
+  (config.yaml) + rozumne osetreni toho, kdyz tak vypadat nebude
 
 
 Want
@@ -44,3 +50,4 @@ Want
 - WikiCorpus: kontrola, zda predany jazyk je mezi iso kody
 - WikiCorpus jako potomek obecnejsi tridy korpus (ktera se pozdeji taky bude
   hodit)
+- umoznit, aby i vzorkove dumpy mohli byt komprimovane

@@ -1,5 +1,5 @@
-verticals-path:             './vert'
-compiled-corpora-path:      './manatee'
+all-verticals-path:         './vert'
+all-compiled-corpora-path:  './manatee'
 corpus-name:                'wiki-{lang}'
 sample-corpus-name:         'wiki-{lang}-sample-{size}'
 extensions:

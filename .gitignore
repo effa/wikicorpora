@@ -1,6 +1,9 @@
 # Huge vertical files
 vert/
 
+# Local environment configuration
+environment-config.yaml
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

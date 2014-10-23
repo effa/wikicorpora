@@ -2,15 +2,16 @@
 # encoding: utf-8
 
 from __future__ import unicode_literals
+from configuration import Configuration  # , ConfigurationException
+from environment import environment
 #from lxml import etree
 #import bz2
 import os
-import yaml
 
 
 class WikiCorpus(object):
 
-    CORPUS_CONFIG_PATH = './config.yaml'
+    CORPUS_CONFIG_PATH = 'corpus-config.yaml'
 
     """Class representing corpus from Wikipedia of one language """
 
@@ -35,8 +36,7 @@ class WikiCorpus(object):
         self._logfile = logfile
 
         # load configuration
-        with open(WikiCorpus.CORPUS_CONFIG_PATH) as config_file:
-            self._configuration_dict = yaml.load(config_file)
+        self._configuration = Configuration(WikiCorpus.CORPUS_CONFIG_PATH)
 
     # ------------------------------------------------------------------------
     # getters and setters
@@ -46,11 +46,11 @@ class WikiCorpus(object):
         """ Returns corpus name
         """
         if self.is_sample():
-            return self._config('sample-corpus-name').format(
+            return self._configuration.get('sample-corpus-name').format(
                 lang=self.language(),
                 size=self.sample_size())
         else:
-            return self._config('corpus-name').format(
+            return self._configuration.get('corpus-name').format(
                 lang=self.language())
 
     def get_dump_path(self):
@@ -58,14 +58,14 @@ class WikiCorpus(object):
         """
         # full dumps are bzipped, while sample dumps are uncompressed
         if self.is_sample():
-            extension = self._config('extensions', 'uncompressed-dump')
+            ext = self._configuration.get('extensions', 'uncompressed-dump')
         else:
-            extension = self._config('extensions', 'compressed-dump')
+            ext = self._configuration.get('extensions', 'compressed-dump')
 
         # dump file name = corpus name + extension
         dump_file_name = '{name}.{ext}'.format(
             name=self.get_corpus_name(),
-            ext=extension)
+            ext=ext)
 
         # path = path to verticals + dump file name
         path = os.path.join(self.get_verticals_dir_path(), dump_file_name)
@@ -77,7 +77,7 @@ class WikiCorpus(object):
         # prevertical file name = corpus name + extension
         prevertical_file_name = '{name}.{ext}'.format(
             name=self.get_corpus_name(),
-            ext=self._config('extensions', 'prevertical'))
+            ext=self._configuration.get('extensions', 'prevertical'))
 
         # path = path to verticals + prevertical file name
         path = os.path.join(
@@ -91,7 +91,7 @@ class WikiCorpus(object):
         # vertical file name = corpus name + extension
         vertical_file_name = '{name}.{ext}'.format(
             name=self.get_corpus_name(),
-            ext=self._config('extensions', 'vertical'))
+            ext=self._configuration.get('extensions', 'vertical'))
 
         # path = path to verticals + vertical file name
         path = os.path.join(self.get_verticals_dir_path(), vertical_file_name)
@@ -101,14 +101,14 @@ class WikiCorpus(object):
         """ Returns path to directory with verticals for this corpus
         """
         return os.path.join(
-            self._config('all-verticals-path'),
+            environment.verticals_path(),
             self.get_corpus_name())
 
     def get_compiled_corpus_path(self):
         """ Returns path to directory with compiled corpus
         """
         return os.path.join(
-            self._config('all-compiled-corpora-path'),
+            environment.compiled_corpora_path(),
             self.get_corpus_name())
 
     def is_sample(self):
@@ -208,17 +208,6 @@ class WikiCorpus(object):
     #  private methods
     # ------------------------------------------------------------------------
 
-    def _config(self, *args):
-        """ Returns information from configration.
-
-        :*args: key (or series of keys in case of nesting)
-        """
-        # TODO: wrong key handling
-        conf = self._configuration_dict
-        for key in args:
-            conf = conf[key]
-        return conf
-
     # ------------------------------------------------------------------------
     #  magic methods
     # ------------------------------------------------------------------------
@@ -238,6 +227,6 @@ class WikiCorpus(object):
 
 
 class CorpusException(Exception):
-    """ Class for exception reprezentation raised during building corpus
+    """ Class for reprezentation of exception raised during building corpus
     """
     pass

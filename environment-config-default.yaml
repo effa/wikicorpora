@@ -1,0 +1,8 @@
+paths:
+    verticals:          './vert'
+    compiled-corpora:   './manatee'
+tools:
+    unitok:             ''
+    desamb:             ''
+
+

@@ -12,7 +12,6 @@ import urllib2
 CHUNK = 32 * 1024
 
 # TODO nacitani osy (zobrazeni prubezneho vysledku stahovani)
-# TODO enbable MD5 checksums checking
 
 
 def download_large_file(url, path, md5sum=None):

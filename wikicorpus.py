@@ -13,6 +13,8 @@ import os
 
 class WikiCorpus(object):
 
+    """Class representing corpus from Wikipedia of one language """
+
     # configuration file
     CORPUS_CONFIG_PATH = 'corpus-config.yaml'
 
@@ -26,8 +28,6 @@ class WikiCorpus(object):
     # md5 checksum file url
     MD5_URL_GENERAL = 'http://dumps.wikimedia.org/{lang}wiki/latest/'\
         + '{lang}wiki-latest-md5sums.txt'
-
-    """Class representing corpus from Wikipedia of one language """
 
     def __init__(self, language, sample_size=None, logfile=None):
         """Initalization of WikiCorpus instance

@@ -3,7 +3,9 @@
 
 from __future__ import unicode_literals
 from configuration import Configuration  # , ConfigurationException
+from downloader import download_large_file, get_online_file
 from environment import environment
+from system_utils import makedirs
 #from lxml import etree
 #import bz2
 import os
@@ -11,7 +13,19 @@ import os
 
 class WikiCorpus(object):
 
+    # configuration file
     CORPUS_CONFIG_PATH = 'corpus-config.yaml'
+
+    # original dump file name
+    DUMP_ORIGINAL_NAME = 'pages-articles.xml.bz2'
+
+    # dump url
+    DUMP_URL_GENERAL = 'http://dumps.wikimedia.org/{lang}wiki/latest/'\
+        + '{lang}wiki-latest-' + DUMP_ORIGINAL_NAME
+
+    # md5 checksum file url
+    MD5_URL_GENERAL = 'http://dumps.wikimedia.org/{lang}wiki/latest/'\
+        + '{lang}wiki-latest-md5sums.txt'
 
     """Class representing corpus from Wikipedia of one language """
 
@@ -68,7 +82,9 @@ class WikiCorpus(object):
             ext=ext)
 
         # path = path to verticals + dump file name
-        path = os.path.join(self.get_verticals_dir_path(), dump_file_name)
+        path = os.path.join(
+            self.get_uncompiled_corpus_path(),
+            dump_file_name)
         return path
 
     def get_prevertical_path(self):
@@ -81,7 +97,7 @@ class WikiCorpus(object):
 
         # path = path to verticals + prevertical file name
         path = os.path.join(
-            self.get_verticals_dir_path(),
+            self.get_uncompiled_corpus_path(),
             prevertical_file_name)
         return path
 
@@ -94,22 +110,32 @@ class WikiCorpus(object):
             ext=self._configuration.get('extensions', 'vertical'))
 
         # path = path to verticals + vertical file name
-        path = os.path.join(self.get_verticals_dir_path(), vertical_file_name)
+        path = os.path.join(
+            self.get_uncompiled_corpus_path(),
+            vertical_file_name)
         return path
 
-    def get_verticals_dir_path(self):
+    def get_uncompiled_corpus_path(self):
         """ Returns path to directory with verticals for this corpus
+
+        It will also creates non-existing directories on this path
         """
-        return os.path.join(
+        path = os.path.join(
             environment.verticals_path(),
             self.get_corpus_name())
+        makedirs(path)
+        return path
 
     def get_compiled_corpus_path(self):
         """ Returns path to directory with compiled corpus
+
+        It will also creates non-existing directories on this path
         """
-        return os.path.join(
+        path = os.path.join(
             environment.compiled_corpora_path(),
             self.get_corpus_name())
+        makedirs(path)
+        return path
 
     def is_sample(self):
         """ Returns True if this is a sample corpus
@@ -135,12 +161,42 @@ class WikiCorpus(object):
         """ Downloads dump of Wikipedia
 
         :force: Boolean
-            if True, downloads dump even if some dump with
+            if True, it downloads dump even if some dump with
             target name is already downloaded
         """
+        # select dump path
         dump_path = self.get_dump_path()
-        print '->', dump_path
-        #raise NotImplementedError
+        if os.path.exists(dump_path) and not force:
+            # TODO: use logging instead of prins (everywhere)
+            print 'Dump {name} already exists.'.format(name=dump_path)
+            return
+
+        # select dump url
+        dump_url = WikiCorpus.DUMP_URL_GENERAL.format(lang=self.language())
+
+        # TODO: logging
+        print 'Start downloading {lang}-wiki dump from {url} into {path}'\
+            .format(lang=self.language(), url=dump_url, path=dump_path)
+
+        # find MD5 checksum
+        md5_url = WikiCorpus.MD5_URL_GENERAL.format(lang=self.language())
+        md5sums = get_online_file(md5_url, lines=True)
+        for file_md5, file_name in map(lambda x: x.split(), md5sums):
+            if file_name.endswith(WikiCorpus.DUMP_ORIGINAL_NAME):
+                md5sum = file_md5
+                break
+        else:
+            # TODO logging
+            print 'no matching MD5 checksum for the dump found'
+            md5sum = None
+
+        # downloading
+        download_large_file(dump_url, dump_path, md5sum=md5sum)
+
+        # TODO: logging
+        print 'Downloading finished: {lang}-wiki dump is in {path}'.format(
+            lang=self.language(),
+            path=dump_path)
 
     def create_sample_dump(self):
         """ Creates smaller sample dump from large dump of given language

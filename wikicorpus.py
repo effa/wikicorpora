@@ -163,8 +163,8 @@ class WikiCorpus(object):
         dump_url = WikiCorpus.DUMP_URL_GENERAL.format(lang=self.language())
 
         # TODO: logging
-        print 'Start downloading {lang}-wiki dump from {url} into {path}'\
-            .format(lang=self.language(), url=dump_url, path=dump_path)
+        print 'Started downloading {iso}-wiki dump\nfrom: {url}\ninto: {path}'\
+            .format(iso=self.language(), url=dump_url, path=dump_path)
 
         # find MD5 checksum
         md5_url = WikiCorpus.MD5_URL_GENERAL.format(lang=self.language())
@@ -182,7 +182,7 @@ class WikiCorpus(object):
         download_large_file(dump_url, dump_path, md5sum=md5sum)
 
         # TODO: logging
-        print 'Downloading finished: {lang}-wiki dump is in {path}'.format(
+        print 'Downloading of {lang}-wiki dump finished'.format(
             lang=self.language(),
             path=dump_path)
 

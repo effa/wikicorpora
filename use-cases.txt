@@ -7,18 +7,17 @@ $ ./wikicorpora.py --language=cs --force-download
 - vystup: ./vert/wiki-cs/wiki-cs.dump.xml.bz2
 
 .Vytvorit vzorek z anglicke wiki
-$ ./wikicorpora.py --language=en --sample-size=10
+$ ./wikicorpora.py --language=en --create-sample --sample-size=10
 - vstup: ./vert/wiki-en/wiki-en.dump.xml.bz2
 - pokud neni dump k dispozici, oznami to a nic neudela
 - vystup: ./vert/wiki-en-sample-10/wiki-en-sample-10.xml
-- pokud jiz vystup existuje, nic neudela
 
 .Vytvorit vzorek z anglicke wiki, vcetne pripadneho stahnuti dumpu
 $ ./wikicorpora.py --language=en --sample-size=10 --soft-download
+  --create-sample
 - vstup: ./vert/wiki-en/wiki-en.dump.xml.bz2
 - pokud neni dump k dispozici, stahne ho
 - vystup: ./vert/wiki-en-sample-10/wiki-en-sample-10.xml
-- pokud jiz vystup existuje, nic neudela
 
 .Kompletne vytvorit korpus pro ceskou wiki, vcetne stazeni a zkompilovani
 $ ./wikicorpora.py --language=cs --force-download --all-phases --compile
@@ -59,9 +58,7 @@ $ ./wikicorpora.py --language=en --sample-size=10 --compile
 - vystup: ./manatee/wiki-en-sample-10/*
 
 .Vypis informaci o korpusu
-$ ./wikicorpora.py --language=en --sample-size=10 --info
-$ ./wikicorpora.py --language=en --info
-  [totez je i $ ./wikicorpora.py --language=en]
+$ ./wikicorpora.py --language=en --sample-size=10 [--info]
 - vypise obsah vert/XXX, zda zkompilovano a prikazy, ktere lze dal pouzit
 - (nejak prehledne: stazeno, prevertikal, vertikal, zkompilovano: vzdy ANO/NE,
   pripadne i seznam vytvorenych vzorku)

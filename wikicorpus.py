@@ -5,8 +5,8 @@ from __future__ import unicode_literals
 from configuration import Configuration  # , ConfigurationException
 from downloader import download_large_file, get_online_file
 from environment import environment
-from system_utils import makedirs
 #from lxml import etree
+from system_utils import makedirs
 #import bz2
 import os
 
@@ -29,25 +29,16 @@ class WikiCorpus(object):
     MD5_URL_GENERAL = 'http://dumps.wikimedia.org/{lang}wiki/latest/'\
         + '{lang}wiki-latest-md5sums.txt'
 
-    def __init__(self, language, sample_size=None, logfile=None):
+    def __init__(self, language):
         """Initalization of WikiCorpus instance
 
         :language: unicode
-        :logfile: unicode
         """
         # TODO: check if language is in dictionary of iso codes
         self._language = language
 
-        # make sure sample size is either positive integer or None
-        if sample_size is None:
-            self._sample_size = None
-        else:
-            if not isinstance(sample_size, int) or sample_size <= 0:
-                raise CorpusException('Sample size has to be positive integer')
-            self._sample_size = sample_size
-
-        # TODO: logging
-        self._logfile = logfile
+        ## TODO: logging
+        #self._logfile = logfile
 
         # load configuration
         self._configuration = Configuration(WikiCorpus.CORPUS_CONFIG_PATH)
@@ -59,22 +50,17 @@ class WikiCorpus(object):
     def get_corpus_name(self):
         """ Returns corpus name
         """
-        if self.is_sample():
-            return self._configuration.get('sample-corpus-name').format(
-                lang=self.language(),
-                size=self.sample_size())
-        else:
-            return self._configuration.get('corpus-name').format(
-                lang=self.language())
+        return self._configuration.get('corpus-name').format(
+            lang=self.language())
 
     def get_dump_path(self):
         """ Returns path to dump
         """
         # full dumps are bzipped, while sample dumps are uncompressed
-        if self.is_sample():
-            ext = self._configuration.get('extensions', 'uncompressed-dump')
-        else:
+        if self.is_dump_compressed():
             ext = self._configuration.get('extensions', 'compressed-dump')
+        else:
+            ext = self._configuration.get('extensions', 'uncompressed-dump')
 
         # dump file name = corpus name + extension
         dump_file_name = '{name}.{ext}'.format(
@@ -137,21 +123,21 @@ class WikiCorpus(object):
         makedirs(path)
         return path
 
-    def is_sample(self):
-        """ Returns True if this is a sample corpus
+    #def is_sample(self):
+    #    """ Returns True if this is a sample corpus
+    #    """
+    #    return bool(self.sample_size())
+
+    def is_dump_compressed(self):
+        """Returns True if dumps is compress, False otherwise.
         """
-        return bool(self.sample_size())
+        # dumps for full languages are always compressed
+        return True
 
     def language(self):
         """ Returns corpus language
         """
         return self._language
-
-    def sample_size(self):
-        """ Returns sample size if this is a sample corpus,
-            None otherwise
-        """
-        return self._sample_size
 
     # ------------------------------------------------------------------------
     #  corpus building methods
@@ -197,15 +183,6 @@ class WikiCorpus(object):
         print 'Downloading finished: {lang}-wiki dump is in {path}'.format(
             lang=self.language(),
             path=dump_path)
-
-    def create_sample_dump(self):
-        """ Creates smaller sample dump from large dump of given language
-        """
-        parent_corpus = WikiCorpus(self.language())
-        dump_path = parent_corpus.get_dump_path()
-        sample_path = self.get_dump_path()
-        print dump_path, '->', sample_path
-        #raise NotImplementedError
 
     def create_prevertical(self):
         """ Parses dump (outer XML, inner Wiki Markup) and creates prevertical
@@ -257,7 +234,7 @@ class WikiCorpus(object):
     def print_info(self):
         """ Returns corpus summary
         """
-        print 'corpus name:', self.get_corpus_name
+        print 'corpus name:', self.get_corpus_name()
         #raise NotImplementedError
 
     # ------------------------------------------------------------------------
@@ -272,15 +249,15 @@ class WikiCorpus(object):
         return unicode(self).encode('utf-8')
 
     def __repr__(self):
-        if self.is_sample():
-            return 'WikiCorpus(language={lang}, sample_size={size})'\
-                .format(lang=self.language(), size=self.sample_size())
-        else:
-            return 'WikiCorpus({lang})'.format(lang=self.language())
+        return 'WikiCorpus({lang})'.format(lang=self.language())
 
     def __unicode__(self):
         return repr(self)
 
+
+# ---------------------------------------------------------------------------
+#  Exceptions
+# ---------------------------------------------------------------------------
 
 class CorpusException(Exception):
     """ Class for reprezentation of exception raised during building corpus

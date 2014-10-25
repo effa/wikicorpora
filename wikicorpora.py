@@ -2,8 +2,7 @@
 # encoding: utf-8
 
 from __future__ import unicode_literals
-#from wikidownloader import download_dump
-#from wikisampler import create_sample_dump
+from samplewikicorpus import SampleWikiCorpus
 from wikicorpus import WikiCorpus, CorpusException
 import argparse
 
@@ -26,11 +25,13 @@ def main():
     # sample options
     sample_group = parser.add_argument_group('sample options')
     sample_group.add_argument('-s', '--sample-size', type=int,
+        help='sample size specification')
+    sample_group.add_argument('--create-sample', action='store_true',
         help='create sample from first SAMPLE_SIZE articles')
 
     # general options
-    parser.add_argument('--logfile',
-        help='path to logfile')
+    #parser.add_argument('--logfile',
+    #    help='path to logfile')
     parser.add_argument('--info', action='store_true',
         help='print corpus summary')
 
@@ -64,13 +65,11 @@ def main():
 
     args = parser.parse_args()
 
-    # if no action is specified, print corpus info
+    # if no action is specified, we will print corpus info
     no_action = not any([args.force_download, args.soft_download,
-        args.sample_size, args.prevertical, args.tokenization, args.tagging,
+        args.create_sample, args.prevertical, args.tokenization, args.tagging,
         args.lemmatization, args.terms_inference, args.all_phases,
         args.compile])
-    if no_action:
-        args.info = True
 
     # DEBUGGING:
     #print args
@@ -80,14 +79,20 @@ def main():
 
     try:
         # create corpus instance for given language (and sample_size)
-        corpus = WikiCorpus(args.language, sample_size)
+        if sample_size:
+            corpus = SampleWikiCorpus(args.language, sample_size)
+        else:
+            corpus = WikiCorpus(args.language)
 
         # download dump
         if args.soft_download or args.force_download:
             corpus.download_dump(force=args.force_download)
 
         # sampling
-        if args.sample_size:
+        if args.create_sample:
+            if not sample_size:
+                raise CorpusException('Sample size (--sample-size=X) has to '
+                    + ' be specified in order to create sample')
             corpus.create_sample_dump()
 
         # parsing dump (preverticalization)
@@ -113,7 +118,7 @@ def main():
             corpus.compile_corpus()
 
         # corpus information
-        if args.info:
+        if args.info or no_action:
             corpus.print_info()
 
     except CorpusException as e:

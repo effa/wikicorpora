@@ -3,11 +3,13 @@
 
 from __future__ import unicode_literals
 from configuration import Configuration  # , ConfigurationException
+from contextlib import contextmanager
 from downloader import download_large_file, get_online_file
 from environment import environment
 #from lxml import etree
 from system_utils import makedirs
-#import bz2
+import errno
+import bz2
 import os
 
 
@@ -240,6 +242,33 @@ class WikiCorpus(object):
     # ------------------------------------------------------------------------
     #  private methods
     # ------------------------------------------------------------------------
+
+    @contextmanager
+    def _open_dump(self):
+        """Opened dump (prepared for reading) with statement manager
+
+        Allows to write:
+            with self._open_dump() as dump_file:
+                do something
+        And dump will be closed automatically no matter what.
+        """
+        dump_path = self.get_dump_path()
+        try:
+            # open dump
+            if self.is_dump_compressed():
+                dump_file = bz2.BZ2File(dump_path, 'r')
+            else:
+                dump_file = open(dump_path)
+            yield dump_file
+            # [after yield, the body of with statement will be executed]
+        except IOError as exc:
+            # errno.ENOENT = "No such file or directory"
+            if exc.errno == errno.ENOENT:
+                raise CorpusException('Dump file {name} doesn\'t exist.'
+                    .format(name=dump_path))
+        finally:
+            # close dump
+            dump_file.close()
 
     # ------------------------------------------------------------------------
     #  magic methods

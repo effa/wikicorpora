@@ -51,8 +51,8 @@ def get_online_file(url, lines=False):
 
     :return: unicode || list of unicodes
     """
-    response = urllib2.urlopen(url)
-    if lines:
-        return response.readlines()
-    else:
-        return response.read()
+    with closing(urllib2.urlopen(url)) as request:
+        if lines:
+            return request.readlines()
+        else:
+            return request.read()

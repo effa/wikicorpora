@@ -1,6 +1,7 @@
 Now
 ---
-- presunout funkcionalitu ze skriptu wikisampler.py do tridy WikiCorpus
+- vytvareni vzorku / pretokenizace: ignorovat clanky, ktere nenesou obsah
+  (Hlavni stranka, redirecty)
 
 Must
 ----
@@ -43,6 +44,8 @@ Could
 
 Want
 ----
+- moznost strucneho prehledu vsech korpusu (treba pokud zadam jen
+  `./wikicorpora.py`)
 - stahovani dumpu: kontrola MD5
 - pri moznosti predelavani jiz existujiciho korpusu brat v uvahu data zmen
   prerekvizit a aktualniho souboru (jako make)

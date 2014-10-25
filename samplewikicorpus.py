@@ -2,9 +2,8 @@
 # encoding: utf-8
 
 from __future__ import unicode_literals
-#from lxml import etree
+from lxml import etree
 from wikicorpus import WikiCorpus, CorpusException
-#import bz2
 
 
 class SampleWikiCorpus(WikiCorpus):
@@ -41,11 +40,6 @@ class SampleWikiCorpus(WikiCorpus):
         """
         return WikiCorpus(self.language())
 
-    #def is_sample(self):
-    #    """ Returns True if this is a sample corpus
-    #    """
-    #    return bool(self.sample_size())
-
     def is_dump_compressed(self):
         """Returns True if dumps is compress, False otherwise.
         """
@@ -75,11 +69,42 @@ class SampleWikiCorpus(WikiCorpus):
     def create_sample_dump(self):
         """ Creates smaller sample dump from large dump of given language
         """
-        parent_corpus = WikiCorpus(self.language())
-        dump_path = parent_corpus.get_dump_path()
+        # find parent dump
+        parent = self.get_parent_corpus()
+
+        # select sample path
         sample_path = self.get_dump_path()
-        print dump_path, '->', sample_path
-        #raise NotImplementedError
+
+        # find the namespace
+        with parent._open_dump() as dump_file:
+            # read first event, which is ('start', root element),
+            context_for_ns = etree.iterparse(dump_file, events=('start',))
+            _, root = context_for_ns.next()
+            # get namespace information from the root element,
+            # None means implicit namespace (without prefix)
+            namespace = root.nsmap[None]
+            del context_for_ns
+
+        # iterate through xml and build a sample file
+        with parent._open_dump() as dump_file:
+            page_tag = '{{{namespace}}}page'.format(namespace=namespace)
+            context = etree.iterparse(dump_file, events=('end',), tag=page_tag)
+            sample_root = etree.Element('mediawiki', nsmap={None: namespace})
+            pages = 0
+            for event, elem in context:
+                sample_root.append(elem)
+                pages += 1
+                if pages == self.sample_size():
+                    break
+            del context
+
+        # write sample xml to file
+        with open(sample_path, 'w') as sample_file:
+            sample_file.write(etree.tostring(sample_root, pretty_print=True))
+
+        # log info (TODO: logging)
+        print 'Sample of {pages} pages created at {path}'.format(
+            pages=pages, path=sample_path)
 
     # ------------------------------------------------------------------------
     #  magic methods

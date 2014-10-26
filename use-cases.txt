@@ -19,6 +19,12 @@ $ ./wikicorpora.py --language=en --sample-size=10 --soft-download
 - pokud neni dump k dispozici, stahne ho
 - vystup: ./vert/wiki-en-sample-10/wiki-en-sample-10.xml
 
+.Vytvorit vzorek z konkretnich clanku z ceske wiki
+$ ./wikicorpora.py --language=cs --sample-size=3 --create-specific-sample
+Title 1: Jan Hus
+Title 2: Husitské války
+Title 3: Bitva u Lipan
+
 .Kompletne vytvorit korpus pro ceskou wiki, vcetne stazeni a zkompilovani
 $ ./wikicorpora.py --language=cs --force-download --all-phases --compile
 - provede stazeni dumpu, vsechny faze zpracovani a kompilaci

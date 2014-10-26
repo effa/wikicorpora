@@ -28,8 +28,13 @@ def main():
     sample_group = parser.add_argument_group('sample options')
     sample_group.add_argument('-s', '--sample-size', type=int,
         help='sample size specification')
-    sample_group.add_argument('--create-sample', action='store_true',
+    specific_or_not_group = sample_group.add_mutually_exclusive_group()
+    specific_or_not_group.add_argument('--create-sample',
+        action='store_true',
         help='create sample from first SAMPLE_SIZE articles')
+    specific_or_not_group.add_argument('--create-specific-sample',
+        action='store_true',
+        help='create sample from selected articles')
 
     # general options
     #parser.add_argument('--logfile',
@@ -69,9 +74,9 @@ def main():
 
     # if no action is specified, we will print corpus info
     no_action = not any([args.force_download, args.soft_download,
-        args.create_sample, args.prevertical, args.tokenization, args.tagging,
-        args.lemmatization, args.terms_inference, args.all_phases,
-        args.compile])
+        args.create_sample, args.create_specific_sample,
+        args.prevertical, args.tokenization, args.tagging, args.lemmatization,
+        args.terms_inference, args.all_phases, args.compile])
 
     # DEBUGGING:
     #print args
@@ -80,15 +85,41 @@ def main():
     sample_size = int(args.sample_size) if args.sample_size else None
 
     try:
+        # no language specified (can be either mistake or command for info
+        # about all corpora)
         if not args.language:
             # if it's a call without any options or with --info option only,
             # -> show all corpora
             if no_action and not args.sample_size:
                 list_all_corpora()
             else:
+                # othewise print error message and command usage
                 print 'No language specified (-l XX or --language=XX).'
                 parser.print_usage()
             return
+
+        # specific sample
+        if args.create_specific_sample:
+            # ask for titles
+            size = 0
+            titles = []
+            if sample_size:
+                print 'Input {n} titles for new sample.'\
+                    .format(n=args.sample_size)
+            else:
+                print 'Input titles for new sample, '\
+                    + 'finish by entering an empty string.'
+            while not sample_size or size < sample_size:
+                title = raw_input('Title {n}: '.format(n=size + 1))
+                if title:
+                    titles.append(title.decode('utf-8'))
+                    size += 1
+                else:
+                    # if user inputs empty string and sample_size is not
+                    # specified, set sample_size to current size, which
+                    # makes the input loop terminate
+                    if not sample_size:
+                        sample_size = size
 
         # create corpus instance for given language (and sample_size)
         if sample_size:
@@ -101,7 +132,9 @@ def main():
             corpus.download_dump(force=args.force_download)
 
         # sampling
-        if args.create_sample:
+        if args.create_specific_sample:
+            corpus.create_sample_dump(titles)
+        elif args.create_sample:
             if not sample_size:
                 raise CorpusException('Sample size (--sample-size=X) has to '
                     + ' be specified in order to create sample')

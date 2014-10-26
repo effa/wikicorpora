@@ -3,6 +3,7 @@
 
 from __future__ import unicode_literals
 from lxml import etree
+from xml_utils import qualified_name
 from wikicorpus import WikiCorpus, CorpusException
 
 
@@ -18,7 +19,7 @@ class SampleWikiCorpus(WikiCorpus):
         # superclass inititalization
         super(SampleWikiCorpus, self).__init__(language)
 
-        # sample size
+        # set sample size
         if not isinstance(sample_size, int) or sample_size <= 0:
             raise SampleCorpusException(
                 'Sample size has to be positive integer')
@@ -66,9 +67,17 @@ class SampleWikiCorpus(WikiCorpus):
         # since this is a sample dump, we will download parent (full) dump
         self.get_parent_corpus().download_dump(force)
 
-    def create_sample_dump(self):
+    def create_sample_dump(self, articles=None):
         """ Creates smaller sample dump from large dump of given language
+
+        :articles: list/set of unicodes [optional]
+            Titles of articles you want to appear in sample. Number of titles
+            is arbitrary, if there are too many of them, some will be ommited,
+            if there are too few, smaller dump will be created and message
+            will be displayed.
         """
+        # TODO: check that all items of articles are unicodes, not just str
+
         # find parent dump
         parent = self.get_parent_corpus()
 
@@ -85,22 +94,47 @@ class SampleWikiCorpus(WikiCorpus):
             namespace = root.nsmap[None]
             del context_for_ns
 
+        # articles specified
+        if articles:
+            specific_sample = True
+            articles = set(articles)
+        else:
+            specific_sample = False
+
         # iterate through xml and build a sample file
         with parent._open_dump() as dump_file:
-            page_tag = '{{{namespace}}}page'.format(namespace=namespace)
+            page_tag = qualified_name('page', namespace)
             context = etree.iterparse(dump_file, events=('end',), tag=page_tag)
             sample_root = etree.Element('mediawiki', nsmap={None: namespace})
             pages = 0
+            # omit first 3 articles (Main page and similar meta-articles)
+            for _ in range(3):
+                next(context)
             for event, elem in context:
-                sample_root.append(elem)
-                pages += 1
-                if pages == self.sample_size():
-                    break
+                title = elem.findtext(qualified_name('title', namespace))
+                if not specific_sample or title in articles:
+                    sample_root.append(elem)
+                    pages += 1
+                    if pages == self.sample_size():
+                        break
+                    if specific_sample:
+                        articles.remove(title)
             del context
+
+        # check if sample is of required size
+        if pages < self.sample_size():
+            # TODO: logging
+            print 'Failed to create sample of {number} pages.'.format(
+                number=self.sample_size())
+            if articles:
+                print 'Following articles not found:'
+                print '\n'.join(['- ' + title for title in articles])
 
         # write sample xml to file
         with open(sample_path, 'w') as sample_file:
-            sample_file.write(etree.tostring(sample_root, pretty_print=True))
+            sample_file.write(etree.tostring(sample_root,
+                pretty_print=True,
+                xml_declaration=True))
 
         # log info (TODO: logging)
         print 'Sample of {pages} pages created at {path}'.format(

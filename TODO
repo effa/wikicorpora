@@ -1,13 +1,14 @@
 Now
 ---
+- kontrola stability pameti pri pruchodu celym dumpem (pri specifickem
+  samplovani)
 - vytvareni vzorku / pretokenizace: ignorovat clanky, ktere nenesou obsah
   (Hlavni stranka, redirecty)
 
 Must
 ----
-- prubezne nacitani osy, kolik uz je stazeno (obecneji uz je hotovo z
-  provadeneho ukolu)
 - parsovani clanku (wiki markup) -> prevertikal
+- vyresit kodovani dumpu a xml
 - tokenizace prevertikalu, pridani POS znacky a lemmatu
 - odhaleni dalsich vyskytu termu v textu
 - vytvoreni konfiguraku a kompilovani korpusu

@@ -101,9 +101,13 @@ class SampleWikiCorpus(WikiCorpus):
         else:
             specific_sample = False
 
+        # create qualified names (= names with namespaces) for tags we need
+        page_tag = qualified_name('page', namespace)
+        title_tag = qualified_name('title', namespace)
+        redirect_tag = qualified_name('redirect', namespace)
+
         # iterate through xml and build a sample file
         with parent._open_dump() as dump_file:
-            page_tag = qualified_name('page', namespace)
             context = etree.iterparse(dump_file, events=('end',), tag=page_tag)
             sample_root = etree.Element('mediawiki', nsmap={None: namespace})
             pages = 0
@@ -111,7 +115,13 @@ class SampleWikiCorpus(WikiCorpus):
             for _ in range(3):
                 next(context)
             for event, elem in context:
-                title = elem.findtext(qualified_name('title', namespace))
+                # ignore redirect pages
+                if elem.find(redirect_tag) is not None:
+                    continue
+                # find content of title element
+                title = elem.findtext(title_tag)
+                # if articles are not specified, take any article,
+                # if they are specified, check if this is wanted article
                 if not specific_sample or title in articles:
                     sample_root.append(elem)
                     pages += 1

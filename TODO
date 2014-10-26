@@ -56,3 +56,4 @@ Want
 - WikiCorpus jako potomek obecnejsi tridy korpus (ktera se pozdeji taky bude
   hodit)
 - umoznit, aby i vzorkove dumpy mohli byt komprimovane
+- stranky s redirectem: vyuzit jejich title (aktualne je proste ignorujeme)

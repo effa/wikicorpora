@@ -2,7 +2,9 @@
 # encoding: utf-8
 
 from __future__ import unicode_literals
+from environment import environment
 from samplewikicorpus import SampleWikiCorpus
+from subprocess import call
 from wikicorpus import WikiCorpus, CorpusException
 import argparse
 
@@ -19,7 +21,7 @@ def main():
 
     # language arguments
     language_group = parser.add_argument_group('corpus language')
-    language_group.add_argument('-l', '--language', required=True,
+    language_group.add_argument('-l', '--language',
         help='2-letter code of language (ISO-639-1)')
 
     # sample options
@@ -45,22 +47,22 @@ def main():
 
     # options concerning phases
     phases_group = parser.add_argument_group('corpus processing phases')
-    phases_group.add_argument('-p', '--prevertical', action='store_true',
+    phases_group.add_argument('--prevertical', '-p', action='store_true',
         help='process dump to prevertical')
-    phases_group.add_argument('-t', '--tokenization', action='store_true',
+    phases_group.add_argument('--tokenization', '-t', action='store_true',
         help='tokenize prevertical')
-    phases_group.add_argument('-m', '--tagging', action='store_true',
+    phases_group.add_argument('--tagging', '-m', action='store_true',
         help='add morphological tag to each token')
-    phases_group.add_argument('-f', '--lemmatization', action='store_true',
+    phases_group.add_argument('--lemmatization', '-f', action='store_true',
         help='add lemma (canonical form) to each token')
-    phases_group.add_argument('-i', '--terms-inference', action='store_true',
+    phases_group.add_argument('--terms-inference', '-i', action='store_true',
         help='infere all terms occurences')
-    phases_group.add_argument('-a', '--all-phases', action='store_true',
+    phases_group.add_argument('--all-phases', '-a', action='store_true',
         help='execute all corpus processing steps')
 
     # compilaton options
     compilation_group = parser.add_argument_group('compilation options')
-    compilation_group.add_argument('-c', '--compile', action='store_true',
+    compilation_group.add_argument('--compile', '-c', action='store_true',
         help='create configuration file and compile corpus')
 
     args = parser.parse_args()
@@ -78,6 +80,16 @@ def main():
     sample_size = int(args.sample_size) if args.sample_size else None
 
     try:
+        if not args.language:
+            # if it's a call without any options or with --info option only,
+            # -> show all corpora
+            if no_action and not args.sample_size:
+                list_all_corpora()
+            else:
+                print 'No language specified (-l XX or --language=XX).'
+                parser.print_usage()
+            return
+
         # create corpus instance for given language (and sample_size)
         if sample_size:
             corpus = SampleWikiCorpus(args.language, sample_size)
@@ -124,6 +136,36 @@ def main():
     except CorpusException as e:
         print 'Error during building corpus:', e.message
 
+
+# ---------------------------------------------------------------------------
+#  helper functions
+# ---------------------------------------------------------------------------
+
+def list_all_corpora():
+    try:
+        # uncompiled corpora
+        print 'All uncompiled corpora:'
+        # use tree command to list all corpora with their files
+        # including sizes and dates of change (-hD options)
+        call(['tree', environment.verticals_path(),
+              '-hD',          # with human readable sizes and dates of change
+              '--du',         # for directories display content size
+              '--noreport'])  # without summary about number of files/dirs
+
+        # compile corpora
+        print '\nAll compiled corpora:'
+        call(['tree', environment.compiled_corpora_path(),
+              '-hDd',         # sizes, dates of change, directories only
+              '--du',         # for directories display content size
+              '--noreport'])  # without summary about number of files/dirs
+    except OSError:
+        print "You need to have 'tree' (version >= 1.6) installed"\
+            + " for listing corpora."
+
+
+# ---------------------------------------------------------------------------
+#  running module -> call main() function
+# ---------------------------------------------------------------------------
 
 if __name__ == '__main__':
     main()

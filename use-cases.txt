@@ -62,3 +62,6 @@ $ ./wikicorpora.py --language=en --sample-size=10 [--info]
 - vypise obsah vert/XXX, zda zkompilovano a prikazy, ktere lze dal pouzit
 - (nejak prehledne: stazeno, prevertikal, vertikal, zkompilovano: vzdy ANO/NE,
   pripadne i seznam vytvorenych vzorku)
+
+.Prehled vsech korpusu
+$ ./wikicorpora.py [--info]

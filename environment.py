@@ -5,14 +5,20 @@
 
 from __future__ import unicode_literals
 from doubleconfiguration import DoubleConfiguration
-#import os
+import os
+
+
+# project base directory
+PROJECT_BASE = os.path.dirname(__file__)
 
 
 class EnvironmentConfiguration(DoubleConfiguration):
 
     # paths to environment configuration files
-    ENVIRONMENT_CONFIG_LOCAL = 'environment-config.yaml'
-    ENVIRONMENT_CONFIG_DEFAULT = 'environment-config-default.yaml'
+    ENVIRONMENT_CONFIG_LOCAL = os.path.join(PROJECT_BASE,
+        'environment-config.yaml')
+    ENVIRONMENT_CONFIG_DEFAULT = os.path.join(PROJECT_BASE,
+        'environment-config-default.yaml')
 
     """Class for retrieving environment configuration"""
 

@@ -1,9 +1,9 @@
 Now
 ---
+- vyfaktorovani spolecne funkcionality z create_prevertical a create_dump
+  (zbaveni se duplicity kodu)
 - kontrola stability pameti pri pruchodu celym dumpem (pri specifickem
   samplovani)
-- vytvareni vzorku / pretokenizace: ignorovat clanky, ktere nenesou obsah
-  (Hlavni stranka, redirecty)
 
 Must
 ----
@@ -45,9 +45,6 @@ Could
 
 Want
 ----
-- moznost strucneho prehledu vsech korpusu (treba pokud zadam jen
-  `./wikicorpora.py`)
-- stahovani dumpu: kontrola MD5
 - pri moznosti predelavani jiz existujiciho korpusu brat v uvahu data zmen
   prerekvizit a aktualniho souboru (jako make)
 - prubezna aktualizace korpusu? (jednak wiki se porad rozsiruje/meni, jednak by

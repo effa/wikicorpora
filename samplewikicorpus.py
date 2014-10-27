@@ -129,6 +129,7 @@ class SampleWikiCorpus(WikiCorpus):
                         break
                     if specific_sample:
                         articles.remove(title)
+                # TODO: cleanup ?! (je mozne, ze bude prochazate cely dump!)
             del context
 
         # check if sample is of required size

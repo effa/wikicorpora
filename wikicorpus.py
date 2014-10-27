@@ -13,12 +13,16 @@ import bz2
 import os
 
 
+# project base directory
+PROJECT_BASE = os.path.dirname(__file__)
+
+
 class WikiCorpus(object):
 
     """Class representing corpus from Wikipedia of one language """
 
     # configuration file
-    CORPUS_CONFIG_PATH = 'corpus-config.yaml'
+    CORPUS_CONFIG_PATH = os.path.join(PROJECT_BASE, 'corpus-config.yaml')
 
     # original dump file name
     DUMP_ORIGINAL_NAME = 'pages-articles.xml.bz2'
@@ -195,8 +199,10 @@ class WikiCorpus(object):
 
         dump_path = self.get_dump_path()
         prevertical_path = self.get_prevertical_path()
-        print dump_path, '->', prevertical_path
-        #raise NotImplementedError
+        #print dump_path, '->', prevertical_path
+
+        # find the namespace
+        # TODO ...
 
     def tokenize_prevertical(self):
         """ Performes tokenization of prevertical

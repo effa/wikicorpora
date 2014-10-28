@@ -1,14 +1,16 @@
 Now
 ---
-- vyfaktorovani spolecne funkcionality z create_prevertical a create_dump
-  (zbaveni se duplicity kodu)
-- kontrola stability pameti pri pruchodu celym dumpem (pri specifickem
+- parsovani clanku (wiki markup) -> prevertikal
+  * progress bar
+  * parsovani WikiMarkupu
+  * kontrola stability pameti pri pruchodu celym dumpem (pri specifickem
   samplovani)
+  * vyfaktorovani spolecne funkcionality z create_prevertical a create_dump
+  (zbaveni se duplicity kodu), mozna trida Dump (nebo jen modul)?
 
 Must
 ----
-- parsovani clanku (wiki markup) -> prevertikal
-- vyresit kodovani dumpu a xml
+- kontrola: uvozovky x apostrofy u atributu ve vertikalu
 - tokenizace prevertikalu, pridani POS znacky a lemmatu
 - odhaleni dalsich vyskytu termu v textu
 - vytvoreni konfiguraku a kompilovani korpusu
@@ -28,8 +30,6 @@ Should
 
 Could
 -----
-- vyjasnit absolutni a relativni cesty (soubory korpusu, konfigurak, zdrojove
-  kody baliku/modulu)
 - volitelna jmena vstupu/vystupu pro skript wikicorpora.py, pripadne umozneni
   nastaveni vychoziho adresare pro wiki korpusy (pres konfigurak)
 - existujici korpusy z Wikipedia, podobne projekty
@@ -41,6 +41,7 @@ Could
   jasne prohlasit, misto vyhozeni top level vyjimky)
 - do dokumentace pridat popis, jak musi vypadat konfiguracni soubor
   (config.yaml) + rozumne osetreni toho, kdyz tak vypadat nebude
+- prehlednou strukturu souboru v repozitari (aktualne je vse na 1 urovni)
 
 
 Want

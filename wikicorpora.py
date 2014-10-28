@@ -178,17 +178,17 @@ def list_all_corpora():
     try:
         # uncompiled corpora
         print 'All uncompiled corpora:'
-        # use tree command to list all corpora with their files
-        # including sizes and dates of change (-hD options)
+        # use tree command to list all corpora with their files including sizes
         call(['tree', environment.verticals_path(),
-              '-hD',          # with human readable sizes and dates of change
+              '-h',           # with human readable sizes
               '--du',         # for directories display content size
               '--noreport'])  # without summary about number of files/dirs
 
         # compile corpora
         print '\nAll compiled corpora:'
         call(['tree', environment.compiled_corpora_path(),
-              '-hDd',         # sizes, dates of change, directories only
+              '-h',           # human readable sizes
+              '-d',           # directories only
               '--du',         # for directories display content size
               '--noreport'])  # without summary about number of files/dirs
     except OSError:

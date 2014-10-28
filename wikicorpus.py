@@ -6,8 +6,10 @@ from configuration import Configuration  # , ConfigurationException
 from contextlib import contextmanager
 from downloader import download_large_file, get_online_file
 from environment import environment
-#from lxml import etree
+from lxml import etree
+from xml_utils import qualified_name
 from system_utils import makedirs
+from wikimarkup import parse_wikimarkup
 import errno
 import bz2
 import os
@@ -193,16 +195,68 @@ class WikiCorpus(object):
     def create_prevertical(self):
         """ Parses dump (outer XML, inner Wiki Markup) and creates prevertical
         """
-        # pomoci lxml prochazet velke xml clanek po clanku (viz wikiindexer.py)
-        # a parsovat jednotlive clanky viz puvodni wikicorpora.py, vysledny
-        # prevertikal prubezne zapisovat do vystupniho souboru
-
-        dump_path = self.get_dump_path()
         prevertical_path = self.get_prevertical_path()
-        #print dump_path, '->', prevertical_path
 
         # find the namespace
-        # TODO ...
+        # TODO: vyfaktorovat do nejake funkce / metody
+        with self._open_dump() as dump_file:
+            # read first event, which is ('start', root element),
+            context_for_ns = etree.iterparse(dump_file, events=('start',))
+            _, root = context_for_ns.next()
+            # get namespace information from the root element,
+            # None means implicit namespace (without prefix)
+            namespace = root.nsmap[None]
+            del context_for_ns
+
+        # create qualified names (= names with namespaces) for tags we need
+        TEXT_TAG = qualified_name('text', namespace)
+        TITLE_TAG = qualified_name('title', namespace)
+        REDIRECT_TAG = qualified_name('redirect', namespace)
+
+        # iterate through xml and build a sample file
+        # TODO: show progress
+        with open(prevertical_path, 'w') as prevertical_file:
+            with self._open_dump() as dump_file:
+                context = etree.iterparse(dump_file, events=('end',))
+                pages = 0
+                last_title = None
+                skip = 0
+
+                # TODO: mely by se zapisovat i top level tag?
+                #  (neco jako <wiki lang="en" sample-size="10">) ???
+
+                # iterate through end-events
+                for event, elem in context:
+                    # NOTE: this relies on the fact that <redirect> goes always
+                    # before <text> (TODO: verify this has to be the case)
+                    if elem.tag == REDIRECT_TAG:
+                        # ignore redirect pages
+                        skip += 1
+                    elif elem.tag == TITLE_TAG:
+                        # remember the title
+                        last_title = elem.text
+                    elif elem.tag == TEXT_TAG:
+                        pages += 1  # TODO? pocitat projite / zpracovane ?
+                        if skip > 0:
+                            skip -= 1
+                            continue
+                        parsed_text = parse_wikimarkup(elem.text)
+                        doc = '<doc title="{title}">\n{text}\n</doc>\n'\
+                            .format(title=last_title, text=parsed_text)
+                        prevertical_file.write(doc.encode('utf-8'))
+
+                    # cleanup
+                    elem.clear()
+                    #while elem.getprevious() is not None:
+                    #    del elem.getparent()[0]
+                    for ancestor in elem.xpath('ancestor-or-self::*'):
+                        while ancestor.getprevious() is not None:
+                            del ancestor.getparent()[0]
+                del context
+
+        # log info (TODO: logging)
+        print 'Prevertical of {name} created at:\n  {path}'.format(
+            name=self.get_corpus_name(), path=prevertical_path)
 
     def tokenize_prevertical(self):
         """ Performes tokenization of prevertical

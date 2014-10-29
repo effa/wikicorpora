@@ -7,6 +7,9 @@ Now
   samplovani)
   * vyfaktorovani spolecne funkcionality z create_prevertical a create_dump
   (zbaveni se duplicity kodu), mozna trida Dump (nebo jen modul)?
+  * testy pro wikimarkup parsing
+- dalsi test samples pro parsovani wikiMarkapu -> doladeni parsovani
+- prehlednou strukturu souboru v repozitari (aktualne je vse na 1 urovni)
 
 Must
 ----
@@ -41,7 +44,6 @@ Could
   jasne prohlasit, misto vyhozeni top level vyjimky)
 - do dokumentace pridat popis, jak musi vypadat konfiguracni soubor
   (config.yaml) + rozumne osetreni toho, kdyz tak vypadat nebude
-- prehlednou strukturu souboru v repozitari (aktualne je vse na 1 urovni)
 
 
 Want

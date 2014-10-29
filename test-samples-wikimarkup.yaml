@@ -1,0 +1,66 @@
+- title:  single word
+  text:   word
+  result: |
+          <doc wuri="Single_word">
+          word
+          </doc>
+# ----------------------------------------------------------------------------
+- title:  a few words
+  text:   This is a self-referential sentence. And one more.
+  result: |
+          <doc wuri="A_few_words">
+          This is a self-referential sentence. And one more.
+          </doc>
+# ----------------------------------------------------------------------------
+- title:  link
+  text:   "[[link url | link name]]"
+  result: |
+          <doc wuri="Link">
+          <term wuri="Link_url">
+          link name
+          </term>
+          </doc>
+# ----------------------------------------------------------------------------
+- title:  some words and a link
+  text:   "some words and a [[link]]"
+  result: |
+          <doc wuri="Some_words_and_a_link">
+          some words and a
+          <term wuri="Link">
+          link
+          </term>
+          </doc>
+# ----------------------------------------------------------------------------
+- title:  introduction, two sections, subsection
+  text:   |
+          introduction
+
+          ==first headline==
+
+          paragraph1
+
+          ===subheadline===
+
+          paragraph2
+
+          paragraph3
+
+          ==second headline==
+
+          paragraph4
+  result: |
+          <doc wuri="Introduction,_two_sections,_subsection">
+          introduction
+          <section title="first headline">
+          paragraph1
+          <section title="subheadline">
+          paragraph2
+
+          paragraph3
+          </section>
+          </section>
+          <section title="second headline">
+          paragraph4
+          </section>
+          </doc>
+# ----------------------------------------------------------------------------

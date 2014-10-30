@@ -7,6 +7,8 @@
 from __future__ import unicode_literals
 import mwparserfromhell as parser
 
+# TODO: zkusit jiny parser, problem soucasneho: [[step]]s
+
 # -----------------------------------------------------------------------------
 #  public module functions
 # -----------------------------------------------------------------------------

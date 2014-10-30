@@ -2,13 +2,11 @@ Now
 ---
 - parsovani clanku (wiki markup) -> prevertikal
   * progress bar
-  * parsovani WikiMarkupu
   * kontrola stability pameti pri pruchodu celym dumpem (pri specifickem
   samplovani)
   * vyfaktorovani spolecne funkcionality z create_prevertical a create_dump
   (zbaveni se duplicity kodu), mozna trida Dump (nebo jen modul)?
   * testy pro wikimarkup parsing
-- dalsi test samples pro parsovani wikiMarkapu -> doladeni parsovani
 - prehlednou strukturu souboru v repozitari (aktualne je vse na 1 urovni)
 
 Must
@@ -21,6 +19,9 @@ Must
   dat (i datumy muzou mit na wiki svoje WURI)
 - sestaveni korpusu pro aj a cj a rozjeti na Sketch Engine
 - dokumentace (jednotne), vcetne vygenerovani
+- nasadit lepsi parser WikiMarkupu a otestovat, ze zvlada (nejak) vsechny
+  konstrukty WikiMarkupu parsovani vsech konstruktu WikiMarkupu; priklad
+  problemu soucasneho parseru '[[step]]s'
 
 Should
 ------

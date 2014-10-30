@@ -240,10 +240,9 @@ class WikiCorpus(object):
                         if skip > 0:
                             skip -= 1
                             continue
-                        parsed_text = parse_wikimarkup(elem.text)
-                        doc = '<doc title="{title}">\n{text}\n</doc>\n'\
-                            .format(title=last_title, text=parsed_text)
-                        prevertical_file.write(doc.encode('utf-8'))
+                        parsed_doc = parse_wikimarkup(elem.text, last_title)\
+                            + '\n'
+                        prevertical_file.write(parsed_doc.encode('utf-8'))
 
                     # cleanup
                     elem.clear()

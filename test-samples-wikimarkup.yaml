@@ -64,3 +64,12 @@
           </section>
           </doc>
 # ----------------------------------------------------------------------------
+- title:  clever link
+  text:   "[[copy edit]]ors"
+  result: |
+          <doc wuri="Clever_link">
+          <term wuri="Copy_edit">
+          copy editors
+          </term>
+          </doc>
+# ----------------------------------------------------------------------------

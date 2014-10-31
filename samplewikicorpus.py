@@ -2,7 +2,9 @@
 # encoding: utf-8
 
 from __future__ import unicode_literals
+from copy import deepcopy
 from lxml import etree
+from progressbar import ProgressBar
 from xml_utils import qualified_name
 from wikicorpus import WikiCorpus, CorpusException
 
@@ -85,14 +87,7 @@ class SampleWikiCorpus(WikiCorpus):
         sample_path = self.get_dump_path()
 
         # find the namespace
-        with parent._open_dump() as dump_file:
-            # read first event, which is ('start', root element),
-            context_for_ns = etree.iterparse(dump_file, events=('start',))
-            _, root = context_for_ns.next()
-            # get namespace information from the root element,
-            # None means implicit namespace (without prefix)
-            namespace = root.nsmap[None]
-            del context_for_ns
+        namespace = parent.get_namespace()
 
         # articles specified
         if articles:
@@ -102,35 +97,69 @@ class SampleWikiCorpus(WikiCorpus):
             specific_sample = False
 
         # create qualified names (= names with namespaces) for tags we need
-        page_tag = qualified_name('page', namespace)
-        title_tag = qualified_name('title', namespace)
-        redirect_tag = qualified_name('redirect', namespace)
+        TEXT_TAG = qualified_name('text', namespace)
+        TITLE_TAG = qualified_name('title', namespace)
+        REDIRECT_TAG = qualified_name('redirect', namespace)
 
         # iterate through xml and build a sample file
         with parent._open_dump() as dump_file:
-            context = etree.iterparse(dump_file, events=('end',), tag=page_tag)
+            context = etree.iterparse(dump_file, events=('end',))
+            # create root under which we will add sample articles
             sample_root = etree.Element('mediawiki', nsmap={None: namespace})
-            pages = 0
             # omit first 3 articles (Main page and similar meta-articles)
-            for _ in range(3):
-                next(context)
+            skip = 3
+            pages = 0
+            last_title = None
+            if specific_sample:
+                # in case of specific sample, it's easily possible
+                # that we will need to go through the whole dump
+                # -> meassure progress as a ratio of processed part
+                progressbar = ProgressBar(parent.get_dump_length())
+            else:
+                progressbar = ProgressBar(self.sample_size())
             for event, elem in context:
-                # ignore redirect pages
-                if elem.find(redirect_tag) is not None:
-                    continue
-                # find content of title element
-                title = elem.findtext(title_tag)
-                # if articles are not specified, take any article,
-                # if they are specified, check if this is wanted article
-                if not specific_sample or title in articles:
-                    sample_root.append(elem)
-                    pages += 1
-                    if pages == self.sample_size():
-                        break
+                if elem.tag == REDIRECT_TAG:
+                    # ignore redirect pages
+                    skip += 1
+                elif elem.tag == TITLE_TAG:
+                    # remember the title
+                    last_title = elem.text
+                elif elem.tag == TEXT_TAG:
+                    if skip > 0:
+                        skip -= 1
+                        continue
+                    # TODO: systematictejsi filtrace
+                    if last_title.startswith('MediaWiki:'):
+                        continue
+                    # if articles are not specified, take any article,
+                    # if they are specified, check if this is wanted article
+                    if not specific_sample or last_title in articles:
+                        # build page node with title and text subelements
+                        page_node = etree.Element('page')
+                        title_node = etree.SubElement(page_node, 'title')
+                        title_node.text = last_title
+                        page_node.append(deepcopy(elem))  # text
+                        # append this node to sample articles
+                        sample_root.append(page_node)
+                        pages += 1
+                        if specific_sample:
+                            articles.remove(last_title)
+                        if pages == self.sample_size():
+                            break
+                    # progress update
                     if specific_sample:
-                        articles.remove(title)
-                # TODO: cleanup ?! (je mozne, ze bude prochazate cely dump!)
+                        progressbar.update(dump_file.tell())
+                    else:
+                        progressbar.update(pages)
+                # cleanup
+                elem.clear()
+                #while elem.getprevious() is not None:
+                #    del elem.getparent()[0]
+                for ancestor in elem.xpath('ancestor-or-self::*'):
+                    while ancestor.getprevious() is not None:
+                        del ancestor.getparent()[0]
             del context
+            progressbar.finish()
 
         # check if sample is of required size
         if pages < self.sample_size():

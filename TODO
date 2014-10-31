@@ -1,10 +1,5 @@
 Now
 ---
-- parsovani clanku (wiki markup) -> prevertikal
-  * vyfaktorovani spolecne funkcionality z create_prevertical a create_dump
-  (zbaveni se duplicity kodu), mozna trida Dump (nebo jen modul)?
-  * kontrola stability pameti pri pruchodu celym dumpem (pri specifickem
-  samplovani)
 - prehlednou strukturu souboru v repozitari (aktualne je vse na 1 urovni)
 - hledani inspirace: wikipedia parsing, corpus from wikipedia
 
@@ -46,6 +41,10 @@ Could
   jasne prohlasit, misto vyhozeni top level vyjimky)
 - do dokumentace pridat popis, jak musi vypadat konfiguracni soubor
   (config.yaml) + rozumne osetreni toho, kdyz tak vypadat nebude
+- vyfaktorovani spolecne funkcionality z create_prevertical a create_dump
+  (zbaveni se duplicity kodu), mozna trida Dump (nebo jen modul)?
+- kontrola stability pameti pri pruchodu celym dumpem (pri specifickem
+  samplovani) a pri prevertikalizaci
 
 
 Want

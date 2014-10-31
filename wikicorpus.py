@@ -82,6 +82,33 @@ class WikiCorpus(object):
             dump_file_name)
         return path
 
+    def get_dump_length(self):
+        """Returns length of the dump
+
+        Note: For compressed dumps, this is larger number than file size.
+        """
+        if self.is_dump_compressed():
+            print 'Calculating uncompressed dump length...'
+            with self._open_dump() as dump_file:
+                dump_file.seek(0, os.SEEK_END)
+                length = dump_file.tell()
+                return length
+        else:
+            return os.path.getsize(self.get_dump_path())
+
+    def get_namespace(self):
+        """Returns namespace of the wiki dump
+        """
+        with self._open_dump() as dump_file:
+            # read first event, which is ('start', root element),
+            context_for_ns = etree.iterparse(dump_file, events=('start',))
+            _, root = context_for_ns.next()
+            # get namespace information from the root element,
+            # None means implicit namespace (without prefix)
+            namespace = root.nsmap[None]
+            del context_for_ns
+        return namespace
+
     def get_prevertical_path(self):
         """ Returns path to prevertical
         """
@@ -197,18 +224,7 @@ class WikiCorpus(object):
         """ Parses dump (outer XML, inner Wiki Markup) and creates prevertical
         """
         prevertical_path = self.get_prevertical_path()
-
-        # find the namespace
-        # TODO: vyfaktorovat do nejake funkce / metody
-        #   -> dump by mela byt vlastni trida (metody open, len, get_namespace
-        with self._open_dump() as dump_file:
-            # read first event, which is ('start', root element),
-            context_for_ns = etree.iterparse(dump_file, events=('start',))
-            _, root = context_for_ns.next()
-            # get namespace information from the root element,
-            # None means implicit namespace (without prefix)
-            namespace = root.nsmap[None]
-            del context_for_ns
+        namespace = self.get_namespace()
 
         # create qualified names (= names with namespaces) for tags we need
         TEXT_TAG = qualified_name('text', namespace)
@@ -219,12 +235,7 @@ class WikiCorpus(object):
         with open(prevertical_path, 'w') as prevertical_file:
             with self._open_dump() as dump_file:
                 context = etree.iterparse(dump_file, events=('end',))
-
-                # find total dump size and create progress bar
-                total_size = os.path.getsize(self.get_dump_path())
-                progressbar = ProgressBar(total_size)
-
-                pages = 0
+                progressbar = ProgressBar(self.get_dump_length())
                 last_title = None
                 # skip first page in full (copressed) dump since it's Main Page
                 skip = 1 if self.is_dump_compressed() else 0
@@ -243,9 +254,13 @@ class WikiCorpus(object):
                         # remember the title
                         last_title = elem.text
                     elif elem.tag == TEXT_TAG:
-                        pages += 1  # TODO? pocitat projite / zpracovane ?
                         if skip > 0:
                             skip -= 1
+                            continue
+                        # TODO: systematictejsi filtrace
+                        #   a odstraneni duplicitniho kodu
+                        #   (create_sample x create_prevertical)
+                        if last_title.startswith('MediaWiki:'):
                             continue
                         parsed_doc = parse_wikimarkup(elem.text, last_title)\
                             + '\n'
@@ -260,7 +275,7 @@ class WikiCorpus(object):
                     for ancestor in elem.xpath('ancestor-or-self::*'):
                         while ancestor.getprevious() is not None:
                             del ancestor.getparent()[0]
-                    if pages >= 2000:
+                    if progressbar.get_progress() >= 0.005:
                         break
                 del context
         progressbar.finish()
@@ -330,16 +345,16 @@ class WikiCorpus(object):
                 dump_file = bz2.BZ2File(dump_path, 'r')
             else:
                 dump_file = open(dump_path)
-            yield dump_file
-            # [after yield, the body of with statement will be executed]
+            try:
+                yield dump_file
+                # [after yield, the body of with statement will be executed]
+            finally:
+                dump_file.close()
         except IOError as exc:
             # errno.ENOENT = "No such file or directory"
             if exc.errno == errno.ENOENT:
                 raise CorpusException('Dump file {name} doesn\'t exist.'
                     .format(name=dump_path))
-        finally:
-            # close dump
-            dump_file.close()
 
     # ------------------------------------------------------------------------
     #  magic methods

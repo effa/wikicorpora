@@ -26,7 +26,10 @@ def parse_wikimarkup(wikitext, title=None):
     Returns:
         unicode
     """
-    assert type(wikitext) == unicode
+    # make sure text is unicode
+    # (e.g. lxml returns unicode in 99 %, but not always...)
+    if isinstance(wikitext, str):
+        wikitext = wikitext.decode('utf-8')
 
     # parse wikitext
     parsed_wikitext = parser.parse(wikitext)
@@ -76,7 +79,8 @@ def term2wuri(term):
         unicode
     """
     wuri = term.strip().replace(' ', '_')
-    wuri = wuri[0].upper() + wuri[1:]  # first letter always capital
+    if wuri:  # ideally term shouldn't be empty, but this is Wikipedia...
+        wuri = wuri[0].upper() + wuri[1:]  # first letter always capital
     return wuri
 
 

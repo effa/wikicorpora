@@ -1,13 +1,12 @@
 Now
 ---
 - parsovani clanku (wiki markup) -> prevertikal
-  * progress bar
-  * kontrola stability pameti pri pruchodu celym dumpem (pri specifickem
-  samplovani)
   * vyfaktorovani spolecne funkcionality z create_prevertical a create_dump
   (zbaveni se duplicity kodu), mozna trida Dump (nebo jen modul)?
-  * testy pro wikimarkup parsing
+  * kontrola stability pameti pri pruchodu celym dumpem (pri specifickem
+  samplovani)
 - prehlednou strukturu souboru v repozitari (aktualne je vse na 1 urovni)
+- hledani inspirace: wikipedia parsing, corpus from wikipedia
 
 Must
 ----
@@ -22,6 +21,8 @@ Must
 - nasadit lepsi parser WikiMarkupu a otestovat, ze zvlada (nejak) vsechny
   konstrukty WikiMarkupu parsovani vsech konstruktu WikiMarkupu; priklad
   problemu soucasneho parseru '[[step]]s'
+- odstraneni prazdnych pojmu (muze souviset s pouzitym parserem)
+- testy pro wikimarkup parsing
 
 Should
 ------

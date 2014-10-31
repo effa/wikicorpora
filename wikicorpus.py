@@ -7,8 +7,9 @@ from contextlib import contextmanager
 from downloader import download_large_file, get_online_file
 from environment import environment
 from lxml import etree
-from xml_utils import qualified_name
+from progressbar import ProgressBar
 from system_utils import makedirs
+from xml_utils import qualified_name
 from wikimarkup import parse_wikimarkup
 import errno
 import bz2
@@ -199,6 +200,7 @@ class WikiCorpus(object):
 
         # find the namespace
         # TODO: vyfaktorovat do nejake funkce / metody
+        #   -> dump by mela byt vlastni trida (metody open, len, get_namespace
         with self._open_dump() as dump_file:
             # read first event, which is ('start', root element),
             context_for_ns = etree.iterparse(dump_file, events=('start',))
@@ -214,13 +216,18 @@ class WikiCorpus(object):
         REDIRECT_TAG = qualified_name('redirect', namespace)
 
         # iterate through xml and build a sample file
-        # TODO: show progress
         with open(prevertical_path, 'w') as prevertical_file:
             with self._open_dump() as dump_file:
                 context = etree.iterparse(dump_file, events=('end',))
+
+                # find total dump size and create progress bar
+                total_size = os.path.getsize(self.get_dump_path())
+                progressbar = ProgressBar(total_size)
+
                 pages = 0
                 last_title = None
-                skip = 0
+                # skip first page in full (copressed) dump since it's Main Page
+                skip = 1 if self.is_dump_compressed() else 0
 
                 # TODO: mely by se zapisovat i top level tag?
                 #  (neco jako <wiki lang="en" sample-size="10">) ???
@@ -243,6 +250,8 @@ class WikiCorpus(object):
                         parsed_doc = parse_wikimarkup(elem.text, last_title)\
                             + '\n'
                         prevertical_file.write(parsed_doc.encode('utf-8'))
+                        # approximate work done by position in dump file
+                        progressbar.update(dump_file.tell())
 
                     # cleanup
                     elem.clear()
@@ -251,7 +260,10 @@ class WikiCorpus(object):
                     for ancestor in elem.xpath('ancestor-or-self::*'):
                         while ancestor.getprevious() is not None:
                             del ancestor.getparent()[0]
+                    if pages >= 1000:
+                        break
                 del context
+        progressbar.finish()
 
         # log info (TODO: logging)
         print 'Prevertical of {name} created at:\n  {path}'.format(

@@ -32,8 +32,7 @@ def download_large_file(url, path, md5sum=None):
         # read file size from headers
         file_size = int(request.info().getheaders('Content-Length')[0])
         print 'file size:', human_readable_size(file_size)
-        downloaded = 0.0
-        progressbar = ProgressBar()
+        progressbar = ProgressBar(file_size)
         with open(path, 'wb') as output_file:
             while True:
                 chunk = request.read(CHUNK)
@@ -41,8 +40,7 @@ def download_large_file(url, path, md5sum=None):
                     break
                 output_file.write(chunk)
                 md5.update(chunk)
-                downloaded += len(chunk)
-                progressbar.update(downloaded / file_size)
+                progressbar.add(len(chunk))
         progressbar.finish()
     # check MD5 checksum
     if md5sum:

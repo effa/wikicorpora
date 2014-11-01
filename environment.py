@@ -40,11 +40,17 @@ class EnvironmentConfiguration(DoubleConfiguration):
 
     def get_unitok_path(self):
         """Returns path to unitok
+
+        Raises:
+            ConfigurationException if there si no path for unitok
         """
         return self.get_nonempty('tools', 'unitok')
 
     def get_desamb_path(self):
         """Returns path to desamb
+
+        Raises:
+            ConfigurationException if there si no path for desamb
         """
         return self.get_nonempty('tools', 'desamb')
 

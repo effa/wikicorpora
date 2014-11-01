@@ -49,8 +49,10 @@ class Configuration(object):
             if the item is empty
         """
         item = self.get(*args)
-        if not item:
-            raise ConfigurationException('empty configuration item')
+        if item is None or item == '':
+            raise ConfigurationException(
+                'empty configuration item for key {key}'.format(
+                    key='/'.join(args)))
         return item
 
 

@@ -5,7 +5,6 @@ Now
 
 Must
 ----
-- kontrola: uvozovky x apostrofy u atributu ve vertikalu
 - tokenizace prevertikalu, pridani POS znacky a lemmatu
 - odhaleni dalsich vyskytu termu v textu
 - vytvoreni konfiguraku a kompilovani korpusu

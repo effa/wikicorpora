@@ -36,12 +36,6 @@ def main():
         action='store_true',
         help='create sample from selected articles')
 
-    # general options
-    #parser.add_argument('--logfile',
-    #    help='path to logfile')
-    parser.add_argument('--info', action='store_true',
-        help='print corpus summary')
-
     # download options
     download_group = parser.add_argument_group('download options')
     soft_or_force_group = download_group.add_mutually_exclusive_group()
@@ -70,6 +64,12 @@ def main():
     compilation_group.add_argument('--compile', '-c', action='store_true',
         help='create configuration file and compile corpus')
 
+    # general options
+    #parser.add_argument('--logfile',
+    #    help='path to logfile')
+    parser.add_argument('--info', action='store_true',
+        help='print corpus summary')
+
     args = parser.parse_args()
 
     # if no action is specified, we will print corpus info
@@ -77,9 +77,6 @@ def main():
         args.create_sample, args.create_specific_sample,
         args.prevertical, args.tokenization, args.tagging, args.lemmatization,
         args.terms_inference, args.all_phases, args.compile])
-
-    # DEBUGGING:
-    #print args
 
     # sample_size has to be either int or None
     sample_size = int(args.sample_size) if args.sample_size else None
@@ -167,7 +164,7 @@ def main():
             corpus.print_info()
 
     except CorpusException as e:
-        print 'Error during building corpus:', e.message
+        print 'Error during building corpus:\n ', e.message
 
 
 # ---------------------------------------------------------------------------

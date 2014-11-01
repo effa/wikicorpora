@@ -2,11 +2,12 @@
 # encoding: utf-8
 
 from __future__ import unicode_literals
-from configuration import Configuration  # , ConfigurationException
+from configuration import Configuration, ConfigurationException
 from contextlib import contextmanager
 from downloader import download_large_file, get_online_file
 from environment import environment
 from lxml import etree
+from nlp import NaturalLanguageProcessor, LanguageProcessorException
 from progressbar import ProgressBar
 from system_utils import makedirs
 from xml_utils import qualified_name
@@ -289,8 +290,20 @@ class WikiCorpus(object):
         """
         prevertical_path = self.get_prevertical_path()
         vertical_path = self.get_vertical_path()
-        print prevertical_path, '->', vertical_path
-        #raise NotImplementedError
+        print 'Tokenization of {name} started...'.format(
+            name=self.get_corpus_name())
+        prevertical_path, '->', vertical_path
+        try:
+            with NaturalLanguageProcessor('cs') as language_processor:
+                language_processor.tokenize(prevertical_path, vertical_path)
+            print 'Tokenization of {name} finished.'.format(
+                name=self.get_corpus_name())
+            print 'Vertical created at:\n  {path}'.format(
+                path=vertical_path)
+        except ConfigurationException as exc:
+            raise CorpusException('Tokenization failed: ' + exc.message)
+        except LanguageProcessorException as exc:
+            raise CorpusException('Tokenization failed: ' + exc.message)
 
     def morfologize_vertical(self, add_tags=True, add_lemmas=True):
         """ Adds morfological tag and/or lemma for each token in the vertical

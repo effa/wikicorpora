@@ -34,3 +34,20 @@ class DoubleConfiguration(object):
         except ConfigurationException:
             # as a fallback, use default configuration file
             return self._default_configuration.get(*args)
+
+    def get_nonempty(self, *args):
+        """ Returns information from configration.
+
+        :*args: key (or series of keys in case of nesting)
+        """
+        try:
+            # first, try to find the information in local configuration file
+            item = self._local_configuration.get(*args)
+        except ConfigurationException:
+            # as a fallback, use default configuration file
+            item = self._default_configuration.get(*args)
+        if item is None or item == '':
+            raise ConfigurationException(
+                'empty configuration item for key {key}'.format(
+                    key='/'.join(args)))
+        return item

@@ -176,20 +176,22 @@ def list_all_corpora():
         # uncompiled corpora
         print 'All uncompiled corpora:'
         # use tree command to list all corpora with their files including sizes
+        # NOTE: content size (--du) printing needs tree>=1.6 but there is
+        #       only 1.5 version on Aurora server installed
         call(['tree', environment.verticals_path(),
-              '-h',           # with human readable sizes
-              '--du',         # for directories display content size
+              #'-h',           # with human readable sizes
+              #'--du',         # for directories display content size
               '--noreport'])  # without summary about number of files/dirs
 
         # compile corpora
         print '\nAll compiled corpora:'
         call(['tree', environment.compiled_corpora_path(),
-              '-h',           # human readable sizes
+              #'-h',           # human readable sizes
               '-d',           # directories only
-              '--du',         # for directories display content size
+              #'--du',         # for directories display content size
               '--noreport'])  # without summary about number of files/dirs
     except OSError:
-        print "You need to have 'tree' (version >= 1.6) installed"\
+        print "You need to have 'tree' installed"\
             + " for listing corpora."
 
 

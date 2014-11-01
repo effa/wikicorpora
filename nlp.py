@@ -103,22 +103,22 @@ class NaturalLanguageProcessor(object):
         :vertical_path: unicode
             where to store result vertical file
         """
-        language = self.get_unitok_language_name()
         unitok_path = environment.get_unitok_path()
         if not unitok_path:
             raise LanguageProcessorException(
                 'No path for unitok in configuration.')
         try:
-            task = Popen(args=(unitok_path,
-                            '--language={l}'.format(l=language),
-                            prevertical_path,
-                            '>',
-                            vertical_path))
+            unitok_command = '{unitok} --language={lang} {prevert} > {vert}'\
+                .format(unitok=unitok_path,
+                        lang=self.get_unitok_language_name(),
+                        prevert=prevertical_path,
+                        vert=vertical_path)
+            task = Popen(unitok_command, shell=True)
+            task.wait()
+            if task.returncode != 0:
+                raise LanguageProcessorException('unitok failed')
         except OSError:
-            raise LanguageProcessorException('OSError')
-        task.wait()
-        if task.returncode != 0:
-            raise LanguageProcessorException('unitok failed')
+            raise LanguageProcessorException('OSError when calling unitok')
 
     # ------------------------------------------------------------------------
     #  private methods

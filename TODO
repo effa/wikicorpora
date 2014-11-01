@@ -5,7 +5,7 @@ Now
 
 Must
 ----
-- tokenizace prevertikalu, pridani POS znacky a lemmatu
+- pridani POS znacky a lemmatu
 - odhaleni dalsich vyskytu termu v textu
 - vytvoreni konfiguraku a kompilovani korpusu
 - rozpoznavani datumu (zavest specialni strukturu?), ale vyuzit jiz oznacenych

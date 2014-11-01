@@ -1,5 +1,6 @@
 paths:
     verticals:          './vert'
+    registry:           './registry'
     compiled-corpora:   './manatee'
 tools:
     unitok:             ''

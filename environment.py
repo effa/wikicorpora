@@ -28,15 +28,20 @@ class EnvironmentConfiguration(DoubleConfiguration):
             EnvironmentConfiguration.ENVIRONMENT_CONFIG_LOCAL,
             EnvironmentConfiguration.ENVIRONMENT_CONFIG_DEFAULT)
 
-    def verticals_path(self):
-        """Returns path to parent directory for all verticals
-        """
-        return self.get('paths', 'verticals')
-
     def compiled_corpora_path(self):
         """Returns path to parent directory for all compiled corpora
         """
         return self.get('paths', 'compiled-corpora')
+
+    def registry_path(self):
+        """Returns path to parent directory for registry (corpora protocols)
+        """
+        return self.get('paths', 'registry')
+
+    def verticals_path(self):
+        """Returns path to parent directory for all verticals
+        """
+        return self.get('paths', 'verticals')
 
     def get_unitok_path(self):
         """Returns path to unitok

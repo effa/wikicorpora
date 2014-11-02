@@ -17,6 +17,7 @@ Must
   problemu soucasneho parseru '[[step]]s'
 - odstraneni prazdnych pojmu (muze souviset s pouzitym parserem)
 - testy pro wikimarkup parsing
+- kontrola vysledneho korpusu aplikaci corpcheck
 
 Should
 ------

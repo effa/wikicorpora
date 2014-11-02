@@ -176,6 +176,9 @@ class WikiCorpus(object):
         """
         return self._language
 
+    def vertical_file_exists(self):
+        return os.path.exists(self.get_vertical_path())
+
     # ------------------------------------------------------------------------
     #  corpus building methods
     # ------------------------------------------------------------------------
@@ -292,7 +295,6 @@ class WikiCorpus(object):
         vertical_path = self.get_vertical_path()
         print 'Tokenization of {name} started...'.format(
             name=self.get_corpus_name())
-        prevertical_path, '->', vertical_path
         try:
             with NaturalLanguageProcessor('cs') as language_processor:
                 language_processor.tokenize(prevertical_path, vertical_path)
@@ -308,9 +310,28 @@ class WikiCorpus(object):
     def morfologize_vertical(self, add_tags=True, add_lemmas=True):
         """ Adds morfological tag and/or lemma for each token in the vertical
         """
+        # check if either add_tags or add_lemmas is set True
+        if not (add_tags or add_lemmas):
+            # nothing to do
+            return
+        # check if vertical file already exists
+        if not self.vertical_file_exists():
+            raise CorpusException('Missing vertical file.')
         vertical_path = self.get_vertical_path()
-        print '<->', vertical_path
-        #raise NotImplementedError
+        print 'Morfologization of {name} started...'.format(
+            name=self.get_corpus_name())
+        try:
+            with NaturalLanguageProcessor('cs') as language_processor:
+                language_processor.morfologize(vertical_path, vertical_path,
+                    add_tags, add_lemmas)
+            print 'Morfologization of {name} finished.'.format(
+                name=self.get_corpus_name())
+            print 'Morfologized vertical location:\n  {path}'.format(
+                path=vertical_path)
+        except ConfigurationException as exc:
+            raise CorpusException('Morfologization failed: ' + exc.message)
+        except LanguageProcessorException as exc:
+            raise CorpusException('Mofologization failed: ' + exc.message)
 
     def infere_terms_occurences(self):
         """ Labels all occurences of terms in morfolgized vertical

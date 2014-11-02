@@ -38,7 +38,8 @@ class Configuration(object):
                 conf = conf[key]
             return conf
         except KeyError:
-            raise ConfigurationException('wrong configuration key')
+            raise ConfigurationException('missing configuration item for key '
+                + '/'.join(args))
 
     def get_nonempty(self, *args):
         """Returns nonempty information from configuration

@@ -1,5 +1,7 @@
 Now
 ---
+- vyzkouset morfologizaci anglictiny (casem i fr, de, it) na Aurore, doladit
+- testovani na aurore + prenest vzorky i domu pro lokalni testovani
 - prehlednou strukturu souboru v repozitari (aktualne je vse na 1 urovni)
 - hledani inspirace: wikipedia parsing, corpus from wikipedia
 
@@ -30,6 +32,11 @@ Should
 
 Could
 -----
+* rozsireni lemmatizace a POS taggingu i na dalsi jazyky, napriklad podle
+  popisu podle popisu na http://nlp.fi.muni.cz/ma/ by mela majka
+  fungovat pro Czech, Slovak, Polish, Swedish, German, French, Italian,
+  English, Portuguese, Catalan, Welsh, Spanish, Galician, Asturian
+  and Russian (vyzkouset, zeptat se na dalsi nastroje)
 - volitelna jmena vstupu/vystupu pro skript wikicorpora.py, pripadne umozneni
   nastaveni vychoziho adresare pro wiki korpusy (pres konfigurak)
 - existujici korpusy z Wikipedia, podobne projekty

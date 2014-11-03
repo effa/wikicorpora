@@ -43,14 +43,6 @@ class EnvironmentConfiguration(DoubleConfiguration):
         """
         return self.get('paths', 'verticals')
 
-    def get_unitok_path(self):
-        """Returns path to unitok
-
-        Raises:
-            ConfigurationException if there si no path for unitok
-        """
-        return self.get_nonempty('tools', 'unitok')
-
     def get_desamb_path(self):
         """Returns path to desamb
 
@@ -58,6 +50,22 @@ class EnvironmentConfiguration(DoubleConfiguration):
             ConfigurationException if there si no path for desamb
         """
         return self.get_nonempty('tools', 'desamb')
+
+    def get_treetagger_path(self):
+        """Returns path to treetagger
+
+        Raises:
+            ConfigurationException if there si no path for treetagger
+        """
+        return self.get_nonempty('tools', 'treetagger')
+
+    def get_unitok_path(self):
+        """Returns path to unitok
+
+        Raises:
+            ConfigurationException if there si no path for unitok
+        """
+        return self.get_nonempty('tools', 'unitok')
 
 # create environment singleton
 environment = EnvironmentConfiguration()

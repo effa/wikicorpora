@@ -321,8 +321,8 @@ class WikiCorpus(object):
         print 'Morfologization of {name} started...'.format(
             name=self.get_corpus_name())
         try:
-            with NaturalLanguageProcessor('cs') as language_processor:
-                language_processor.morfologize(vertical_path, vertical_path,
+            with NaturalLanguageProcessor(self.language()) as nlpr:
+                nlpr.morfologize(vertical_path, vertical_path,
                     add_tags, add_lemmas)
             print 'Morfologization of {name} finished.'.format(
                 name=self.get_corpus_name())

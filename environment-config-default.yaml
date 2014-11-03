@@ -3,7 +3,8 @@ paths:
     registry:           './registry'
     compiled-corpora:   './manatee'
 tools:
-    unitok:             ''
     desamb:             ''
+    treetagger:         ''
+    unitok:             ''
 
 

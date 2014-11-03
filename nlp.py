@@ -23,8 +23,6 @@ class NaturalLanguageProcessor(object):
     This way, all resources will be closed after end of the with-statement.
     """
 
-    #LEMMATIZABLE_LANGUAGES = ['cs', 'en']
-
     # unitok languages names
     UNITOK_LANGUAGES = defaultdict(lambda: 'other', (
         ('en', 'english'),
@@ -39,6 +37,13 @@ class NaturalLanguageProcessor(object):
         ('el', 'greek'),
         ('da', 'danish'),
         ('hi', 'hindi')))
+
+    # languages allowed for tree_tagger
+    TREETAGGER_LANGUAGES = defaultdict(lambda: None, (
+        ('en', 'english'),
+        ('fr', 'french'),
+        ('de', 'german'),
+        ('it', 'italian')))
 
     # ------------------------------------------------------------------------
     #  magic methods
@@ -65,6 +70,20 @@ class NaturalLanguageProcessor(object):
 
     def __unicode__(self):
         return self.__repr__()
+
+    # ------------------------------------------------------------------------
+    #  static methods
+    # ------------------------------------------------------------------------
+
+    @staticmethod
+    def get_treetagger_language(iso_code):
+        """For treetagger-supported languages, returns language full name
+
+        :iso_code: unicode (alpha-2 code of the language)
+
+        :returns: unicode (name of the language) || None
+        """
+        return NaturalLanguageProcessor.TREETAGGER_LANGUAGES[iso_code]
 
     # ------------------------------------------------------------------------
     #  property access methods
@@ -125,12 +144,10 @@ class NaturalLanguageProcessor(object):
                     add_tags=True, add_lemmas=True):
         """Adds tags and/or lemmas to given vertical.
         """
-        # TODO: podle popisu na http://nlp.fi.muni.cz/ma/ by mela majka
-        # fungovat pro Czech, Slovak, Polish, Swedish, German, French, Italian,
-        # English, Portuguese, Catalan, Welsh, Spanish, Galician, Asturian
-        # and Russian.
+        # TODO rozlozit na pomocne funkce a zprehlednit
+        language = self.get_language()
         # TODO: umoznit udelat pro cestinu jen tagy / jen lemmata:
-        if self.get_language() == 'cs':
+        if language == 'cs':
             # for czech language, use desamb
             desamb_path = environment.get_desamb_path()
             try:
@@ -147,6 +164,28 @@ class NaturalLanguageProcessor(object):
                 call(('mv', tmp_output_path, output_path))
             except OSError:
                 raise LanguageProcessorException('OSError when calling desamb')
+        elif language in NaturalLanguageProcessor.TREETAGGER_LANGUAGES:
+            # TODO dovolit pridavat pouze taggy / pouze lemmata
+            treetagger_path = environment.get_treetagger_path()
+            try:
+                tmp_output_path = output_path + '.tmp'
+                # treetagger needs file in iso-8858-1 encoding, so we need
+                # convert it first
+                command = '{conv} <{inp} | {treetagger} {lang} {opt} >{outp}'\
+                    .format(treetagger=treetagger_path,
+                            lang=self.get_treetagger_language(language),
+                            opt='-token -lemma -no-unknown -sgml',
+                            conv='iconv -f utf-8 -t iso-8859-1//TRANSLIT',
+                            inp=input_path,
+                            outp=tmp_output_path)
+                task = Popen(command, shell=True)
+                task.wait()
+                if task.returncode != 0:
+                    raise LanguageProcessorException('treetagger failed')
+                call(('mv', tmp_output_path, output_path))
+            except OSError:
+                raise LanguageProcessorException(
+                    'OSError when calling treetagger')
         else:
             if add_tags and add_lemmas:
                 wanted_task = 'adding tags and lemmas'
@@ -156,7 +195,7 @@ class NaturalLanguageProcessor(object):
                 wanted_task = 'adding tags'
             raise LanguageProcessorException(
                 'No known tool for adding morfologization information for '
-                + wanted_task + ' for ' + self.get_language())
+                + wanted_task + ' for ' + language)
 
     # ------------------------------------------------------------------------
     #  private methods

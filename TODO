@@ -1,13 +1,11 @@
 Now
 ---
-- vyzkouset morfologizaci anglictiny (casem i fr, de, it) na Aurore, doladit
 - testovani na aurore + prenest vzorky i domu pro lokalni testovani
 - prehlednou strukturu souboru v repozitari (aktualne je vse na 1 urovni)
 - hledani inspirace: wikipedia parsing, corpus from wikipedia
 
 Must
 ----
-- pridani POS znacky a lemmatu
 - odhaleni dalsich vyskytu termu v textu
 - vytvoreni konfiguraku a kompilovani korpusu
 - rozpoznavani datumu (zavest specialni strukturu?), ale vyuzit jiz oznacenych
@@ -32,7 +30,7 @@ Should
 
 Could
 -----
-* rozsireni lemmatizace a POS taggingu i na dalsi jazyky, napriklad podle
+- rozsireni lemmatizace a POS taggingu i na dalsi jazyky, napriklad podle
   popisu podle popisu na http://nlp.fi.muni.cz/ma/ by mela majka
   fungovat pro Czech, Slovak, Polish, Swedish, German, French, Italian,
   English, Portuguese, Catalan, Welsh, Spanish, Galician, Asturian

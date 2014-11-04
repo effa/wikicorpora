@@ -279,8 +279,6 @@ class WikiCorpus(object):
                     for ancestor in elem.xpath('ancestor-or-self::*'):
                         while ancestor.getprevious() is not None:
                             del ancestor.getparent()[0]
-                    if progressbar.get_progress() >= 0.005:
-                        break
                 del context
         progressbar.finish()
 

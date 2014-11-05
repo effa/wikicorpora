@@ -9,7 +9,7 @@ import os
 
 
 # project base directory
-PROJECT_BASE = os.path.dirname(__file__)
+PROJECT_BASE = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 
 
 class EnvironmentConfiguration(DoubleConfiguration):

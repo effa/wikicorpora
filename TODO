@@ -1,11 +1,12 @@
 Now
 ---
+- nastroj na Wiki z labu (viz mail Vit Baisa)
 - testovani na aurore + prenest vzorky i domu pro lokalni testovani
-- prehlednou strukturu souboru v repozitari (aktualne je vse na 1 urovni)
 - hledani inspirace: wikipedia parsing, corpus from wikipedia
 
 Must
 ----
+- vyresit tagovani a lemmetizaci cisel
 - odhaleni dalsich vyskytu termu v textu
 - vytvoreni konfiguraku a kompilovani korpusu
 - rozpoznavani datumu (zavest specialni strukturu?), ale vyuzit jiz oznacenych
@@ -26,6 +27,7 @@ Should
 - stranky projektu (staci na GH) s odkazem na demo na Sketch Engine
 - vyresit namespacy poradne (pokud muzou byt vnorene)
 - unit testy
+- prehlednou strukturu projektu
 
 
 Could

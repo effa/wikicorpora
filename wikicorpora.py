@@ -51,9 +51,7 @@ def main():
     phases_group.add_argument('--tokenization', '-t', action='store_true',
         help='tokenize prevertical')
     phases_group.add_argument('--tagging', '-m', action='store_true',
-        help='add morphological tag to each token')
-    phases_group.add_argument('--lemmatization', '-f', action='store_true',
-        help='add lemma (canonical form) to each token')
+        help='add morphological tag and lemma/lempos to each token')
     phases_group.add_argument('--terms-inference', '-i', action='store_true',
         help='infere all terms occurences')
     phases_group.add_argument('--all-phases', '-a', action='store_true',
@@ -75,7 +73,7 @@ def main():
     # if no action is specified, we will print corpus info
     no_action = not any([args.force_download, args.soft_download,
         args.create_sample, args.create_specific_sample,
-        args.prevertical, args.tokenization, args.tagging, args.lemmatization,
+        args.prevertical, args.tokenization, args.tagging,
         args.terms_inference, args.all_phases, args.compile])
 
     # sample_size has to be either int or None
@@ -128,6 +126,10 @@ def main():
         if args.soft_download or args.force_download:
             corpus.download_dump(force=args.force_download)
 
+        # extract dump (only force if download is forced as well)
+        #if args.extract
+        #    corpus.extract_dump(force=args.force_download)
+
         # sampling
         if args.create_specific_sample:
             corpus.create_sample_dump(titles)
@@ -146,10 +148,12 @@ def main():
             corpus.tokenize_prevertical()
 
         # morfologization
-        if args.tagging or args.lemmatization or args.all_phases:
-            corpus.morfologize_vertical(
-                add_tags=args.tagging or args.all_phases,
-                add_lemmas=args.lemmatization or args.all_phases)
+        #if args.tagging or args.lemmatization or args.all_phases:
+        #    corpus.morfologize_vertical(
+        #        add_tags=args.tagging or args.all_phases,
+        #        add_lemmas=args.lemmatization or args.all_phases)
+        if args.tagging or args.all_phases:
+            corpus.tagging()
 
         # terms occurences inference
         if args.terms_inference or args.all_phases:

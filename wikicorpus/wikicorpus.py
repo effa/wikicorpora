@@ -11,7 +11,8 @@ from nlp import NaturalLanguageProcessor, LanguageProcessorException
 from progressbar import ProgressBar
 from system_utils import makedirs
 from xml_utils import qualified_name
-from wikimarkup import parse_wikimarkup
+#from wikimarkup import parse_wikimarkup
+from wikiextractor import parse_wikimarkup
 import errno
 import bz2
 import os
@@ -38,6 +39,15 @@ class WikiCorpus(object):
     # md5 checksum file url
     MD5_URL_GENERAL = 'http://dumps.wikimedia.org/{lang}wiki/latest/'\
         + '{lang}wiki-latest-md5sums.txt'
+
+    # namespaces to omit
+    # TODO: make the following list complete
+    OMITTED_NAMESPACES = set([
+        'MediaWiki', 'Template', 'User', 'File', 'Help', 'Portal', 'Draft',
+        'TimedText', 'Module', 'Education Program', 'User talk', 'Talk',
+        'Wikipedia talk', 'WT', 'Project talk', 'File talk', 'Image talk',
+        'File', 'Image'
+    ])
 
     def __init__(self, language):
         """Initalization of WikiCorpus instance
@@ -123,6 +133,11 @@ class WikiCorpus(object):
             self.get_uncompiled_corpus_path(),
             prevertical_file_name)
         return path
+
+    def get_url_prefix(self):
+        """Returns url prefix for all articles in the corpus.
+        """
+        return 'http://{lang}.wikipedia.org/wiki'.format(lang=self.language())
 
     def get_vertical_path(self):
         """ Returns path to vertical
@@ -241,35 +256,35 @@ class WikiCorpus(object):
                 context = etree.iterparse(dump_file, events=('end',))
                 progressbar = ProgressBar(self.get_dump_length())
                 last_title = None
+                id_number = 0
                 # skip first page in full (copressed) dump since it's Main Page
-                skip = 1 if self.is_dump_compressed() else 0
-
-                # TODO: mely by se zapisovat i top level tag?
-                #  (neco jako <wiki lang="en" sample-size="10">) ???
+                #skip = 1 if self.is_dump_compressed() else 0
+                skip = False
 
                 # iterate through end-events
                 for event, elem in context:
-                    # NOTE: this relies on the fact that <redirect> goes always
-                    # before <text> (TODO: verify this has to be the case)
                     if elem.tag == REDIRECT_TAG:
                         # ignore redirect pages
-                        skip += 1
+                        skip = True
                     elif elem.tag == TITLE_TAG:
                         # remember the title
                         last_title = elem.text
+                        # TODO: throw away "special" articles (e.g. articles
+                        # with special namespace, such as "Help:"
+                        colon = last_title.find(':')
+                        if (colon > 0 and last_title[:colon] in
+                                WikiCorpus.OMITTED_NAMESPACES):
+                            skip = True
                     elif elem.tag == TEXT_TAG:
-                        if skip > 0:
-                            skip -= 1
+                        if skip:
+                            skip = False
                             continue
-                        # TODO: systematictejsi filtrace
-                        #   a odstraneni duplicitniho kodu
-                        #   (create_sample x create_prevertical)
-                        if last_title.startswith('MediaWiki:'):
-                            continue
-                        parsed_doc = parse_wikimarkup(elem.text, last_title)\
-                            + '\n'
+                        # new id
+                        id_number += 1
+                        parsed_doc = parse_wikimarkup(id_number, last_title,
+                            self.get_url_prefix(), elem.text) + '\n'
                         prevertical_file.write(parsed_doc.encode('utf-8'))
-                        # approximate work done by position in dump file
+                        # approximate work done by positin in dump file
                         progressbar.update(dump_file.tell())
 
                     # cleanup
@@ -281,6 +296,9 @@ class WikiCorpus(object):
                             del ancestor.getparent()[0]
                 del context
         progressbar.finish()
+
+        # use WikiExtractor.py
+        #cat cswiki-latest-pages-meta-current.xml | ./WikiExtractor.py -s
 
         # log info (TODO: logging)
         print 'Prevertical of {name} created at:\n  {path}'.format(

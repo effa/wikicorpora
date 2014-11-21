@@ -2,12 +2,15 @@
 # encoding: utf-8
 
 """Module for WikiMarkup parsing
+
+    !!! DEPRECATED !!! (use wikiextractor.py instead)
+
+    Problems: [[step]]s; [[File:....]]; etc.
 """
 
 from __future__ import unicode_literals
 import mwparserfromhell as parser
 
-# TODO: zkusit jiny parser, problem soucasneho: [[step]]s
 
 # -----------------------------------------------------------------------------
 #  public module functions

@@ -1,6 +1,9 @@
 # Local environment configuration
 environment-config.yaml
 
+# Ephemeral info
+questions.txt
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

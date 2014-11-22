@@ -101,10 +101,10 @@ selfClosingTags = ['br', 'hr', 'nobr', 'ref', 'references']
 
 # handle 'a' separetely, depending on keepLinks
 ignoredTags = [
-        'b', 'big', 'blockquote', 'center', 'cite', 'div', 'em',
-        'font', 'h1', 'h2', 'h3', 'h4', 'hiero', 'i', 'kbd', 'nowiki',
-        'p', 'plaintext', 's', 'small', 'span', 'strike', 'strong',
-        'sub', 'sup', 'tt', 'u', 'var',
+    'b', 'big', 'blockquote', 'center', 'cite', 'div', 'em',
+    'font', 'h1', 'h2', 'h3', 'h4', 'hiero', 'i', 'kbd', 'nowiki',
+    'p', 'plaintext', 's', 'small', 'span', 'strike', 'strong',
+    'sub', 'sup', 'tt', 'u', 'var',
 ]
 
 placeholder_tags = {'math':'formula', 'code':'codice'}
@@ -409,7 +409,8 @@ def compact(text):
     page = []                   # list of paragraph
     headers = {}                # Headers for unfilled sections
     emptySection = False        # empty sections are discarded
-    inList = False              # whether opened <UL>
+    #inList = False              # whether opened <UL>
+    openSections = []           # stack of open sections (their levels)
 
     for line in text.split('\n'):
 
@@ -421,7 +422,13 @@ def compact(text):
             title = m.group(2)
             lev = len(m.group(1))
             if keepSections:
-                page.append("<p heading='1'>%s</p>" % (title))
+                # close previous sections
+                while len(openSections) > 0 and openSections[-1] >= lev:
+                    openSections.pop()
+                    page.append("</section>")
+                page.append('<section level="%s" title="%s">' % (lev, title))
+                openSections.append(lev)
+                page.append('<p heading="1">%s</p>' % (title))
                 continue
             if title and title[-1] not in '!?':
                 title += '.'
@@ -459,6 +466,10 @@ def compact(text):
             emptySection = False
         elif not emptySection:
             page.append("<p>\n%s\n</p>" % (line))
+
+    # close all sections and the document
+    for i in range(len(openSections)):
+        page.append('</section>')
 
     return page
 

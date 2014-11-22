@@ -7,11 +7,9 @@ Must
   dat (i datumy muzou mit na wiki svoje WURI)
 - sestaveni korpusu pro aj a cj a rozjeti na Sketch Engine
 - dokumentace (jednotne), vcetne vygenerovani
-- nasadit lepsi parser WikiMarkupu a otestovat, ze zvlada (nejak) vsechny
-  konstrukty WikiMarkupu parsovani vsech konstruktu WikiMarkupu; priklad
-  problemu soucasneho parseru '[[step]]s'
-- odstraneni prazdnych pojmu (muze souviset s pouzitym parserem)
 - testy pro wikimarkup parsing
+- vylepseni parsovani, napr. odstraneni prazdnych sekci
+- odstraneni prazdnych pojmu (muze souviset s pouzitym parserem)
 - kontrola vysledneho korpusu aplikaci corpcheck
 
 Should
@@ -26,6 +24,7 @@ Should
 
 Could
 -----
+- vylepseni parsovani wikimarkupu, napr. seznamy
 - rozsireni lemmatizace a POS taggingu i na dalsi jazyky, napriklad podle
   popisu podle popisu na http://nlp.fi.muni.cz/ma/ by mela majka
   fungovat pro Czech, Slovak, Polish, Swedish, German, French, Italian,
@@ -50,6 +49,8 @@ Could
 
 Want
 ----
+- vyzkouset jine parsery WikiMarkupu, dalsi vylepsovani parsovani (seznamy
+  atp.)
 - pri moznosti predelavani jiz existujiciho korpusu brat v uvahu data zmen
   prerekvizit a aktualniho souboru (jako make)
 - prubezna aktualizace korpusu? (jednak wiki se porad rozsiruje/meni, jednak by

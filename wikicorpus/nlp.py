@@ -169,7 +169,7 @@ class NaturalLanguageProcessor(object):
                     'OSError when calling treetagger')
         else:
             # for other languages, at least tokenize them
-            self.tokenize()
+            self.tokenize(prevertical_path, vertical_path)
 
     def desamb_morfologization(self, input_path, output_path):
         """Uses desamb for adding tags and lemmas [works for czech only]
@@ -205,12 +205,13 @@ class NaturalLanguageProcessor(object):
         assert prevertical_path != vertical_path
         unitok_path = environment.get_unitok_path()
         try:
-            unitok_command = '{unitok} --language={lang} {prevert} > {vert}'\
+            unitok_cmd = '{unitok} --language={lang} -a {prevert} > {vert}'\
                 .format(unitok=unitok_path,
                         lang=self.get_unitok_language(),
                         prevert=prevertical_path,
                         vert=vertical_path)
-            task = Popen(unitok_command, shell=True)
+            # -a ... better support for abbreviations
+            task = Popen(unitok_cmd, shell=True)
             task.wait()
             if task.returncode != 0:
                 raise LanguageProcessorException('unitok failed')

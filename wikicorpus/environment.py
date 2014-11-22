@@ -58,8 +58,12 @@ class EnvironmentConfiguration(DoubleConfiguration):
             ConfigurationException if there si no path for treetagger
         """
         assert len(language) > 2, 'full language name needed'
-        tt_template = self.get_nonempty('tools', 'treetagger')
-        tt_script = tt_template.format(lang=language)
+        # english has a new version of a treetagger script which should be used
+        if language == 'english':
+            tt_script = self.get_nonempty('tools', 'treetagger-en')
+        else:
+            tt_template = self.get_nonempty('tools', 'treetagger')
+            tt_script = tt_template.format(lang=language)
         return tt_script
 
     def get_unitok_path(self):

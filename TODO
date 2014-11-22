@@ -49,6 +49,7 @@ Could
 
 Want
 ----
+- vytvaret vzorkove dumpy v unicode misto ASCII
 - vyzkouset jine parsery WikiMarkupu, dalsi vylepsovani parsovani (seznamy
   atp.)
 - pri moznosti predelavani jiz existujiciho korpusu brat v uvahu data zmen

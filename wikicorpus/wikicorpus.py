@@ -21,9 +21,6 @@ import os
 # project base directory
 PROJECT_BASE = os.path.dirname(__file__)
 
-# Wikipedia namespace number label for articles
-ARTICLE_NS = '0'
-
 
 class WikiCorpus(object):
 
@@ -42,6 +39,9 @@ class WikiCorpus(object):
     # md5 checksum file url
     MD5_URL_GENERAL = 'http://dumps.wikimedia.org/{lang}wiki/latest/'\
         + '{lang}wiki-latest-md5sums.txt'
+
+    # Wikipedia namespace number label for articles
+    ARTICLE_NS = '0'
 
     def __init__(self, language):
         """Initalization of WikiCorpus instance
@@ -213,8 +213,8 @@ class WikiCorpus(object):
         dump_url = WikiCorpus.DUMP_URL_GENERAL.format(lang=self.language())
 
         # TODO: logging
-        print 'Started downloading {iso}-wiki dump\nfrom: {url}\ninto: {path}'\
-            .format(iso=self.language(), url=dump_url, path=dump_path)
+        print 'Started downloading {l}-wiki dump\n from: {url}\n into: {path}'\
+            .format(l=self.language(), url=dump_url, path=dump_path)
 
         # find MD5 checksum
         md5_url = WikiCorpus.MD5_URL_GENERAL.format(lang=self.language())
@@ -265,7 +265,7 @@ class WikiCorpus(object):
                         skip = True
                     elif elem.tag == NS_TAG:
                         # ignore nonarticle pages (such as "Help:" etc.)
-                        if elem.text != ARTICLE_NS:
+                        if elem.text != WikiCorpus.ARTICLE_NS:
                             skip = True
                     elif elem.tag == TITLE_TAG:
                         # remember the title
@@ -293,7 +293,7 @@ class WikiCorpus(object):
         progressbar.finish()
 
         # log info (TODO: logging)
-        print 'Prevertical of {name} created at:\n  {path}'.format(
+        print 'Prevertical of {name} created\n at: {path}'.format(
             name=self.get_corpus_name(), path=prevertical_path)
 
     def create_vertical(self):
@@ -313,7 +313,7 @@ class WikiCorpus(object):
         try:
             with NaturalLanguageProcessor(self.language()) as lp:
                 lp.create_vertical_file(prevertical_path, vertical_path)
-            print 'Vertical of {name} created at:\n  {path}'.format(
+            print 'Vertical of {name} created\n at: {path}'.format(
                 name=self.get_corpus_name(),
                 path=vertical_path)
         except ConfigurationException as exc:

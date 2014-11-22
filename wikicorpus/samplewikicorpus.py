@@ -123,6 +123,8 @@ class SampleWikiCorpus(WikiCorpus):
                     skip = True
                 elif elem.tag == NS_TAG:
                     last_ns = elem.text
+                    if elem.text != WikiCorpus.ARTICLE_NS:
+                        skip = True
                 elif elem.tag == TITLE_TAG:
                     # remember the title
                     last_title = elem.text
@@ -178,7 +180,7 @@ class SampleWikiCorpus(WikiCorpus):
                 xml_declaration=True))
 
         # log info (TODO: logging)
-        print 'Sample of {pages} pages created at {path}'.format(
+        print 'Sample of {pages} pages created\nat: {path}'.format(
             pages=pages, path=sample_path)
 
     # ------------------------------------------------------------------------

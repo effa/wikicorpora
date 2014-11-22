@@ -51,13 +51,16 @@ class EnvironmentConfiguration(DoubleConfiguration):
         """
         return self.get_nonempty('tools', 'desamb')
 
-    def get_treetagger_path(self):
-        """Returns path to treetagger
+    def get_treetagger_path(self, language):
+        """Returns path to a treetagger script
 
         Raises:
             ConfigurationException if there si no path for treetagger
         """
-        return self.get_nonempty('tools', 'treetagger')
+        assert len(language) > 2, 'full language name needed'
+        tt_template = self.get_nonempty('tools', 'treetagger')
+        tt_script = tt_template.format(lang=language)
+        return tt_script
 
     def get_unitok_path(self):
         """Returns path to unitok

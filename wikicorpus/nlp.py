@@ -38,11 +38,15 @@ class NaturalLanguageProcessor(object):
         ('da', 'danish'),
         ('hi', 'hindi')))
 
-    # languages allowed for tree_tagger
+    # languages allowed for treetagger
     TREETAGGER_LANGUAGES = defaultdict(lambda: None, (
+        ('bg', 'bulgarian'),
         ('en', 'english'),
         ('fr', 'french'),
+        ('nl', 'dutch'),
         ('de', 'german'),
+        ('es', 'spanish'),
+        ('ru', 'russian'),
         ('it', 'italian')))
 
     # ------------------------------------------------------------------------
@@ -75,31 +79,36 @@ class NaturalLanguageProcessor(object):
     #  static methods
     # ------------------------------------------------------------------------
 
-    @staticmethod
-    def get_treetagger_language(iso_code):
+    #@staticmethod
+    #def get_treetagger_language(iso_code):
+    #    """For treetagger-supported languages, returns language full name
+
+    #    :iso_code: unicode (alpha-2 code of the language)
+
+    #    :returns: unicode (name of the language) || None
+    #    """
+    #    return NaturalLanguageProcessor.TREETAGGER_LANGUAGES[iso_code]
+
+    # ------------------------------------------------------------------------
+    #  property access methods
+    # ------------------------------------------------------------------------
+
+    def get_language(self):
+        return self._lang
+
+    def get_unitok_language(self):
+        """Returns name of language in form which is needed by unitok
+        """
+        return self.UNITOK_LANGUAGES[self.get_language()]
+
+    def get_treetagger_language(self):
         """For treetagger-supported languages, returns language full name
 
         :iso_code: unicode (alpha-2 code of the language)
 
         :returns: unicode (name of the language) || None
         """
-        return NaturalLanguageProcessor.TREETAGGER_LANGUAGES[iso_code]
-
-    # ------------------------------------------------------------------------
-    #  property access methods
-    # ------------------------------------------------------------------------
-
-    #def can_lemmatize(self):
-    #    return self.lang() in NaturalLanguageProcessor.LEMMATIZABLE_LANGUAGES
-
-    def get_language(self):
-        return self._lang
-
-    def get_unitok_language_name(self):
-        """Returns name of language in form which is needed by unitok
-        """
-        return NaturalLanguageProcessor.UNITOK_LANGUAGES[self.get_language()]
-
+        return self.TREETAGGER_LANGUAGES[self.get_language()]
     # ------------------------------------------------------------------------
     #  resources control
     # ------------------------------------------------------------------------
@@ -114,6 +123,77 @@ class NaturalLanguageProcessor(object):
     #  natural language processing
     # ------------------------------------------------------------------------
 
+    def create_vertical_file(self, prevertical_path, vertical_path):
+        """ Creates a vertical file.
+
+        Performes tokenization of prevertical and for some languages
+        also morfologization (adding morfological tag and lemma/lempos)
+
+        :prevertical_path: unicode
+            path to prevertical file
+        :vertical_path: unicode
+            where to store result vertical file
+        """
+        language = self.get_language()
+        if language == 'cs':
+            # for czech language, use unitok + desamb
+            self.tokenize(prevertical_path, vertical_path)
+            self.desamb_morfologization(vertical_path, vertical_path)
+        elif language in self.TREETAGGER_LANGUAGES:
+            # use a treetagger script for both tokenization and morfologization
+            treetagger_path = environment.get_treetagger_path(
+                self.get_treetagger_language())
+            try:
+                # handle case of input_path == output_path
+                tmp_output_path = vertical_path + '.tmp'
+                ## treetagger needs file in iso-8858-1 encoding, so we need
+                ## convert it first
+                #command = '{conv} <{inp} | {treetagger} {lang} {opt} >{outp}'\
+                #    .format(treetagger=treetagger_path,
+                #            lang=self.get_treetagger_language(language),
+                #            opt='-token -lemma -no-unknown -sgml',
+                #            conv='iconv -f utf-8 -t iso-8859-1//TRANSLIT',
+                #            inp=prevertical_path,
+                #            outp=tmp_output_path)
+                command = '{treetagger} <{inp} >{outp}'\
+                    .format(treetagger=treetagger_path,
+                            inp=prevertical_path,
+                            outp=tmp_output_path)
+                task = Popen(command, shell=True)
+                task.wait()
+                if task.returncode != 0:
+                    raise LanguageProcessorException('treetagger failed')
+                call(('mv', tmp_output_path, vertical_path))
+            except OSError:
+                raise LanguageProcessorException(
+                    'OSError when calling treetagger')
+        else:
+            # for other languages, at least tokenize them
+            self.tokenize()
+
+    def desamb_morfologization(self, input_path, output_path):
+        """Uses desamb for adding tags and lemmas [works for czech only]
+
+        :input_path: unicode
+        :output_path: unicode
+        """
+        assert self.get_language() == 'cs', 'desamb works only for czech'
+        desamb_path = environment.get_desamb_path()
+        # handle frequent case of input_path == output_path
+        tmp_output_path = output_path + '.tmp'
+        try:
+            desamb_command = '{desamb} {inputp} > {outputp}'\
+                .format(desamb=desamb_path,
+                        inputp=input_path,
+                        outputp=tmp_output_path)
+            task = Popen(desamb_command, shell=True)
+            task.wait()
+            if task.returncode != 0:
+                raise LanguageProcessorException('desamb failed')
+            call(('mv', tmp_output_path, output_path))
+        except OSError:
+            raise LanguageProcessorException('OSError when calling desamb')
+
     def tokenize(self, prevertical_path, vertical_path):
         """Tokenizes prevertical.
 
@@ -122,15 +202,12 @@ class NaturalLanguageProcessor(object):
         :vertical_path: unicode
             where to store result vertical file
         """
+        assert prevertical_path != vertical_path
         unitok_path = environment.get_unitok_path()
-        # TODO: tahle podminka by mela byt nadbytecna (viz configuration.py)
-        #if not unitok_path:
-        #    raise LanguageProcessorException(
-        #        'No path for unitok in configuration.')
         try:
             unitok_command = '{unitok} --language={lang} {prevert} > {vert}'\
                 .format(unitok=unitok_path,
-                        lang=self.get_unitok_language_name(),
+                        lang=self.get_unitok_language(),
                         prevert=prevertical_path,
                         vert=vertical_path)
             task = Popen(unitok_command, shell=True)
@@ -140,62 +217,6 @@ class NaturalLanguageProcessor(object):
         except OSError:
             raise LanguageProcessorException('OSError when calling unitok')
 
-    def morfologize(self, input_path, output_path,
-                    add_tags=True, add_lemmas=True):
-        """Adds tags and/or lemmas to given vertical.
-        """
-        # TODO rozlozit na pomocne funkce a zprehlednit
-        language = self.get_language()
-        # TODO: umoznit udelat pro cestinu jen tagy / jen lemmata:
-        if language == 'cs':
-            # for czech language, use desamb
-            desamb_path = environment.get_desamb_path()
-            try:
-                # handle frequent case of input_path == output_path
-                tmp_output_path = output_path + '.tmp'
-                desamb_command = '{desamb} {inputp} > {outputp}'\
-                    .format(desamb=desamb_path,
-                            inputp=input_path,
-                            outputp=tmp_output_path)
-                task = Popen(desamb_command, shell=True)
-                task.wait()
-                if task.returncode != 0:
-                    raise LanguageProcessorException('desamb failed')
-                call(('mv', tmp_output_path, output_path))
-            except OSError:
-                raise LanguageProcessorException('OSError when calling desamb')
-        elif language in NaturalLanguageProcessor.TREETAGGER_LANGUAGES:
-            # TODO dovolit pridavat pouze taggy / pouze lemmata
-            treetagger_path = environment.get_treetagger_path()
-            try:
-                tmp_output_path = output_path + '.tmp'
-                # treetagger needs file in iso-8858-1 encoding, so we need
-                # convert it first
-                command = '{conv} <{inp} | {treetagger} {lang} {opt} >{outp}'\
-                    .format(treetagger=treetagger_path,
-                            lang=self.get_treetagger_language(language),
-                            opt='-token -lemma -no-unknown -sgml',
-                            conv='iconv -f utf-8 -t iso-8859-1//TRANSLIT',
-                            inp=input_path,
-                            outp=tmp_output_path)
-                task = Popen(command, shell=True)
-                task.wait()
-                if task.returncode != 0:
-                    raise LanguageProcessorException('treetagger failed')
-                call(('mv', tmp_output_path, output_path))
-            except OSError:
-                raise LanguageProcessorException(
-                    'OSError when calling treetagger')
-        else:
-            if add_tags and add_lemmas:
-                wanted_task = 'adding tags and lemmas'
-            elif add_lemmas:
-                wanted_task = 'adding lemmas'
-            else:
-                wanted_task = 'adding tags'
-            raise LanguageProcessorException(
-                'No known tool for adding morfologization information for '
-                + wanted_task + ' for ' + language)
 
     # ------------------------------------------------------------------------
     #  private methods

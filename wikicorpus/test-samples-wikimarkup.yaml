@@ -1,75 +1,103 @@
-- title:  single word
-  text:   word
+- id:         1
+  title:      single word
+  url_prefix: http://en.wikipedia.org/wiki
+  text:       word
   result: |
-          <doc wuri="Single_word">
+          <doc id="1" url="http://en.wikipedia.org/wiki/Single_word" title="single word">
+          <p>
           word
+          </p>
           </doc>
 # ----------------------------------------------------------------------------
-- title:  a few words
-  text:   This is a self-referential sentence. And one more.
+- id:         2
+  title:      Několik slov
+  url_prefix: http://cs.wikipedia.org/wiki
+  text:       Tato věta mluví sama o sobě. A tato taky.
   result: |
-          <doc wuri="A_few_words">
-          This is a self-referential sentence. And one more.
+          <doc id="2" url="http://cs.wikipedia.org/wiki/Několik_slov" title="Několik slov">
+          <p>
+          Tato věta mluví sama o sobě. A tato taky.
+          </p>
           </doc>
 # ----------------------------------------------------------------------------
-- title:  link
-  text:   "[[link url | link name]]"
+- id:         3
+  title:      link
+  url_prefix: http://en.wikipedia.org/wiki
+  text:       "[[link url | link name]]"
   result: |
-          <doc wuri="Link">
-          <term wuri="Link_url">
-          link name
-          </term>
+          <doc id="3" url="http://en.wikipedia.org/wiki/Link" title="link">
+          <p>
+          <term name="link url"> link name</term>
+          </p>
           </doc>
 # ----------------------------------------------------------------------------
-- title:  some words and a link
-  text:   "some words and a [[link]]"
+- id:         4
+  title:      some words and a link
+  url_prefix: http://en.wikipedia.org/wiki
+  text:       "some words and a [[link]]"
+
   result: |
-          <doc wuri="Some_words_and_a_link">
-          some words and a
-          <term wuri="Link">
-          link
-          </term>
+          <doc id="4" url="http://en.wikipedia.org/wiki/Some_words_and_a_link" title="some words and a link">
+          <p>
+          some words and a <term name="link">link</term>
+          </p>
           </doc>
 # ----------------------------------------------------------------------------
-- title:  introduction, two sections, subsection
-  text:   |
+- id:         5
+  title:      two sections and a subsection
+  url_prefix: http://en.wikipedia.org/wiki
+  text: |
+        introduction
+
+        ==first headline==
+
+        paragraph1
+
+        ===subheadline===
+
+        paragraph2
+
+        paragraph3
+
+        ==second headline==
+
+        paragraph4
+  result: |
+          <doc id="5" url="http://en.wikipedia.org/wiki/Two_sections_and_a_subsection" title="two sections and a subsection">
+          <p>
           introduction
-
-          ==first headline==
-
+          </p>
+          <section level="2" title="first headline">
+          <p heading="1">first headline</p>
+          <p>
           paragraph1
-
-          ===subheadline===
-
+          </p>
+          <section level="3" title="subheadline">
+          <p heading="1">subheadline</p>
+          <p>
           paragraph2
-
+          </p>
+          <p>
           paragraph3
-
-          ==second headline==
-
-          paragraph4
-  result: |
-          <doc wuri="Introduction,_two_sections,_subsection">
-          introduction
-          <section title="first headline">
-          paragraph1
-          <section title="subheadline">
-          paragraph2
-
-          paragraph3
+          </p>
           </section>
           </section>
-          <section title="second headline">
+          <section level="2" title="second headline">
+          <p heading="1">second headline</p>
+          <p>
           paragraph4
+          </p>
           </section>
           </doc>
 # ----------------------------------------------------------------------------
-- title:  clever link
+- id:         5
+  title:      link with trail
+  url_prefix: http://en.wikipedia.org/wiki
   text:   "[[copy edit]]ors"
   result: |
-          <doc wuri="Clever_link">
-          <term wuri="Copy_edit">
-          copy editors
-          </term>
+          <doc id="5" url="http://en.wikipedia.org/wiki/Link_with_trail" title="link with trail">
+          <p>
+          <term name="copy edit">copy editors</term>
+          </p>
           </doc>
 # ----------------------------------------------------------------------------

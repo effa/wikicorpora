@@ -21,6 +21,9 @@ import os
 # project base directory
 PROJECT_BASE = os.path.dirname(__file__)
 
+# Wikipedia namespace number label for articles
+ARTICLE_NS = '0'
+
 
 class WikiCorpus(object):
 
@@ -39,15 +42,6 @@ class WikiCorpus(object):
     # md5 checksum file url
     MD5_URL_GENERAL = 'http://dumps.wikimedia.org/{lang}wiki/latest/'\
         + '{lang}wiki-latest-md5sums.txt'
-
-    # namespaces to omit
-    # TODO: make the following list complete
-    OMITTED_NAMESPACES = set([
-        'MediaWiki', 'Template', 'User', 'File', 'Help', 'Portal', 'Draft',
-        'TimedText', 'Module', 'Education Program', 'User talk', 'Talk',
-        'Wikipedia talk', 'WT', 'Project talk', 'File talk', 'Image talk',
-        'File', 'Image'
-    ])
 
     def __init__(self, language):
         """Initalization of WikiCorpus instance
@@ -249,6 +243,7 @@ class WikiCorpus(object):
         TEXT_TAG = qualified_name('text', namespace)
         TITLE_TAG = qualified_name('title', namespace)
         REDIRECT_TAG = qualified_name('redirect', namespace)
+        NS_TAG = qualified_name('ns', namespace)
 
         # iterate through xml and build a sample file
         with open(prevertical_path, 'w') as prevertical_file:
@@ -258,23 +253,20 @@ class WikiCorpus(object):
                 last_title = None
                 id_number = 0
                 # skip first page in full (copressed) dump since it's Main Page
-                #skip = 1 if self.is_dump_compressed() else 0
-                skip = False
+                skip = True if self.is_dump_compressed() else False
 
                 # iterate through end-events
                 for event, elem in context:
                     if elem.tag == REDIRECT_TAG:
                         # ignore redirect pages
                         skip = True
+                    elif elem.tag == NS_TAG:
+                        # ignore nonarticle pages (such as "Help:" etc.)
+                        if elem.text != ARTICLE_NS:
+                            skip = True
                     elif elem.tag == TITLE_TAG:
                         # remember the title
                         last_title = elem.text
-                        # TODO: throw away "special" articles (e.g. articles
-                        # with special namespace, such as "Help:"
-                        colon = last_title.find(':')
-                        if (colon > 0 and last_title[:colon] in
-                                WikiCorpus.OMITTED_NAMESPACES):
-                            skip = True
                     elif elem.tag == TEXT_TAG:
                         if skip:
                             skip = False
@@ -296,9 +288,6 @@ class WikiCorpus(object):
                             del ancestor.getparent()[0]
                 del context
         progressbar.finish()
-
-        # use WikiExtractor.py
-        #cat cswiki-latest-pages-meta-current.xml | ./WikiExtractor.py -s
 
         # log info (TODO: logging)
         print 'Prevertical of {name} created at:\n  {path}'.format(

@@ -37,8 +37,6 @@
 import re
 from htmlentitydefs import name2codepoint
 
-# TODO: kompilovat vsechny RE pouze jedenkrat
-
 ### PARAMS ####################################################################
 
 ##
@@ -92,7 +90,7 @@ def parse_wikimarkup(id_number, title, url_prefix, text):
 
 
 def get_url(prefix, title):
-    title = normalizeTitle(title)
+    title = term2wuri(title)
     return "%s/%s" % (prefix, title)
 
 #------------------------------------------------------------------------------
@@ -107,45 +105,71 @@ ignoredTags = [
     'sub', 'sup', 'tt', 'u', 'var',
 ]
 
-placeholder_tags = {'math':'formula', 'code':'codice'}
+placeholder_tags = {'math': 'formula', 'code': 'codice'}
 
-##
-# Normalize title
-def normalizeTitle(title):
-  # remove leading whitespace and underscores
-  title = title.strip(' _')
-  # replace sequences of whitespace and underscore chars with a single space
-  title = re.compile(r'[\s_]+').sub(' ', title)
 
-  m = re.compile(r'([^:]*):(\s*)(\S(?:.*))').match(title)
-  if m:
-      prefix = m.group(1)
-      if m.group(2):
-          optionalWhitespace = ' '
-      else:
-          optionalWhitespace = ''
-      rest = m.group(3)
+def term2wuri(term):
+    """ Creates last part of wikipedia URI ("wuri") from a term
 
-      ns = prefix.capitalize()
-      if ns in acceptedNamespaces:
-          # If the prefix designates a known namespace, then it might be
-          # followed by optional whitespace that should be removed to get
-          # the canonical page name
-          # (e.g., "Category:  Births" should become "Category:Births").
-          title = ns + ":" + rest.capitalize()
-      else:
-          # No namespace, just capitalize first letter.
-          # If the part before the colon is not a known namespace, then we must
-          # not remove the space after the colon (if any), e.g.,
-          # "3001: The_Final_Odyssey" != "3001:The_Final_Odyssey".
-          # However, to get the canonical page name we must contract multiple
-          # spaces into one, because
-          # "3001:   The_Final_Odyssey" != "3001: The_Final_Odyssey".
-          title = prefix.capitalize() + ":" + optionalWhitespace + rest
-  else:
-      # no namespace, just capitalize first letter
-      title = title.capitalize()
-  return title
+    Examples:
+        'duke' -> 'Duke'
+        'Channel Islands' -> 'Channel_Islands'
+        'early modern period' -> 'Early_modern_period'
+    Args:
+        term (unicode)
+            any word, name, phrase
+    Returns:
+        unicode
+    """
+    # TODO: handle namespaces (see normalizedTitle())
+    # strip leading whitespace and underscores
+    # and replace spaces with underscores
+    wuri = term.strip(' _').replace(' ', '_')
+    # replace sequences of underscores with a single underscore
+    wuri = re.compile(r'_+').sub('_', wuri)
+    if len(wuri) > 0:  # ideally term shouldn't be empty, but it's Wikipedia
+        wuri = wuri[0].upper() + wuri[1:]  # first letter always capital
+    return wuri
+
+
+###
+## Normalize title
+#def normalizeTitle(title):
+#    # remove leading whitespace and underscores
+#    title = title.strip(' _')
+#    # replace sequences of whitespace and underscore chars with a single space
+#    title = re.compile(r'[\s_]+').sub(' ', title)
+
+#    m = re.compile(r'([^:]*):(\s*)(\S(?:.*))').match(title)
+#    if m:
+#        prefix = m.group(1)
+#        if m.group(2):
+#            optionalWhitespace = ' '
+#        else:
+#            optionalWhitespace = ''
+#        rest = m.group(3)
+
+#        ns = prefix.capitalize()
+#        if ns in acceptedNamespaces:
+#            # If the prefix designates a known namespace, then it might be
+#            # followed by optional whitespace that should be removed to get
+#            # the canonical page name
+#            # (e.g., "Category:  Births" should become "Category:Births").
+#            title = ns + ":" + rest.capitalize()
+#        else:
+#            # No namespace, just capitalize first letter.
+#            # If the part before the colon is not a known namespace, we must
+#            # not remove the space after the colon (if any), e.g.,
+#            # "3001: The_Final_Odyssey" != "3001:The_Final_Odyssey".
+#            # However, to get the canonical page name we must contract
+#            # multiple spaces into one, because
+#            # "3001:   The_Final_Odyssey" != "3001: The_Final_Odyssey".
+#            title = prefix.capitalize() + ":" + optionalWhitespace + rest
+#    else:
+#        # no namespace, just capitalize first letter
+#        title = title.capitalize()
+#    return title
+
 
 ##
 # Removes HTML or XML character references and entities from a text string.
@@ -166,7 +190,7 @@ def unescape(text):
             else:               # named entity
                 return unichr(name2codepoint[code])
         except:
-            return text # leave as is
+            return text  # leave as is
 
     return re.sub("&#?(\w+);", fixup, text)
 
@@ -176,11 +200,15 @@ comment = re.compile(r'<!--.*?-->', re.DOTALL)
 # Match elements to ignore
 discard_element_patterns = []
 for tag in discardElements:
-    pattern = re.compile(r'<\s*%s\b[^>]*>.*?<\s*/\s*%s>' % (tag, tag), re.DOTALL | re.IGNORECASE)
+    pattern = re.compile(r'<\s*%s\b[^>]*>.*?<\s*/\s*%s>' % (tag, tag),
+        re.DOTALL | re.IGNORECASE)
     discard_element_patterns.append(pattern)
+
 
 # Match ignored tags
 ignored_tag_patterns = []
+
+
 def ignoreTag(tag):
     left = re.compile(r'<\s*%s\b[^>]*>' % tag, re.IGNORECASE)
     right = re.compile(r'<\s*/\s*%s>' % tag, re.IGNORECASE)
@@ -192,13 +220,15 @@ for tag in ignoredTags:
 # Match selfClosing HTML tags
 selfClosing_tag_patterns = []
 for tag in selfClosingTags:
-    pattern = re.compile(r'<\s*%s\b[^/]*/\s*>' % tag, re.DOTALL | re.IGNORECASE)
+    pattern = re.compile(r'<\s*%s\b[^/]*/\s*>' % tag,
+        re.DOTALL | re.IGNORECASE)
     selfClosing_tag_patterns.append(pattern)
 
 # Match HTML placeholder tags
 placeholder_tag_patterns = []
 for tag, repl in placeholder_tags.items():
-    pattern = re.compile(r'<\s*%s(\s*| [^>]+?)>.*?<\s*/\s*%s\s*>' % (tag, tag), re.DOTALL | re.IGNORECASE)
+    pattern = re.compile(r'<\s*%s(\s*| [^>]+?)>.*?<\s*/\s*%s\s*>' % (tag, tag),
+        re.DOTALL | re.IGNORECASE)
     placeholder_tag_patterns.append((pattern, repl))
 
 # Match preformatted lines
@@ -221,6 +251,7 @@ spaces = re.compile(r' {2,}')
 # Matches dots
 dots = re.compile(r'\.{4,}')
 
+
 # A matching function for nested expressions, e.g. namespaces and tables.
 def dropNested(text, openDelim, closeDelim):
     openRE = re.compile(openDelim)
@@ -237,7 +268,7 @@ def dropNested(text, openDelim, closeDelim):
         next = openRE.search(text, next.end())
         if not next:            # termination
             while nest:         # close all pending
-                nest -=1
+                nest -= 1
                 end0 = closeRE.search(text, end.end())
                 if end0:
                     end = end0
@@ -271,18 +302,19 @@ def dropNested(text, openDelim, closeDelim):
     # collect text outside partitions
     res = ''
     start = 0
-    for s, e in  matches:
+    for s, e in matches:
         res += text[start:s]
         start = e
     res += text[start:]
     return res
+
 
 def dropSpans(matches, text):
     """Drop from text the blocks identified in matches"""
     matches.sort()
     res = ''
     start = 0
-    for s, e in  matches:
+    for s, e in matches:
         res += text[start:s]
         start = e
     res += text[start:]
@@ -299,13 +331,17 @@ wikiLink = re.compile(r'\[\[([^[]*?)(?:\|([^[]*?))?\]\](\w*)')
 
 parametrizedLink = re.compile(r'\[\[.*?\]\]')
 
+
 # Function applied to wikiLinks
 def make_anchor_tag(match):
     global keepLinks
     link = match.group(1)
     colon = link.find(':')
+    # TODO: tohle zahazuje i vsechny nevinne odkazy s dvojteckami -> opravit
     if colon > 0 and link[:colon] not in acceptedNamespaces:
         return ''
+    # strip leading spaces and underscores
+    link = link.strip()
     trail = match.group(3)
     anchor = match.group(2)
     if not anchor:
@@ -315,6 +351,7 @@ def make_anchor_tag(match):
         return '<term name="%s">%s</term>' % (link, anchor)
     else:
         return anchor
+
 
 def clean(text):
 
@@ -398,11 +435,12 @@ def clean(text):
     text = dots.sub('...', text)
     text = re.sub(u' (,:\.\)\]»)', r'\1', text)
     text = re.sub(u'(\[\(«) ', r'\1', text)
-    text = re.sub(r'\n\W+?\n', '\n', text) # lines with only punctuations
+    text = re.sub(r'\n\W+?\n', '\n', text)  # lines with only punctuations
     text = text.replace(',,', ',').replace(',.', '.')
     return text
 
 section = re.compile(r'(==+)\s*(.*?)\s*\1')
+
 
 def compact(text):
     """Deal with headers, lists, empty sections, residuals of tables"""
@@ -473,7 +511,9 @@ def compact(text):
 
     return page
 
+
 def handle_unicode(entity):
     numeric_code = int(entity[2:-1])
-    if numeric_code >= 0x10000: return ''
+    if numeric_code >= 0x10000:
+        return ''
     return unichr(numeric_code)

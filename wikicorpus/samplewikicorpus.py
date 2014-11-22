@@ -100,14 +100,14 @@ class SampleWikiCorpus(WikiCorpus):
         TEXT_TAG = qualified_name('text', namespace)
         TITLE_TAG = qualified_name('title', namespace)
         REDIRECT_TAG = qualified_name('redirect', namespace)
+        NS_TAG = qualified_name('ns', namespace)
 
         # iterate through xml and build a sample file
         with parent._open_dump() as dump_file:
             context = etree.iterparse(dump_file, events=('end',))
             # create root under which we will add sample articles
             sample_root = etree.Element('mediawiki', nsmap={None: namespace})
-            # omit first 3 articles (Main page and similar meta-articles)
-            skip = 3
+            skip = True
             pages = 0
             last_title = None
             if specific_sample:
@@ -120,16 +120,15 @@ class SampleWikiCorpus(WikiCorpus):
             for event, elem in context:
                 if elem.tag == REDIRECT_TAG:
                     # ignore redirect pages
-                    skip += 1
+                    skip = True
+                elif elem.tag == NS_TAG:
+                    last_ns = elem.text
                 elif elem.tag == TITLE_TAG:
                     # remember the title
                     last_title = elem.text
                 elif elem.tag == TEXT_TAG:
-                    if skip > 0:
-                        skip -= 1
-                        continue
-                    # TODO: systematictejsi filtrace
-                    if last_title.startswith('MediaWiki:'):
+                    if skip:
+                        skip = False
                         continue
                     # if articles are not specified, take any article,
                     # if they are specified, check if this is wanted article
@@ -138,6 +137,8 @@ class SampleWikiCorpus(WikiCorpus):
                         page_node = etree.Element('page')
                         title_node = etree.SubElement(page_node, 'title')
                         title_node.text = last_title
+                        ns_node = etree.SubElement(page_node, 'ns')
+                        ns_node.text = last_ns
                         page_node.append(deepcopy(elem))  # text
                         # append this node to sample articles
                         sample_root.append(page_node)

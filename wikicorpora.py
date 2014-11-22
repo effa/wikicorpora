@@ -13,26 +13,28 @@ This is a main file for wikicorpora command line application.
 It parses arguments and performes selected actions.
 """
 
+TOOL_DESCRIPTION = 'WikiCorpora is a tool for building corpora from Wikipedia.'
+
 
 def main():
     """ Main function handling calling this script with arguments
     """
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(description=(TOOL_DESCRIPTION))
 
     # language arguments
     language_group = parser.add_argument_group('corpus language')
-    language_group.add_argument('-l', '--language',
+    language_group.add_argument('-l', '--language', metavar='L',
         help='2-letter code of language (ISO-639-1)')
 
     # sample options
     sample_group = parser.add_argument_group('sample options')
-    sample_group.add_argument('-s', '--sample-size', type=int,
-        help='sample size specification')
+    sample_group.add_argument('-s', '--size', type=int,
+        help='sample size specification', metavar='N')
     specific_or_not_group = sample_group.add_mutually_exclusive_group()
     specific_or_not_group.add_argument('--create-sample',
         action='store_true',
-        help='create sample from first SAMPLE_SIZE articles')
-    specific_or_not_group.add_argument('--create-specific-sample',
+        help='create sample from first N articles')
+    specific_or_not_group.add_argument('--create-own-sample',
         action='store_true',
         help='create sample from selected articles')
 
@@ -65,6 +67,8 @@ def main():
     # general options
     #parser.add_argument('--logfile',
     #    help='path to logfile')
+    parser.add_argument('--usage', action='store_true',
+        help='show program usage')
     parser.add_argument('--info', action='store_true',
         help='print corpus summary')
 
@@ -72,35 +76,44 @@ def main():
 
     # if no action is specified, we will print corpus info
     no_action = not any([args.force_download, args.soft_download,
-        args.create_sample, args.create_specific_sample,
+        args.create_sample, args.create_own_sample,
         args.prevertical, args.tokenization, args.tagging,
         args.terms_inference, args.all_phases, args.compile])
 
     # sample_size has to be either int or None
-    sample_size = int(args.sample_size) if args.sample_size else None
+    sample_size = int(args.size) if args.size else None
 
     try:
         # no language specified (can be either mistake or command for info
-        # about all corpora)
+        # about all corpora or a call without any parameters)
         if not args.language:
-            # if it's a call without any options or with --info option only,
-            # -> show all corpora
-            if no_action and not args.sample_size:
-                list_all_corpora()
-            else:
-                # othewise print error message and command usage
+            # if size or an action is specified, then a language is
+            # probably ommited by mistake
+            if args.size or not no_action:
+                # print error message and command usage
                 print 'No language specified (-l XX or --language=XX).'
                 parser.print_usage()
+            # if it's a call with --info option, show all corpora
+            elif args.info:
+                list_all_corpora()
+            # if it's a call with --usage option, show usage
+            elif args.usage:
+                parser.print_usage()
+            # otherwise it's empty call -> show short help and usage
+            else:
+                print TOOL_DESCRIPTION
+                parser.print_usage()
+                print 'For usage description use "wikicorpora.py --help".'
             return
 
-        # specific sample
-        if args.create_specific_sample:
+        # own sample
+        if args.create_own_sample:
             # ask for titles
             size = 0
             titles = []
             if sample_size:
                 print 'Input {n} titles for new sample.'\
-                    .format(n=args.sample_size)
+                    .format(n=args.size)
             else:
                 print 'Input titles for new sample, '\
                     + 'finish by entering an empty string.'
@@ -131,7 +144,7 @@ def main():
         #    corpus.extract_dump(force=args.force_download)
 
         # sampling
-        if args.create_specific_sample:
+        if args.create_own_sample:
             corpus.create_sample_dump(titles)
         elif args.create_sample:
             if not sample_size:

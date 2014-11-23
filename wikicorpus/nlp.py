@@ -42,6 +42,7 @@ class NaturalLanguageProcessor(object):
     TREETAGGER_LANGUAGES = defaultdict(lambda: None, (
         ('bg', 'bulgarian'),
         ('en', 'english'),
+        ('fi', 'finnish'),
         ('fr', 'french'),
         ('nl', 'dutch'),
         ('de', 'german'),
@@ -74,20 +75,6 @@ class NaturalLanguageProcessor(object):
 
     def __unicode__(self):
         return self.__repr__()
-
-    # ------------------------------------------------------------------------
-    #  static methods
-    # ------------------------------------------------------------------------
-
-    #@staticmethod
-    #def get_treetagger_language(iso_code):
-    #    """For treetagger-supported languages, returns language full name
-
-    #    :iso_code: unicode (alpha-2 code of the language)
-
-    #    :returns: unicode (name of the language) || None
-    #    """
-    #    return NaturalLanguageProcessor.TREETAGGER_LANGUAGES[iso_code]
 
     # ------------------------------------------------------------------------
     #  property access methods

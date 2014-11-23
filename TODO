@@ -25,11 +25,6 @@ Should
 Could
 -----
 - vylepseni parsovani wikimarkupu, napr. seznamy
-- rozsireni lemmatizace a POS taggingu i na dalsi jazyky, napriklad podle
-  popisu podle popisu na http://nlp.fi.muni.cz/ma/ by mela majka
-  fungovat pro Czech, Slovak, Polish, Swedish, German, French, Italian,
-  English, Portuguese, Catalan, Welsh, Spanish, Galician, Asturian
-  and Russian (vyzkouset, zeptat se na dalsi nastroje)
 - volitelna jmena vstupu/vystupu pro skript wikicorpora.py, pripadne umozneni
   nastaveni vychoziho adresare pro wiki korpusy (pres konfigurak)
 - existujici korpusy z Wikipedia, podobne projekty

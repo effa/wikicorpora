@@ -4,6 +4,7 @@
 from __future__ import unicode_literals
 from collections import defaultdict
 from environment import environment
+from registry import Tagset
 from subprocess import Popen, call
 
 """
@@ -120,43 +121,23 @@ class NaturalLanguageProcessor(object):
             path to prevertical file
         :vertical_path: unicode
             where to store result vertical file
+
+        :return: [Tagset] used tagset
         """
         language = self.get_language()
         if language == 'cs':
             # for czech language, use unitok + desamb
             self.tokenize(prevertical_path, vertical_path)
             self.desamb_morfologization(vertical_path, vertical_path)
+            return Tagset.DESAMB
         elif language in self.TREETAGGER_LANGUAGES:
             # use a treetagger script for both tokenization and morfologization
-            treetagger_path = environment.get_treetagger_path(
-                self.get_treetagger_language())
-            try:
-                # handle case of input_path == output_path
-                tmp_output_path = vertical_path + '.tmp'
-                ## treetagger needs file in iso-8858-1 encoding, so we need
-                ## convert it first
-                #command = '{conv} <{inp} | {treetagger} {lang} {opt} >{outp}'\
-                #    .format(treetagger=treetagger_path,
-                #            lang=self.get_treetagger_language(language),
-                #            opt='-token -lemma -no-unknown -sgml',
-                #            conv='iconv -f utf-8 -t iso-8859-1//TRANSLIT',
-                #            inp=prevertical_path,
-                #            outp=tmp_output_path)
-                command = '{treetagger} <{inp} >{outp}'\
-                    .format(treetagger=treetagger_path,
-                            inp=prevertical_path,
-                            outp=tmp_output_path)
-                task = Popen(command, shell=True)
-                task.wait()
-                if task.returncode != 0:
-                    raise LanguageProcessorException('treetagger failed')
-                call(('mv', tmp_output_path, vertical_path))
-            except OSError:
-                raise LanguageProcessorException(
-                    'OSError when calling treetagger')
+            self.treetagger_morfologization(prevertical_path, vertical_path)
+            return Tagset.TREETAGGER
         else:
             # for other languages, at least tokenize them
             self.tokenize(prevertical_path, vertical_path)
+            return Tagset.BASIC
 
     def desamb_morfologization(self, input_path, output_path):
         """Uses desamb for adding tags and lemmas [works for czech only]
@@ -205,6 +186,31 @@ class NaturalLanguageProcessor(object):
         except OSError:
             raise LanguageProcessorException('OSError when calling unitok')
 
+    def treetagger_morfologization(self, input_path, output_path):
+        """Uses TreeTagger for adding tags and lemmas
+
+        :input_path: unicode
+        :output_path: unicode
+        """
+        assert self.get_language() in self.TREETAGGER_LANGUAGES
+        treetagger_path = environment.get_treetagger_path(
+            self.get_treetagger_language())
+        try:
+            # handle case of input_path == output_path
+            tmp_output_path = output_path + '.tmp'
+            # call treetagger script
+            command = '{treetagger} <{inp} >{outp}'\
+                .format(treetagger=treetagger_path,
+                        inp=input_path,
+                        outp=tmp_output_path)
+            task = Popen(command, shell=True)
+            task.wait()
+            if task.returncode != 0:
+                raise LanguageProcessorException('treetagger failed')
+            call(('mv', tmp_output_path, output_path))
+        except OSError:
+            raise LanguageProcessorException(
+                'OSError when calling treetagger')
 
     # ------------------------------------------------------------------------
     #  private methods

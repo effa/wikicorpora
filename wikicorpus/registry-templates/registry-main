@@ -1,0 +1,27 @@
+NAME        "{language} Wikipedia"
+MAINTAINER  "tomas.effenberger@mail.muni.cz"
+INFO        "{language} Wikipedia Corpus built from http://{iso}.wikipedia.org"
+PATH     "{compiled_corpus_path}"
+ENCODING "UTF-8"
+LANGUAGE "{language}"
+INFOHREF "http://www.sketchengine.co.uk/documentation/wiki/Corpora/wiki-{iso}"
+VERTICAL "{vertical_path}"
+
+# TODO: WSDEF WSATTR WSSTRIP TERMBASE TERMDEF DEFFILTERLINK LPOSLIST WPOSLIST
+
+TAGSETDOC "{tagsetdoc}"
+
+#=== Attributes ===
+
+{attributes}
+
+#=== Structures ===
+
+{structures}
+
+#=== Controlling display in concordances ===
+
+#HARDCUT 0
+#MAXCONTEXT 100
+#MAXDETAIL 100
+#WRAPDETAIL p

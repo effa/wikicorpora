@@ -9,9 +9,9 @@ from environment import environment
 from lxml import etree
 from nlp import NaturalLanguageProcessor, LanguageProcessorException
 from progressbar import ProgressBar
+from registry import Registry
 from system_utils import makedirs
 from xml_utils import qualified_name
-#from wikimarkup import parse_wikimarkup
 from wikiextractor import parse_wikimarkup
 import errno
 import bz2
@@ -43,6 +43,9 @@ class WikiCorpus(object):
     # Wikipedia namespace number label for articles
     ARTICLE_NS = '0'
 
+    # basic set of structures in a vertical file
+    _BASIC_STRUCTURES = {'doc', 'p', 's', 'g'}
+
     def __init__(self, language):
         """Initalization of WikiCorpus instance
 
@@ -56,6 +59,13 @@ class WikiCorpus(object):
 
         # load configuration
         self._configuration = Configuration(WikiCorpus.CORPUS_CONFIG_PATH)
+
+        # vertical info
+        self._tagset = None
+        self._structures = None
+
+        # registry
+        self._registry = None
 
     # ------------------------------------------------------------------------
     # getters and setters
@@ -126,6 +136,18 @@ class WikiCorpus(object):
         path = os.path.join(
             self.get_uncompiled_corpus_path(),
             prevertical_file_name)
+        return path
+
+    def get_registry_path(self):
+        """ Returns path to registry file.
+
+        It will also creates non-existing directories on this path
+        """
+        registry_dir = environment.registry_path()
+        makedirs(registry_dir)
+        path = os.path.join(
+            registry_dir,
+            self.get_corpus_name())
         return path
 
     def get_url_prefix(self):
@@ -311,8 +333,13 @@ class WikiCorpus(object):
         print 'Verticalization of {name} started...'.format(
             name=self.get_corpus_name())
         try:
+            # create vertical file
             with NaturalLanguageProcessor(self.language()) as lp:
-                lp.create_vertical_file(prevertical_path, vertical_path)
+                tags = lp.create_vertical_file(prevertical_path, vertical_path)
+                self.tagset = tags
+                self.structures = WikiCorpus._BASIC_STRUCTURES
+            # create registry file
+            self.create_registry()
             print 'Vertical of {name} created\n at: {path}'.format(
                 name=self.get_corpus_name(),
                 path=vertical_path)
@@ -327,6 +354,20 @@ class WikiCorpus(object):
         vertical_path = self.get_vertical_path()
         print '<->', vertical_path
         #raise NotImplementedError
+
+    def create_registry(self):
+        """ Creates registry file
+        """
+        # create (or update) _registry attribute
+        self._registry = Registry(
+            path=self.get_registry_path(),
+            lang=self.language(),
+            vertical_path=self.get_vertical_path(),
+            compiled_path=self.get_compiled_corpus_path(),
+            tagset=self._tagset,
+            structures=self._structures)
+        # save registry to file
+        self._registry.store()
 
     def compile_corpus(self):
         """ Compiles given corpora

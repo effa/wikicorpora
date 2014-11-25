@@ -1,8 +1,14 @@
+Now
+----
+- dodelani vytvareni konfiguraku + zapis do souboru
+
+
 Must
 ----
-- vyresit tagovani a lemmetizaci cisel
 - odhaleni dalsich vyskytu termu v textu
+- vyresit tagovani a lemmetizaci cisel
 - vytvoreni konfiguraku a kompilovani korpusu
+- kontrola vysledneho korpusu aplikaci corpcheck
 - rozpoznavani datumu (zavest specialni strukturu?), ale vyuzit jiz oznacenych
   dat (i datumy muzou mit na wiki svoje WURI)
 - sestaveni korpusu pro aj a cj a rozjeti na Sketch Engine
@@ -10,7 +16,6 @@ Must
 - testy pro wikimarkup parsing
 - vylepseni parsovani, napr. odstraneni prazdnych sekci
 - odstraneni prazdnych pojmu (muze souviset s pouzitym parserem)
-- kontrola vysledneho korpusu aplikaci corpcheck
 
 Should
 ------

@@ -1,0 +1,6 @@
+# glue
+STRUCTURE g {{
+    TYPE "file64"
+    DISPLAYTAG 0
+    DISPLAYBEGIN "_EMPTY_"
+}}

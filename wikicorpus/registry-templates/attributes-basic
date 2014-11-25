@@ -1,0 +1,18 @@
+# atributy pro jazyky bez morfologickeho nastroje (tj. pouze tokenizovane)
+ATTRIBUTE word {{
+    TYPE "FD_FGD"
+}}
+# ????
+#ATTRIBUTE gdex {{
+#    TYPE "FD_FGD"
+#}}
+ATTRIBUTE   lc {{
+        LABEL   "word (lowercase)"
+        DYNAMIC  utf8lowercase
+        DYNLIB   internal
+        ARG1     "C"
+        FUNTYPE  s
+        FROMATTR word
+        TYPE     index
+        TRANSQUERY      yes
+}}

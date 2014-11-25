@@ -1,0 +1,5 @@
+# paragraph
+STRUCTURE p {{
+    TYPE "file64"
+    ATTRIBUTE heading
+}}

@@ -4,7 +4,7 @@
 from __future__ import unicode_literals
 from collections import defaultdict
 from environment import environment
-from registry import Tagset
+from registry import TAGSETS
 from subprocess import Popen, call
 
 """
@@ -129,15 +129,15 @@ class NaturalLanguageProcessor(object):
             # for czech language, use unitok + desamb
             self.tokenize(prevertical_path, vertical_path)
             self.desamb_morfologization(vertical_path, vertical_path)
-            return Tagset.DESAMB
+            return TAGSETS.DESAMB
         elif language in self.TREETAGGER_LANGUAGES:
             # use a treetagger script for both tokenization and morfologization
             self.treetagger_morfologization(prevertical_path, vertical_path)
-            return Tagset.TREETAGGER
+            return TAGSETS.TREETAGGER
         else:
             # for other languages, at least tokenize them
             self.tokenize(prevertical_path, vertical_path)
-            return Tagset.BASIC
+            return TAGSETS.BASIC
 
     def desamb_morfologization(self, input_path, output_path):
         """Uses desamb for adding tags and lemmas [works for czech only]

@@ -1,0 +1,21 @@
+# attributes for czech corpus (unitok + desamb combination)
+
+# TODO: dodelat (lemma, lempos, lemma_lc, gdex)
+#GDEXDEFAULTCONF "/corpora/gdex/configurations/English_lemmatized"
+
+ATTRIBUTE word {{
+    TYPE "FD_FGD"
+}}
+ATTRIBUTE tag {{
+    TYPE "FD_FGD"
+}}
+ATTRIBUTE   lc {{
+        LABEL   "word (lowercase)"
+        DYNAMIC  utf8lowercase
+        DYNLIB   internal
+        ARG1     "C"
+        FUNTYPE  s
+        FROMATTR word
+        TYPE     index
+        TRANSQUERY      yes
+}}

@@ -63,6 +63,12 @@ $ wikicorpora.py --language=en --sample-size=10 --compile
 - vstup: vert/wiki-en-sample-10/wiki-en-sample-10.vert
 - vystup: manatee/wiki-en-sample-10/*
 
+.Kontrola vytvoreneho korpusu programem corpcheck
+$ wikicorpora.py --language=en --sample-size=10 --check
+
+.Vyhledavani v korpusu programem corpquery (dotaz v CQL)
+$ wikicorpora.py --language=en --sample-size=10 --query="<CQL expression>"
+
 .Vypis informaci o korpusu
 $ wikicorpora.py --language=en --sample-size=10 [--info]
 - vypise obsah vert/XXX, zda zkompilovano a prikazy, ktere lze dal pouzit

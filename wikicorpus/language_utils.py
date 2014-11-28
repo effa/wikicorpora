@@ -7,7 +7,8 @@
 import json
 
 # loads dictionary of languages
-LANGUAGES_FILE = 'languages.json'
+# docasny hack -> TODO: struktura projetu + absolutni cesty
+LANGUAGES_FILE = '/home/tom/Documents/lab/wikicorpora/wikicorpus/languages.json'
 with open(LANGUAGES_FILE) as languages_file:
     LANGUAGES = json.load(languages_file)
 

@@ -97,6 +97,7 @@ class NaturalLanguageProcessor(object):
         :returns: unicode (name of the language) || None
         """
         return self.TREETAGGER_LANGUAGES[self.get_language()]
+
     # ------------------------------------------------------------------------
     #  resources control
     # ------------------------------------------------------------------------

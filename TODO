@@ -1,14 +1,23 @@
 Now
 ----
-- dodelani vytvareni konfiguraku + zapis do souboru
-
+- unit testy pro inferenci vyskytu pojmu -> odladeni (prip. soupis veci k
+  reseni)
+- pak doimplementovat get_registry_tagset, vyresit strukturu projektu a
+  absolutni cesty,  cele propojit a odzkouset na Albe
 
 Must
 ----
+- struktura projektu a absolutni cesty
+- test: co se stane, kdyz vstupni text obsahuje retezec "</doc>" atp.
+- dodelani vytvareni konfiguraku + zapis do souboru
 - odhaleni dalsich vyskytu termu v textu
 - vyresit tagovani a lemmetizaci cisel
+- pri odhalovani dalsich vyskytu termu je potreba mit / brat v uvahu cisla na
+  #num#, nersp. @card@-x
+- desamb: parametry, co ty hacky?! (pridavani tecek, casto spatne), pri
+  nejmensim je v postprocessingu odstranit...
 - vytvoreni konfiguraku a kompilovani korpusu
-- kontrola vysledneho korpusu aplikaci corpcheck
+- kontrola vysledneho korpusu aplikaci corpcheck (./wikicorpora ... --check)
 - rozpoznavani datumu (zavest specialni strukturu?), ale vyuzit jiz oznacenych
   dat (i datumy muzou mit na wiki svoje WURI)
 - sestaveni korpusu pro aj a cj a rozjeti na Sketch Engine

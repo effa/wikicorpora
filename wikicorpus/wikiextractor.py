@@ -85,6 +85,8 @@ def parse_wikimarkup(id_number, title, url_prefix, text):
     text = '\n'.join(compact(clean(text)))
     url = get_url(url_prefix, title)
     header = '<doc id="%s" url="%s" title="%s">' % (id_number, url, title)
+    # append a paragraph with title (-> to get title morfologized as well)
+    header += '\n<p heading="1">%s</p>' % title
     parsed_doc = u'{header}\n{text}\n</doc>'.format(header=header, text=text)
     return parsed_doc
 

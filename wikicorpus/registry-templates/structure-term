@@ -1,0 +1,9 @@
+# term
+STRUCTURE term {{
+    ATTRIBUTE name {{
+        LABEL "term name"
+    }}
+    ATTRIBUTE uncertainty {{
+        LABEL "uncertainty level (0 = humnan annotated, 1 = derived from article, 2 = derived globally)"
+    }}
+}}

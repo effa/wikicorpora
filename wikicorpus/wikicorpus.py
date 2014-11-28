@@ -9,10 +9,12 @@ from environment import environment
 from lxml import etree
 from nlp import NaturalLanguageProcessor, LanguageProcessorException
 from progressbar import ProgressBar
-from registry import Registry
+from registry import store_registry, get_registry_tagset, RegistryException
+from subprocess import call
 from system_utils import makedirs
-from xml_utils import qualified_name
+from verticaldocument import VerticalDocument
 from wikiextractor import parse_wikimarkup
+from xml_utils import qualified_name
 import errno
 import bz2
 import os
@@ -44,7 +46,7 @@ class WikiCorpus(object):
     ARTICLE_NS = '0'
 
     # basic set of structures in a vertical file
-    _BASIC_STRUCTURES = {'doc', 'p', 's', 'g'}
+    _BASIC_STRUCTURES = {'doc', 'p', 's', 'g', 'term'}
 
     def __init__(self, language):
         """Initalization of WikiCorpus instance
@@ -63,9 +65,6 @@ class WikiCorpus(object):
         # vertical info
         self._tagset = None
         self._structures = None
-
-        # registry
-        self._registry = None
 
     # ------------------------------------------------------------------------
     # getters and setters
@@ -352,22 +351,49 @@ class WikiCorpus(object):
         """ Labels all occurences of terms in morfolgized vertical
         """
         vertical_path = self.get_vertical_path()
-        print '<->', vertical_path
-        #raise NotImplementedError
+        try:
+            print 'Terms occurences inference in {name} started ...'.format(
+                name=self.get_corpus_name())
+            if self._tagset is None:
+                self._tagset = get_registry_tagset(self.get_registry_path())
+            # TODO: jmeno vertikalu bez termu - vzit z konfiguarku
+            original_vertical_path = vertical_path + '.original'
+            call(('cp', vertical_path, original_vertical_path))
+            with open(original_vertical_path) as input_file:
+                with open(vertical_path, 'w') as output_file:
+                    for line in input_file:
+                        # TODO: ?osetrit prazdne radky a podobne veci??
+                        if line.startswith('<doc'):
+                            document = [line]
+                        else:
+                            document.append(line)
+                        # check if the end of document is reached
+                        if line == '</doc>':
+                            vertical = VerticalDocument(document,
+                                tagset=self._tagset,
+                                terms_inference=True)
+                            output_file.write(str(vertical))
+            # NOTE: neni potreba upravovat registry...
+            #  (aspon v soucasnem stavu... termy jsou uz v puvodnim vertikalu)
+            print 'Terms occurences inference in {name} finished.'.format(
+                name=self.get_corpus_name())
+        #except ConfigurationException as exc:
+        #    raise CorpusException('Verticalization failed: ' + exc.message)
+        except RegistryException as exc:
+            raise CorpusException('Terms inference failed: ' + exc.message)
+        except LanguageProcessorException as exc:
+            raise CorpusException('Terms inference failed: ' + exc.message)
 
     def create_registry(self):
         """ Creates registry file
         """
-        # create (or update) _registry attribute
-        self._registry = Registry(
+        store_registry(
             path=self.get_registry_path(),
             lang=self.language(),
             vertical_path=self.get_vertical_path(),
             compiled_path=self.get_compiled_corpus_path(),
             tagset=self._tagset,
             structures=self._structures)
-        # save registry to file
-        self._registry.store()
 
     def compile_corpus(self):
         """ Compiles given corpora

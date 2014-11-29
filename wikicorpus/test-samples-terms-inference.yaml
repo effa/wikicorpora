@@ -1,0 +1,51 @@
+#- label:    single word
+#  tagset:   basic
+#  vertical: |
+#    <doc>
+#    word
+#    </doc>
+#  result: |
+#    <doc>
+#    word
+#    </doc>
+## ----------------------------------------------------------------------------
+#- label:    one term, no inference, basic tagset
+#  tagset:   basic
+#  vertical: |
+#    <doc>
+#    <term name="green cone">
+#    green
+#    cone
+#    </term>
+#    </doc>
+#  result: |
+#    <doc>
+#    <term name="green cone">
+#    green
+#    cone
+#    </term>
+#    </doc>
+# ----------------------------------------------------------------------------
+- label:    one term, one simple inference, basic tagset
+  tagset:   basic
+  vertical: |
+    <doc>
+    <term name="green cone">
+    green
+    cone
+    </term>
+    green
+    cone
+    </doc>
+  result: |
+    <doc>
+    <term name="green cone">
+    green
+    cone
+    </term>
+    <term name="green cone" uncertainty="1">
+    green
+    cone
+    </term>
+    </doc>
+# ----------------------------------------------------------------------------

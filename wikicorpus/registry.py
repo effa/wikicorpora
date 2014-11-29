@@ -93,6 +93,18 @@ class TAGSETS:
     TREETAGGER = Tagset(
         name='treetagger',
         doc='https://www.sketchengine.co.uk/documentation/wiki/tagsets/penn')
+    # list of all available tagsets
+    available_tagsets = [BASIC, DESAMB, TREETAGGER]
+
+
+def get_tagset_by_name(name):
+    """Returns tagset corresponding to given name
+    """
+    for tagset in TAGSETS.available_tagsets:
+        if tagset.name == name:
+            return tagset
+    else:
+        return None
 
 
 # -----------------------------------------------------------------------------

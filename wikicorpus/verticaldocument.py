@@ -131,16 +131,24 @@ class VerticalDocument(object):
 
     def __init__(self, lines, tagset, terms_inference=False):
         """
-        :lines: [list<unicode>]
+        :lines: [list<unicode>] OR unicode
         :tagset: [registry.Tagset]
         """
-        assert isinstance(lines, list), 'lines should be list of unicodes'
+        # check :lines: is unicode or list of unicode
+        if isinstance(lines, unicode):
+            # if it's unicode, slit it to list of lines
+            lines = lines.split('\n')
+        elif not isinstance(lines, list):
+            raise ValueError(':lines: should be unicode or list of unicodes')
+
+        # building representation of vertical (store lines, tranform tokens to
+        # Token objects) and trie of all terms in text
         self._tagset = tagset
         self._lines = []
         self._termstrie = TermsTrie()
         reading_term = False
         term_canonical_form = None
-        for i, line in enumerate(lines):
+        for line in lines:
             line = line.strip()
             # skip empty lines
             if not line:
@@ -163,12 +171,14 @@ class VerticalDocument(object):
                     self._termstrie.add(term_name, term_canonical_form)
                     reading_term = False
             else:
+                # use Token class to represent tokens
                 token = Token(line, tagset)
                 self._lines.append(token)
                 # if reading a term, remember the lemma
                 if reading_term:
-                    term_canonical_form += token.get_lemma(True)
+                    term_canonical_form.append(token.get_lemma(True))
 
+        # apply terms inference
         if terms_inference:
             self._terms_occurences_inference()
 
@@ -194,24 +204,28 @@ class VerticalDocument(object):
         longest_term = None
         self._termstrie.search_start()
         while True:
-            line = self.get(pos + current_length)
-            if is_sgml_tag(line):
-                # break term search if there is a new paragraph or a term
-                if line == '</p>' or line.startswith('<term '):
+            try:
+                line = self.get(pos + current_length)
+                if is_sgml_tag(line):
+                    # break term search if there is a new paragraph or a term
+                    if line == '</p>' or line.startswith('<term '):
+                        break
+                    else:
+                        continue
+                lemma = self.get(pos + current_length).get_lemma()
+                if not self._termstrie.search_continue(lemma):
                     break
-                else:
-                    continue
-            lemma = self.get(pos + current_length).get_lemma()
-            if not self._termstrie.search_continue(lemma):
-                break
-            found_term = self._termstrie.search_result()
-            if found_term:
-                longest_term = found_term
-                max_length = current_length
-            current_length += 1
-            # check the end of the vertical
-            if pos + current_length >= len(self._lines):
-                break
+                found_term = self._termstrie.search_result()
+                if found_term:
+                    longest_term = found_term
+                    # TODO: prepsat jasneji
+                    max_length = current_length + 1
+            finally:
+                # go to next line, even if "continue" was called
+                current_length += 1
+                # check the end of the vertical
+                if pos + current_length >= len(self._lines):
+                    break
         return (longest_term, max_length)
 
     def _terms_occurences_inference(self):
@@ -245,6 +259,7 @@ class VerticalDocument(object):
                     if new_term_rest_length == 0:
                         new_lines.append('</term>')
                         new_term_reading = False
+        self._lines = new_lines
 
 
 # -----------------------------------------------------------------------------

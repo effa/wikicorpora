@@ -4,6 +4,7 @@
   text:       word
   result: |
           <doc id="1" url="http://en.wikipedia.org/wiki/Single_word" title="single word">
+          <p heading="1">single word</p>
           <p>
           word
           </p>
@@ -15,6 +16,7 @@
   text:       Tato věta mluví sama o sobě. A tato taky.
   result: |
           <doc id="2" url="http://cs.wikipedia.org/wiki/Několik_slov" title="Několik slov">
+          <p heading="1">Několik slov</p>
           <p>
           Tato věta mluví sama o sobě. A tato taky.
           </p>
@@ -26,6 +28,7 @@
   text:       "[[link url | link name]]"
   result: |
           <doc id="3" url="http://en.wikipedia.org/wiki/Link" title="link">
+          <p heading="1">link</p>
           <p>
           <term name="link url"> link name</term>
           </p>
@@ -38,6 +41,7 @@
 
   result: |
           <doc id="4" url="http://en.wikipedia.org/wiki/Some_words_and_a_link" title="some words and a link">
+          <p heading="1">some words and a link</p>
           <p>
           some words and a <term name="link">link</term>
           </p>
@@ -64,6 +68,7 @@
         paragraph4
   result: |
           <doc id="5" url="http://en.wikipedia.org/wiki/Two_sections_and_a_subsection" title="two sections and a subsection">
+          <p heading="1">two sections and a subsection</p>
           <p>
           introduction
           </p>
@@ -90,12 +95,13 @@
           </section>
           </doc>
 # ----------------------------------------------------------------------------
-- id:         5
+- id:         6
   title:      link with trail
   url_prefix: http://en.wikipedia.org/wiki
   text:   "[[copy edit]]ors"
   result: |
-          <doc id="5" url="http://en.wikipedia.org/wiki/Link_with_trail" title="link with trail">
+          <doc id="6" url="http://en.wikipedia.org/wiki/Link_with_trail" title="link with trail">
+          <p heading="1">link with trail</p>
           <p>
           <term name="copy edit">copy editors</term>
           </p>

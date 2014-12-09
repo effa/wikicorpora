@@ -4,10 +4,13 @@
 from __future__ import unicode_literals
 from collections import namedtuple
 from language_utils import get_language_name
+import re
 
 # TODO: absolutni cesty!!!!!!!!!
 TEMPLATE_DIR = 'registry-templates/'
 
+# regular expression for tagset statement in registry file
+TAGSET_RE = re.compile(r'^#tagset=(\w*)')
 
 #class Registry(object):
 
@@ -29,6 +32,7 @@ TEMPLATE_DIR = 'registry-templates/'
 #        self._compiled_path = compiled_path
 #        self._tagset = tagset
 #        self._structures = structures
+
 
 def store_registry(path, lang, vertical_path, compiled_path,
         tagset, structures):
@@ -70,7 +74,19 @@ def get_registry_tagset(path):
 
     :throws: RegistryException if registry not found
     """
-    raise NotImplementedError
+    with open(path) as registry_file:
+        registry_lines = registry_file.readlines()
+    for line in registry_lines:
+        match = TAGSET_RE.search(line)
+        if match:
+            tagset_name = match.group(1)
+            tagset = get_tagset_by_name(tagset_name)
+            if tagset:
+                return tagset
+            else:
+                raise RegistryException('Uknown tagset: ' + tagset_name)
+    raise RegistryException('Tagset statement not found.'
+        + ' Add "# tagset=<basic|desamb|treetagger>" to registry.')
 
 # -----------------------------------------------------------------------------
 #  tagsets representation

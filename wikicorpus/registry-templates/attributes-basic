@@ -1,4 +1,6 @@
-# atributy pro jazyky bez morfologickeho nastroje (tj. pouze tokenizovane)
+#tagset=basic
+# attirubtes for languages without morfologic tool (i.e. tokenized only)
+
 ATTRIBUTE word {{
     TYPE "FD_FGD"
 }}

@@ -1,16 +1,14 @@
 Now
 ----
-- unit testy pro inferenci vyskytu pojmu -> odladeni (prip. soupis veci k
-  reseni)
-- pak doimplementovat get_registry_tagset, vyresit strukturu projektu a
-  absolutni cesty,  cele propojit a odzkouset na Albe
+- vyresit strukturu projektu a absolutni cesty
+- cisla a hacky desambu
+- cele propojit a odzkouset na Albe
 
 Must
 ----
 - struktura projektu a absolutni cesty
 - test: co se stane, kdyz vstupni text obsahuje retezec "</doc>" atp.
 - dodelani vytvareni konfiguraku + zapis do souboru
-- odhaleni dalsich vyskytu termu v textu
 - vyresit tagovani a lemmetizaci cisel
 - pri odhalovani dalsich vyskytu termu je potreba mit / brat v uvahu cisla na
   #num#, nersp. @card@-x
@@ -22,7 +20,6 @@ Must
   dat (i datumy muzou mit na wiki svoje WURI)
 - sestaveni korpusu pro aj a cj a rozjeti na Sketch Engine
 - dokumentace (jednotne), vcetne vygenerovani
-- testy pro wikimarkup parsing
 - vylepseni parsovani, napr. odstraneni prazdnych sekci
 - odstraneni prazdnych pojmu (muze souviset s pouzitym parserem)
 
@@ -34,11 +31,13 @@ Should
 - vyresit namespacy poradne (pokud muzou byt vnorene)
 - unit testy
 - prehlednou strukturu projektu
+- dalsi testy pro inferenci pojmu
 
 
 Could
 -----
 - vylepseni parsovani wikimarkupu, napr. seznamy
+- dalsi testy pro wikimarkup parsing
 - volitelna jmena vstupu/vystupu pro skript wikicorpora.py, pripadne umozneni
   nastaveni vychoziho adresare pro wiki korpusy (pres konfigurak)
 - existujici korpusy z Wikipedia, podobne projekty

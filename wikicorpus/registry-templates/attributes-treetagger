@@ -1,4 +1,5 @@
-# attributes: treetagger
+#tagset=treetagger
+# attributes for treetagger morfologization
 
 # TODO: ???
 #GDEXDEFAULTCONF "/corpora/gdex/configurations/English_lemmatized"

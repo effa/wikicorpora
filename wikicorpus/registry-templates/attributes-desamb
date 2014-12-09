@@ -1,3 +1,4 @@
+#tagset=desamb
 # attributes for czech corpus (unitok + desamb combination)
 
 # TODO: dodelat (lemma, lempos, lemma_lc, gdex)

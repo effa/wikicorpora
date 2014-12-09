@@ -1,36 +1,36 @@
-#- label:    single word
-#  tagset:   basic
-#  vertical: |
-#    <doc>
-#    word
-#    </doc>
-#  result: |
-#    <doc>
-#    word
-#    </doc>
-## ----------------------------------------------------------------------------
-#- label:    one term, no inference, basic tagset
-#  tagset:   basic
-#  vertical: |
-#    <doc>
-#    <term name="green cone">
-#    green
-#    cone
-#    </term>
-#    </doc>
-#  result: |
-#    <doc>
-#    <term name="green cone">
-#    green
-#    cone
-#    </term>
-#    </doc>
+- label:    single word
+  tagset:   basic
+  vertical: |
+    <doc>
+    word
+    </doc>
+  result: |
+    <doc>
+    word
+    </doc>
+# ----------------------------------------------------------------------------
+- label:    one term, no inference, basic tagset
+  tagset:   basic
+  vertical: |
+    <doc>
+    <term wuri="Green_cone">
+    green
+    cone
+    </term>
+    </doc>
+  result: |
+    <doc>
+    <term wuri="Green_cone">
+    green
+    cone
+    </term>
+    </doc>
 # ----------------------------------------------------------------------------
 - label:    one term, one simple inference, basic tagset
   tagset:   basic
   vertical: |
     <doc>
-    <term name="green cone">
+    <term wuri="Green_cone">
     green
     cone
     </term>
@@ -39,13 +39,249 @@
     </doc>
   result: |
     <doc>
-    <term name="green cone">
+    <term wuri="Green_cone">
     green
     cone
     </term>
-    <term name="green cone" uncertainty="1">
+    <term wuri="Green_cone" uncertainty="1">
     green
     cone
     </term>
+    </doc>
+# ----------------------------------------------------------------------------
+- label:    one term, one two inferences, basic tagset
+  tagset:   basic
+  vertical: |
+    <doc>
+    green
+    cone
+    and
+    <term wuri="Green_cone">
+    green
+    cone
+    </term>
+    and
+    green
+    cone
+    </doc>
+  result: |
+    <doc>
+    <term wuri="Green_cone" uncertainty="1">
+    green
+    cone
+    </term>
+    and
+    <term wuri="Green_cone">
+    green
+    cone
+    </term>
+    and
+    <term wuri="Green_cone" uncertainty="1">
+    green
+    cone
+    </term>
+    </doc>
+# ----------------------------------------------------------------------------
+- label:    more terms, more inferences, basic tagset
+  tagset:   basic
+  vertical: |
+    <doc>
+    <term wuri="Green_cube">
+    green
+    cube
+    </term>
+    and
+    green
+    cone
+    and
+    <term wuri="Green_cone">
+    green
+    cone
+    </term>
+    and
+    green
+    cube
+    or
+    green
+    sphere
+    or
+    yellow
+    cube
+    </doc>
+  result: |
+    <doc>
+    <term wuri="Green_cube">
+    green
+    cube
+    </term>
+    and
+    <term wuri="Green_cone" uncertainty="1">
+    green
+    cone
+    </term>
+    and
+    <term wuri="Green_cone">
+    green
+    cone
+    </term>
+    and
+    <term wuri="Green_cube" uncertainty="1">
+    green
+    cube
+    </term>
+    or
+    green
+    sphere
+    or
+    yellow
+    cube
+    </doc>
+# ----------------------------------------------------------------------------
+- label:    one simple inference, desamb tagset
+  tagset:   desamb
+  vertical: |
+    <doc id="1" url="http://cs.wikipedia.org/wiki/Astronomie" title="Astronomie">
+    <p heading="1">
+    <term wuri="Astronomie">
+    Astronomie	astronomie	k1gFnSc1
+    </term>
+    </p>
+    <p>
+    <s desamb="1">
+    Astronomie	astronomie	k1gFnSc1
+    </s>
+    </p>
+    </doc>
+  result: |
+    <doc id="1" url="http://cs.wikipedia.org/wiki/Astronomie" title="Astronomie">
+    <p heading="1">
+    <term wuri="Astronomie">
+    Astronomie	astronomie	k1gFnSc1
+    </term>
+    </p>
+    <p>
+    <s desamb="1">
+    <term wuri="Astronomie" uncertainty="1">
+    Astronomie	astronomie	k1gFnSc1
+    </term>
+    </s>
+    </p>
+    </doc>
+# ----------------------------------------------------------------------------
+- label:    one simple inference, treetagger tagset
+  tagset:   treetagger
+  vertical: |
+    <doc id="1" url="http://en.wikipedia.org/wiki/Anarchism" title="Anarchism">
+    <p heading="1">
+    <term wuri="Anarchism">
+    Anarchism	NN	anarchism-n
+    </term>
+    </p>
+    <p>
+    <s>
+    Anarchism	NN	anarchism-n
+    </s>
+    </p>
+    </doc>
+  result: |
+    <doc id="1" url="http://en.wikipedia.org/wiki/Anarchism" title="Anarchism">
+    <p heading="1">
+    <term wuri="Anarchism">
+    Anarchism	NN	anarchism-n
+    </term>
+    </p>
+    <p>
+    <s>
+    <term wuri="Anarchism" uncertainty="1">
+    Anarchism	NN	anarchism-n
+    </term>
+    </s>
+    </p>
+    </doc>
+# ----------------------------------------------------------------------------
+- label:    one non-trivial inference, desamb tagset
+  tagset:   desamb
+  vertical: |
+    <doc id="1" url="http://cs.wikipedia.org/wiki/Astronomie" title="Astronomie">
+    <p heading="1">
+    <term wuri="Astronomie">
+    Astronomie	astronomie	k1gFnSc1
+    </term>
+    </p>
+    <p>
+    <s desamb="1">
+    Mám	xx	xx
+    rád	xx	xx
+    astronomii	astronomie	k1gFnSc1
+    </g>
+    .	xx	xx
+    </s>
+    </p>
+    </doc>
+  result: |
+    <doc id="1" url="http://cs.wikipedia.org/wiki/Astronomie" title="Astronomie">
+    <p heading="1">
+    <term wuri="Astronomie">
+    Astronomie	astronomie	k1gFnSc1
+    </term>
+    </p>
+    <p>
+    <s desamb="1">
+    Mám	xx	xx
+    rád	xx	xx
+    <term wuri="Astronomie" uncertainty="1">
+    astronomii	astronomie	k1gFnSc1
+    </term>
+    </g>
+    .	xx	xx
+    </s>
+    </p>
+    </doc>
+# ----------------------------------------------------------------------------
+- label:    one non-trivial inference, treetagger tagset
+  tagset:   treetagger
+  vertical: |
+    <doc id="1" url="http://en.wikipedia.org/wiki/Anarchism" title="Anarchism">
+    <p heading="1">
+    <term wuri="Anarchism">
+    Anarchism	NN	anarchism-n
+    </term>
+    </p>
+    <p>
+    <s>
+    Sentence	xx	xx
+    with	xx	xx
+    word	NN	xx
+    anarchism	NN	anarchism-n
+    and	xx	xx
+    anarchism	NN	anarchism-n
+    <g/>
+    .	xx	xx
+    </s>
+    </p>
+    </doc>
+  result: |
+    <doc id="1" url="http://en.wikipedia.org/wiki/Anarchism" title="Anarchism">
+    <p heading="1">
+    <term wuri="Anarchism">
+    Anarchism	NN	anarchism-n
+    </term>
+    </p>
+    <p>
+    <s>
+    Sentence	xx	xx
+    with	xx	xx
+    word	NN	xx
+    <term wuri="Anarchism" uncertainty="1">
+    anarchism	NN	anarchism-n
+    </term>
+    and	xx	xx
+    <term wuri="Anarchism" uncertainty="1">
+    anarchism	NN	anarchism-n
+    </term>
+    <g/>
+    .	xx	xx
+    </s>
+    </p>
     </doc>
 # ----------------------------------------------------------------------------

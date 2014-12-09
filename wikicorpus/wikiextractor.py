@@ -36,6 +36,7 @@
 
 import re
 from htmlentitydefs import name2codepoint
+from wiki_utils import create_article_url, term2wuri
 
 ### PARAMS ####################################################################
 
@@ -71,7 +72,7 @@ discardElements = set([
 
 
 def parse_wikimarkup(id_number, title, url_prefix, text):
-    """Returns parsed wikimiarkup as prevertical
+    """Returns parsed wikimarkup as prevertical
 
         :returns unicode
     """
@@ -83,17 +84,20 @@ def parse_wikimarkup(id_number, title, url_prefix, text):
     if not isinstance(text, unicode):
         text = text.decode('utf-8')
     text = '\n'.join(compact(clean(text)))
-    url = get_url(url_prefix, title)
+    url = create_article_url(url_prefix, title)
     header = '<doc id="%s" url="%s" title="%s">' % (id_number, url, title)
     # append a paragraph with title (-> to get title morfologized as well)
-    header += '\n<p heading="1">%s</p>' % title
+    header += '\n<p heading="1">\n%s</p>'\
+        % get_term_element(title, title)
     parsed_doc = u'{header}\n{text}\n</doc>'.format(header=header, text=text)
     return parsed_doc
 
 
-def get_url(prefix, title):
-    title = term2wuri(title)
-    return "%s/%s" % (prefix, title)
+def get_term_element(title, name):
+    wuri = term2wuri(title)
+    term_element = '<term wuri="%s">%s</term>\n' % (wuri, name)
+    return term_element
+
 
 #------------------------------------------------------------------------------
 
@@ -108,30 +112,6 @@ ignoredTags = [
 ]
 
 placeholder_tags = {'math': 'formula', 'code': 'codice'}
-
-
-def term2wuri(term):
-    """ Creates last part of wikipedia URI ("wuri") from a term
-
-    Examples:
-        'duke' -> 'Duke'
-        'Channel Islands' -> 'Channel_Islands'
-        'early modern period' -> 'Early_modern_period'
-    Args:
-        term (unicode)
-            any word, name, phrase
-    Returns:
-        unicode
-    """
-    # TODO: handle namespaces (see normalizedTitle())
-    # strip leading whitespace and underscores
-    # and replace spaces with underscores
-    wuri = term.strip(' _').replace(' ', '_')
-    # replace sequences of underscores with a single underscore
-    wuri = re.compile(r'_+').sub('_', wuri)
-    if len(wuri) > 0:  # ideally term shouldn't be empty, but it's Wikipedia
-        wuri = wuri[0].upper() + wuri[1:]  # first letter always capital
-    return wuri
 
 
 ###
@@ -350,7 +330,7 @@ def make_anchor_tag(match):
         anchor = link
     anchor += trail
     if keepLinks:
-        return '<term name="%s">%s</term>' % (link, anchor)
+        return get_term_element(link, anchor)
     else:
         return anchor
 

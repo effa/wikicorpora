@@ -4,7 +4,9 @@
   text:       word
   result: |
           <doc id="1" url="http://en.wikipedia.org/wiki/Single_word" title="single word">
-          <p heading="1">single word</p>
+          <p heading="1">
+          <term wuri="Single_word">single word</term>
+          </p>
           <p>
           word
           </p>
@@ -16,7 +18,9 @@
   text:       Tato věta mluví sama o sobě. A tato taky.
   result: |
           <doc id="2" url="http://cs.wikipedia.org/wiki/Několik_slov" title="Několik slov">
-          <p heading="1">Několik slov</p>
+          <p heading="1">
+          <term wuri="Několik_slov">Několik slov</term>
+          </p>
           <p>
           Tato věta mluví sama o sobě. A tato taky.
           </p>
@@ -28,9 +32,11 @@
   text:       "[[link url | link name]]"
   result: |
           <doc id="3" url="http://en.wikipedia.org/wiki/Link" title="link">
-          <p heading="1">link</p>
+          <p heading="1">
+          <term wuri="Link">link</term>
+          </p>
           <p>
-          <term name="link url"> link name</term>
+          <term wuri="Link_url"> link name</term>
           </p>
           </doc>
 # ----------------------------------------------------------------------------
@@ -41,9 +47,11 @@
 
   result: |
           <doc id="4" url="http://en.wikipedia.org/wiki/Some_words_and_a_link" title="some words and a link">
-          <p heading="1">some words and a link</p>
+          <p heading="1">
+          <term wuri="Some_words_and_a_link">some words and a link</term>
+          </p>
           <p>
-          some words and a <term name="link">link</term>
+          some words and a <term wuri="Link">link</term>
           </p>
           </doc>
 # ----------------------------------------------------------------------------
@@ -68,7 +76,9 @@
         paragraph4
   result: |
           <doc id="5" url="http://en.wikipedia.org/wiki/Two_sections_and_a_subsection" title="two sections and a subsection">
-          <p heading="1">two sections and a subsection</p>
+          <p heading="1">
+          <term wuri="Two_sections_and_a_subsection">two sections and a subsection</term>
+          </p>
           <p>
           introduction
           </p>
@@ -101,9 +111,11 @@
   text:   "[[copy edit]]ors"
   result: |
           <doc id="6" url="http://en.wikipedia.org/wiki/Link_with_trail" title="link with trail">
-          <p heading="1">link with trail</p>
+          <p heading="1">
+          <term wuri="Link_with_trail">link with trail</term>
+          </p>
           <p>
-          <term name="copy edit">copy editors</term>
+          <term wuri="Copy_edit">copy editors</term>
           </p>
           </doc>
 # ----------------------------------------------------------------------------

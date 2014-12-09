@@ -29,7 +29,7 @@ TERM_TAG = re.compile(r"""
         ^
         <term
         \s+
-        name="(?P<name>.*?)"
+        wuri="(?P<wuri>.*?)"
         >
         $
         """, re.VERBOSE)
@@ -163,12 +163,12 @@ class VerticalDocument(object):
                 match = TERM_TAG.match(line)
                 if match:
                     # term reading start
-                    term_name = match.group('name')
+                    term_wuri = match.group('wuri')
                     term_canonical_form = []
                     reading_term = True
                 if line == '</term>':
                     # term reading finished
-                    self._termstrie.add(term_name, term_canonical_form)
+                    self._termstrie.add(term_wuri, term_canonical_form)
                     reading_term = False
             else:
                 # use Token class to represent tokens
@@ -246,10 +246,10 @@ class VerticalDocument(object):
                     old_term_reading = False
             else:
                 if not new_term_reading and not old_term_reading:
-                    term_name, term_length = self._longest_matching_term(i)
+                    term_wuri, term_length = self._longest_matching_term(i)
                     if term_length > 0:
-                        term_tag = '<term name="{name}" uncertainty="1">'\
-                            .format(name=term_name)
+                        term_tag = '<term wuri="{name}" uncertainty="1">'\
+                            .format(name=term_wuri)
                         new_lines.append(term_tag)
                         new_term_reading = True
                         new_term_rest_length = term_length

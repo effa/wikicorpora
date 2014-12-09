@@ -4,8 +4,8 @@
 from __future__ import unicode_literals
 from copy import deepcopy
 from lxml import etree
-from progressbar import ProgressBar
-from xml_utils import qualified_name
+from utils.progressbar import ProgressBar
+from utils.xml_utils import qualified_name
 from wikicorpus import WikiCorpus, CorpusException
 
 

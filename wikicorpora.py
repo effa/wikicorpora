@@ -2,9 +2,9 @@
 # encoding: utf-8
 
 from __future__ import unicode_literals
-from wikicorpus.environment import environment
-from wikicorpus.samplewikicorpus import SampleWikiCorpus
+from environment import environment
 from subprocess import call
+from wikicorpus.samplewikicorpus import SampleWikiCorpus
 from wikicorpus.wikicorpus import WikiCorpus, CorpusException
 import argparse
 

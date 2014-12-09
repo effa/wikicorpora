@@ -2,26 +2,24 @@
 # encoding: utf-8
 
 from __future__ import unicode_literals
-from configuration import Configuration, ConfigurationException
+from configuration.configuration import Configuration, ConfigurationException
 from contextlib import contextmanager
-from downloader import download_large_file, get_online_file
 from environment import environment
 from lxml import etree
 from nlp import NaturalLanguageProcessor, LanguageProcessorException
-from progressbar import ProgressBar
-from registry import store_registry, get_registry_tagset, RegistryException
+from registry.registry import store_registry
+from registry.registry import get_registry_tagset, RegistryException
+from setup import project_path
 from subprocess import call
-from system_utils import makedirs
+from utils.downloader import download_large_file, get_online_file
+from utils.progressbar import ProgressBar
+from utils.system_utils import makedirs
+from utils.xml_utils import qualified_name
 from verticaldocument import VerticalDocument
 from wikiextractor import parse_wikimarkup
-from xml_utils import qualified_name
 import errno
 import bz2
 import os
-
-
-# project base directory
-PROJECT_BASE = os.path.dirname(__file__)
 
 
 class WikiCorpus(object):
@@ -29,7 +27,7 @@ class WikiCorpus(object):
     """Class representing corpus from Wikipedia of one language """
 
     # configuration file
-    CORPUS_CONFIG_PATH = os.path.join(PROJECT_BASE, 'corpus-config.yaml')
+    CORPUS_CONFIG_PATH = project_path('wikicorpus/corpus-config.yaml')
 
     # original dump file name
     DUMP_ORIGINAL_NAME = 'pages-articles.xml.bz2'

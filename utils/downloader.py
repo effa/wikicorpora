@@ -13,8 +13,6 @@ import urllib2
 # download constants
 CHUNK = 32 * 1024
 
-# TODO nacitani osy (zobrazeni prubezneho vysledku stahovani)
-
 
 def download_large_file(url, path, md5sum=None):
     """ Downloads large file from :url: to :path:

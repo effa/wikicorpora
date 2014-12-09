@@ -5,10 +5,15 @@
 """
 
 import json
+import os
+
+# component root path
+BASE = os.path.abspath(os.path.dirname(__file__))
+
+# path to JSON file with languages
+LANGUAGES_FILE = os.path.join(BASE, 'languages.json')
 
 # loads dictionary of languages
-# docasny hack -> TODO: struktura projetu + absolutni cesty
-LANGUAGES_FILE = '/home/tom/Documents/lab/wikicorpora/wikicorpus/languages.json'
 with open(LANGUAGES_FILE) as languages_file:
     LANGUAGES = json.load(languages_file)
 

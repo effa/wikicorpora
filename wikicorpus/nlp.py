@@ -4,7 +4,7 @@
 from __future__ import unicode_literals
 from collections import defaultdict
 from environment import environment
-from registry import TAGSETS
+from registry.tagsets import TAGSETS
 from subprocess import Popen, call
 
 """

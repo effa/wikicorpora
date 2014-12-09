@@ -36,7 +36,7 @@
 
 import re
 from htmlentitydefs import name2codepoint
-from wiki_utils import create_article_url, term2wuri
+from utils.wiki_utils import create_article_url, term2wuri
 
 ### PARAMS ####################################################################
 

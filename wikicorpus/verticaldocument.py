@@ -2,7 +2,7 @@
 # encoding: utf-8
 
 from __future__ import unicode_literals
-from registry import TAGSETS
+from registry.tagsets import TAGSETS
 from termstrie import TermsTrie
 import re
 

@@ -1,14 +1,11 @@
 Now
 ----
-- vyresit strukturu projektu a absolutni cesty
 - cisla a hacky desambu
-- cele propojit a odzkouset na Albe
+- odzkouset a vyladit na Albe
 
 Must
 ----
-- struktura projektu a absolutni cesty
 - test: co se stane, kdyz vstupni text obsahuje retezec "</doc>" atp.
-- dodelani vytvareni konfiguraku + zapis do souboru
 - vyresit tagovani a lemmetizaci cisel
 - pri odhalovani dalsich vyskytu termu je potreba mit / brat v uvahu cisla na
   #num#, nersp. @card@-x
@@ -22,6 +19,7 @@ Must
 - dokumentace (jednotne), vcetne vygenerovani
 - vylepseni parsovani, napr. odstraneni prazdnych sekci
 - odstraneni prazdnych pojmu (muze souviset s pouzitym parserem)
+- update requirements.txt
 
 Should
 ------

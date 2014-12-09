@@ -4,20 +4,16 @@
 """Module for reading local environment configuration."""
 
 from __future__ import unicode_literals
-from doubleconfiguration import DoubleConfiguration
-import os
-
-
-# project base directory
-PROJECT_BASE = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+from configuration.doubleconfiguration import DoubleConfiguration
+from setup import project_path
 
 
 class EnvironmentConfiguration(DoubleConfiguration):
 
     # paths to environment configuration files
-    ENVIRONMENT_CONFIG_LOCAL = os.path.join(PROJECT_BASE,
+    ENVIRONMENT_CONFIG_LOCAL = project_path(
         'environment-config.yaml')
-    ENVIRONMENT_CONFIG_DEFAULT = os.path.join(PROJECT_BASE,
+    ENVIRONMENT_CONFIG_DEFAULT = project_path(
         'environment-config-default.yaml')
 
     """Class for retrieving environment configuration"""

@@ -2,36 +2,19 @@
 # encoding: utf-8
 
 from __future__ import unicode_literals
-from collections import namedtuple
-from language_utils import get_language_name
+from utils.language_utils import get_language_name
+from tagsets import get_tagset_by_name
+import os
 import re
 
-# TODO: absolutni cesty!!!!!!!!!
-TEMPLATE_DIR = 'registry-templates/'
+# component root path
+BASE = os.path.abspath(os.path.dirname(__file__))
+
+# path to directory with registry templates
+TEMPLATE_DIR = os.path.join(BASE, 'registry-templates')
 
 # regular expression for tagset statement in registry file
 TAGSET_RE = re.compile(r'^#tagset=(\w*)')
-
-#class Registry(object):
-
-#    """Class representing a corpus registry file."""
-
-#    def __init__(self, path, lang, vertical_path, compiled_path,
-#            tagset, structures):
-#        """
-#        :path: [unicode] path to registry file
-#        :lang: [unicode] 2-letter language code
-#        :vertical_path: [unicode] path to vertical file
-#        :compiled_path: [unicode] path to directory with compiled corpus
-#        :tagset: [Tagset] which tagset is used in corpus
-#        :structures: [set of unicodes] which structures are used in corpus
-#        """
-#        self._path = path
-#        self._lang = lang
-#        self._vertical_path = vertical_path
-#        self._compiled_path = compiled_path
-#        self._tagset = tagset
-#        self._structures = structures
 
 
 def store_registry(path, lang, vertical_path, compiled_path,
@@ -88,40 +71,6 @@ def get_registry_tagset(path):
     raise RegistryException('Tagset statement not found.'
         + ' Add "# tagset=<basic|desamb|treetagger>" to registry.')
 
-# -----------------------------------------------------------------------------
-#  tagsets representation
-# -----------------------------------------------------------------------------
-
-# create class for a tagset representation
-Tagset = namedtuple('Tagset', ['name', 'doc'])
-
-
-class TAGSETS:
-    """Simple enum class for tagsets
-    """
-    BASIC = Tagset(
-        name='basic',
-        doc='TODO....')
-    # TODO: zkontrolovat:
-    DESAMB = Tagset(
-        name='desamb',
-        doc='http://nlp.fi.muni.cz/projekty/ajka/tags.pdf')
-    TREETAGGER = Tagset(
-        name='treetagger',
-        doc='https://www.sketchengine.co.uk/documentation/wiki/tagsets/penn')
-    # list of all available tagsets
-    available_tagsets = [BASIC, DESAMB, TREETAGGER]
-
-
-def get_tagset_by_name(name):
-    """Returns tagset corresponding to given name
-    """
-    for tagset in TAGSETS.available_tagsets:
-        if tagset.name == name:
-            return tagset
-    else:
-        return None
-
 
 # -----------------------------------------------------------------------------
 #  utilities
@@ -130,7 +79,7 @@ def get_tagset_by_name(name):
 def render_registry_template(template_file_name, **kwargs):
     """Renders registry template.
     """
-    with open(TEMPLATE_DIR + template_file_name) as f:
+    with open(os.path.join(TEMPLATE_DIR, template_file_name)) as f:
         template = f.read().decode('utf-8')
     # NOTE: if more tricks needed, use jinja2
     return template.format(**kwargs)

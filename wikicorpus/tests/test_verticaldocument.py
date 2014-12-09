@@ -5,10 +5,14 @@
 """
 
 from __future__ import unicode_literals
-from verticaldocument import VerticalDocument
-from registry import get_tagset_by_name
+from wikicorpus.verticaldocument import VerticalDocument
+from registry.tagsets import get_tagset_by_name
+import os
 import unittest
 import yaml
+
+# absolute path to this file
+BASE = os.path.abspath(os.path.dirname(__file__))
 
 
 class TestVerticalDocument(unittest.TestCase):
@@ -16,7 +20,8 @@ class TestVerticalDocument(unittest.TestCase):
     """Class of unit tests for verticaldocument.py module"""
 
     # test samples files
-    INFERENCE_SAMPLES_FILE = './test-samples-terms-inference.yaml'
+    INFERENCE_SAMPLES_FILE = os.path.join(BASE,
+        'test-samples-terms-inference.yaml')
 
     # Override some of the TestCase attributes:
     # show diffs of arbitrary length

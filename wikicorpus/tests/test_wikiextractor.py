@@ -5,16 +5,20 @@
 """
 
 from __future__ import unicode_literals
-from wikiextractor import parse_wikimarkup
+from wikicorpus.wikiextractor import parse_wikimarkup
+import os
 import unittest
 import yaml
+
+# absolute path to this file
+BASE = os.path.abspath(os.path.dirname(__file__))
 
 
 class TestWikiCorpora(unittest.TestCase):
 
     """Class of unit tests for wikiextractor.py module"""
 
-    TEST_SAMPLES_FILE = './test-samples-wikimarkup.yaml'
+    TEST_SAMPLES_FILE = os.path.join(BASE, 'test-samples-wikimarkup.yaml')
 
     def setUp(self):
         pass

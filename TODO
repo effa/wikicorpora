@@ -1,16 +1,10 @@
 Now
 ----
-- cisla a hacky desambu
-- odzkouset a vyladit na Albe
+- odzkouset a vyladit na Albe (vzorky + synchronizovat aktualni vzorky domu)
 
 Must
 ----
 - test: co se stane, kdyz vstupni text obsahuje retezec "</doc>" atp.
-- vyresit tagovani a lemmetizaci cisel
-- pri odhalovani dalsich vyskytu termu je potreba mit / brat v uvahu cisla na
-  #num#, nersp. @card@-x
-- desamb: parametry, co ty hacky?! (pridavani tecek, casto spatne), pri
-  nejmensim je v postprocessingu odstranit...
 - vytvoreni konfiguraku a kompilovani korpusu
 - kontrola vysledneho korpusu aplikaci corpcheck (./wikicorpora ... --check)
 - rozpoznavani datumu (zavest specialni strukturu?), ale vyuzit jiz oznacenych

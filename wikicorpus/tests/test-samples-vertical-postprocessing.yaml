@@ -1,0 +1,80 @@
+# ----------------------------------------------------------------------------
+- label:    removing desamb hacks
+  tagset:   desamb
+  vertical: |
+    <doc>
+    <p>
+    <s>
+    Jedna	xx	xx
+    věta	xx	xx
+    přerušená	xx	xx
+    <g />
+    .	.	kIx.
+    </s>
+    <s hack="1">
+    hackem	xx	xx
+    desambu	xx	xx
+    </g>	xx	xx
+    .	.	kIx.
+    </s>
+    </p>
+    </doc>
+  result: |
+    <doc>
+    <p>
+    <s>
+    Jedna	xx	xx
+    věta	xx	xx
+    přerušená	xx	xx
+    hackem	xx	xx
+    desambu	xx	xx
+    </g>	xx	xx
+    .	.	kIx.
+    </s>
+    </p>
+    </doc>
+# ----------------------------------------------------------------------------
+- label:    "replacing #num# with actual number"
+  tagset:   desamb
+  vertical: |
+    <doc>
+    <p>
+    10	#num#	k4
+    <g/>
+    .	.	kIx.
+    října	říjen	k1gInSc2
+    </p>
+    </doc>
+  result: |
+    <doc>
+    <p>
+    10	10	k4
+    <g/>
+    .	.	kIx.
+    října	říjen	k1gInSc2
+    </p>
+    </doc>
+# ----------------------------------------------------------------------------
+- label:    "replacing @card@ with actual number"
+  tagset:   treetagger
+  vertical: |
+    <doc>
+    <p>
+    Since	IN	since-i
+    the	DT	the-x
+    1890	CD	@card@-x
+    Route	NP	Route-n
+    11	NP	@card@-n
+    </p>
+    </doc>
+  result: |
+    <doc>
+    <p>
+    Since	IN	since-i
+    the	DT	the-x
+    1890	CD	1890-x
+    Route	NP	Route-n
+    11	NP	11-n
+    </p>
+    </doc>
+# ----------------------------------------------------------------------------

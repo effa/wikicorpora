@@ -20,6 +20,8 @@ class TestVerticalDocument(unittest.TestCase):
     """Class of unit tests for verticaldocument.py module"""
 
     # test samples files
+    POSTPROCESSING_SAMPLES_FILE = os.path.join(BASE,
+        'test-samples-vertical-postprocessing.yaml')
     INFERENCE_SAMPLES_FILE = os.path.join(BASE,
         'test-samples-terms-inference.yaml')
 
@@ -35,14 +37,21 @@ class TestVerticalDocument(unittest.TestCase):
     def tearDown(self):
         pass
 
-    # TODO: testovani dalsich casti modulu verticaldocument.py
-    #  napr. vytvoreni vertikalu bez inference pojmu
+    def test_vertical_postprocessing(self):
+        """ Tests for vertical postprocessing when creating VerticalDocument
+        """
+        self._test_samples(TestVerticalDocument.POSTPROCESSING_SAMPLES_FILE)
 
     def test_terms_inference(self):
         """ Tests for creating VerticalDocument object with terms inference
         """
+        self._test_samples(TestVerticalDocument.INFERENCE_SAMPLES_FILE, True)
+
+    def _test_samples(self, samples_file_name, terms_inference=True):
+        """ Helper method for testing VerticalDocument using a file of samples
+        """
         # load test samples
-        with open(TestVerticalDocument.INFERENCE_SAMPLES_FILE) as samples_file:
+        with open(samples_file_name) as samples_file:
             samples = yaml.load(samples_file)
         for sample in samples:
             # read samples from yaml file, decode to unicode
@@ -53,6 +62,6 @@ class TestVerticalDocument(unittest.TestCase):
                 for x in ['label', 'tagset', 'vertical', 'result'])
             tagset = get_tagset_by_name(tagset)
             vertical_document = VerticalDocument(vert_text, tagset,
-                terms_inference=True)
+                terms_inference=terms_inference)
             self.assertEqual(result, unicode(vertical_document),
                 msg='failed test case "{label}"'.format(label=label))

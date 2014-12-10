@@ -347,6 +347,9 @@ class WikiCorpus(object):
 
     def infere_terms_occurences(self):
         """ Labels all occurences of terms in morfolgized vertical
+
+        During terms-inference some postprocessing is done as well
+        (removing desamb hacks, using actual numbers as lemmata).
         """
         vertical_path = self.get_vertical_path()
         try:
@@ -355,7 +358,7 @@ class WikiCorpus(object):
             if self._tagset is None:
                 self._tagset = get_registry_tagset(self.get_registry_path())
             # TODO: jmeno vertikalu bez termu - vzit z konfiguarku
-            original_vertical_path = vertical_path + '.original'
+            original_vertical_path = vertical_path + '.before-inference'
             call(('cp', vertical_path, original_vertical_path))
             with open(original_vertical_path) as input_file:
                 with open(vertical_path, 'w') as output_file:

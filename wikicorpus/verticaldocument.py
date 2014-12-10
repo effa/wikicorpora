@@ -67,19 +67,25 @@ class Token(object):
         :line: [unicode] one line (one token) of vertical file
         :tagset: [registry.Tagset] tagset of the vertical
         """
-        self._line = line
         parts = line.split('\t')
         self._word = parts[0]
         self._lemma = None
         self._tag = None
+        self._tagset = tagset
         if tagset == TAGSETS.DESAMB:
             # desamb: 2nd column is lemma, 3rd is tag
             self._lemma = parts[1]
             self._tag = parts[2]
+            # for numbers, use actual numbers as the lemma
+            if self._lemma.startswith('#num#'):
+                self._lemma = self._word + self._lemma[5:]
         elif tagset == TAGSETS.TREETAGGER:
             # treetagger: 2nd column is tag, 3rd is lemma
             self._tag = parts[1]
             self._lemma = parts[2]
+            # for numbers, use actual numbers as the lemma
+            if self._lemma.startswith('@card@'):
+                self._lemma = self._word + self._lemma[6:]
 
     def get_word(self):
         return self._word
@@ -97,8 +103,20 @@ class Token(object):
         return self._lemma
 
     def __unicode__(self):
-        # we will simpy return an original line, assumes immutability
-        return self._line
+        """Returns unicode representation of the token (as one line)
+        """
+        if self._tagset == TAGSETS.DESAMB:
+            return '{word}\t{lemma}\t{tag}'.format(
+                word=self.get_word(),
+                lemma=self.get_lemma(),
+                tag=self.get_tag())
+        elif self._tagset == TAGSETS.TREETAGGER:
+            return '{word}\t{tag}\t{lemma}'.format(
+                word=self.get_word(),
+                tag=self.get_tag(),
+                lemma=self.get_lemma())
+        else:
+            return self.get_word()
 
 
 # -----------------------------------------------------------------------------
@@ -153,12 +171,23 @@ class VerticalDocument(object):
             # skip empty lines
             if not line:
                 continue
+
             # if it's sgml tag, leave it as a string,
             # but if it's a token, use Token class to represent it
             if is_sgml_tag(line):
+
+                # remove desamb hacks
+                if line.startswith('<s hack'):
+                    # remove last 3 lines: <g/>, ., </s>
+                    del self._lines[-3:]
+                    continue
+
                 # ignore sentence tags, if inside <term> (they are incorrect)
-                if not reading_term or not re.search(r'^</?s', line):
-                    self._lines.append(line)
+                if reading_term and re.search(r'^</?s', line):
+                    continue
+
+                self._lines.append(line)
+
                 # try to match a term sgml tag
                 match = TERM_TAG.match(line)
                 if match:
@@ -166,6 +195,7 @@ class VerticalDocument(object):
                     term_wuri = match.group('wuri')
                     term_canonical_form = []
                     reading_term = True
+
                 if line == '</term>':
                     # term reading finished
                     self._termstrie.add(term_wuri, term_canonical_form)

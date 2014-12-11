@@ -1,7 +1,7 @@
 Must
 ----
-- vytvoreni konfiguraku a kompilovani korpusu
-- kontrola vysledneho korpusu aplikaci corpcheck (./wikicorpora ... --check)
+- vytvoreni konfiguraku
+- dotazovani (parametry pro corpquery,  zapsat par prikladu, napr. do README)
 - sestaveni korpusu pro aj a cj a rozjeti na Sketch Engine
 - dokumentace (jednotne), vcetne vygenerovani
 - vyresit problem treetaggeru: "... konec vety. <term>Pojem</term> dalsi veta"
@@ -15,6 +15,7 @@ Should
 - unit testy
 - prehlednou strukturu projektu
 - dalsi testy pro inferenci pojmu
+- vypis informaci o korpusu (--info)
 
 
 Could

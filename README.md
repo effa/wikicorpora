@@ -3,6 +3,11 @@ WikiCorpora
 
 WikiCorpora is a tool for building corpora from Wikipedia.
 
+It's supposed to be run on Alba server in Natural Language Processing Centre
+at the Faculty of Informatics, Masaryk University, Brno. Some portions of
+the code can be run anywhere, but for full functionality WikiCorpora depends
+on several NLP tools, such as unitok, desamb, treetagger and compilecorp.
+
 Usage
 -----
 

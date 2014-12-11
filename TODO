@@ -1,19 +1,10 @@
-Now
-----
-- odzkouset a vyladit na Albe (vzorky + synchronizovat aktualni vzorky domu)
-
 Must
 ----
-- test: co se stane, kdyz vstupni text obsahuje retezec "</doc>" atp.
 - vytvoreni konfiguraku a kompilovani korpusu
 - kontrola vysledneho korpusu aplikaci corpcheck (./wikicorpora ... --check)
-- rozpoznavani datumu (zavest specialni strukturu?), ale vyuzit jiz oznacenych
-  dat (i datumy muzou mit na wiki svoje WURI)
 - sestaveni korpusu pro aj a cj a rozjeti na Sketch Engine
 - dokumentace (jednotne), vcetne vygenerovani
-- vylepseni parsovani, napr. odstraneni prazdnych sekci,
-  odstraneni prazdnych pojmu
-- update requirements.txt
+- vyresit problem treetaggeru: "... konec vety. <term>Pojem</term> dalsi veta"
 
 Should
 ------
@@ -28,14 +19,16 @@ Should
 
 Could
 -----
+- rozpoznavani datumu (zavest specialni strukturu?), ale vyuzit jiz oznacenych
+  dat (i datumy muzou mit na wiki svoje WURI), pripadne i rozpoznavani dalsich
+  pojmenovanych entit (rozsireni soucasne inference)
 - vylepseni parsovani wikimarkupu, napr. seznamy
 - dalsi testy pro wikimarkup parsing
-- volitelna jmena vstupu/vystupu pro skript wikicorpora.py, pripadne umozneni
-  nastaveni vychoziho adresare pro wiki korpusy (pres konfigurak)
 - existujici korpusy z Wikipedia, podobne projekty
 - projit svoje zalozky k projektu wikicorpora
 - rozpoznavani dalsich pojmenovanych entit (zrovna na wiki neni zasadni)
-- zvazit pouziti bezpecnejsich defused packages pro parsovani XML
+- zvazit pouziti bezpecnejsich defused packages pro parsovani XML + bezpecnost
+  obecne (je to Wikipedie, takze tam muze byt uplne cokoliv, treba "</doc>")
 - vyzkouset jine pristupy parsovani xml
 - pohlidat, aby skript koncil slusne (napr. pokud neexistuje konfigurak, tak to
   jasne prohlasit, misto vyhozeni top level vyjimky)

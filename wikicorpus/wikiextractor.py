@@ -491,7 +491,7 @@ def compact(text):
         elif not emptySection:
             page.append("<p>\n%s\n</p>" % (line))
 
-    # close all sections and the document
+    # close all sections
     for i in range(len(openSections)):
         page.append('</section>')
 

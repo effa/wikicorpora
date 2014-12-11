@@ -11,8 +11,8 @@ Must
   dat (i datumy muzou mit na wiki svoje WURI)
 - sestaveni korpusu pro aj a cj a rozjeti na Sketch Engine
 - dokumentace (jednotne), vcetne vygenerovani
-- vylepseni parsovani, napr. odstraneni prazdnych sekci
-- odstraneni prazdnych pojmu (muze souviset s pouzitym parserem)
+- vylepseni parsovani, napr. odstraneni prazdnych sekci,
+  odstraneni prazdnych pojmu
 - update requirements.txt
 
 Should

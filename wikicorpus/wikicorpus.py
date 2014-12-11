@@ -62,7 +62,7 @@ class WikiCorpus(object):
 
         # vertical info
         self._tagset = None
-        self._structures = None
+        #self._structures = None  # always _BASIC_STRUCTURES
 
     # ------------------------------------------------------------------------
     # getters and setters
@@ -146,6 +146,20 @@ class WikiCorpus(object):
             registry_dir,
             self.get_corpus_name())
         return path
+
+    def get_tagset(self):
+        """Returns tagset of the corpus.
+
+        @return: [registry.tagsets.tagset] || None
+        @throws: CorpusException
+        """
+        # first, if _tagset is None, update the tagset ifnormation
+        if self._tagset is None:
+            try:
+                self._tagset = get_registry_tagset(self.get_registry_path())
+            except IOError as exc:
+                raise CorpusException("Couldn't find tagset.\n" + repr(exc))
+        return self._tagset
 
     def get_url_prefix(self):
         """Returns url prefix for all articles in the corpus.
@@ -333,8 +347,8 @@ class WikiCorpus(object):
             # create vertical file
             with NaturalLanguageProcessor(self.language()) as lp:
                 tags = lp.create_vertical_file(prevertical_path, vertical_path)
-                self.tagset = tags
-                self.structures = WikiCorpus._BASIC_STRUCTURES
+                self._tagset = tags
+                #self._structures = WikiCorpus._BASIC_STRUCTURES
             # create registry file
             self.create_registry()
             print 'Vertical of {name} created\n at: {path}'.format(
@@ -355,14 +369,13 @@ class WikiCorpus(object):
         try:
             print 'Terms occurences inference in {name} started ...'.format(
                 name=self.get_corpus_name())
-            if self._tagset is None:
-                self._tagset = get_registry_tagset(self.get_registry_path())
             # TODO: jmeno vertikalu bez termu - vzit z konfiguarku
             original_vertical_path = vertical_path + '.before-inference'
             call(('cp', vertical_path, original_vertical_path))
             with open(original_vertical_path) as input_file:
                 with open(vertical_path, 'w') as output_file:
                     for line in input_file:
+                        line = line.decode('utf-8').strip()
                         # TODO: ?osetrit prazdne radky a podobne veci??
                         if line.startswith('<doc'):
                             document = [line]
@@ -371,15 +384,13 @@ class WikiCorpus(object):
                         # check if the end of document is reached
                         if line == '</doc>':
                             vertical = VerticalDocument(document,
-                                tagset=self._tagset,
+                                tagset=self.get_tagset(),
                                 terms_inference=True)
                             output_file.write(str(vertical))
-            # NOTE: neni potreba upravovat registry...
-            #  (aspon v soucasnem stavu... termy jsou uz v puvodnim vertikalu)
             print 'Terms occurences inference in {name} finished.'.format(
                 name=self.get_corpus_name())
-        #except ConfigurationException as exc:
-        #    raise CorpusException('Verticalization failed: ' + exc.message)
+        except CorpusException as exc:
+            raise CorpusException('Terms inference failed: ' + exc.message)
         except RegistryException as exc:
             raise CorpusException('Terms inference failed: ' + exc.message)
         except LanguageProcessorException as exc:
@@ -393,8 +404,8 @@ class WikiCorpus(object):
             lang=self.language(),
             vertical_path=self.get_vertical_path(),
             compiled_path=self.get_compiled_corpus_path(),
-            tagset=self._tagset,
-            structures=self._structures)
+            tagset=self.get_tagset(),
+            structures=WikiCorpus._BASIC_STRUCTURES)
 
     def compile_corpus(self):
         """ Compiles given corpora

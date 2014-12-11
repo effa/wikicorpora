@@ -18,8 +18,11 @@ configuration files is following:
 ```
 paths:
     verticals:          '<path to directory for all verticals>'
-    compiled-corpora:   '<path to directory with compiled corpora>'
+    registry:           '<path to directory for registry files'
+    compiled-corpora:   '<path to directory for compiled corpora>'
 tools:
     unitok:             '<path to unitok>'
     desamb:             '<path to desamb>'
+    treetagger:         '<path to treetagger scripts (using substituable {lang})>'
+    treetagger-en:      '<path to special treetagger script for english>'
 ```

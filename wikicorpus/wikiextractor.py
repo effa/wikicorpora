@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # =============================================================================
-#  Modified by Tomas Effenberger (November 2014)
+#  Modified by Tomas Effenberger (2014)
 #
 # =============================================================================
 #  Version: 2.6 (Oct 14, 2013)
@@ -87,7 +87,7 @@ def parse_wikimarkup(id_number, title, url_prefix, text):
     url = create_article_url(url_prefix, title)
     header = '<doc id="%s" url="%s" title="%s">' % (id_number, url, title)
     # append a paragraph with title (-> to get title morfologized as well)
-    header += '\n<p heading="1">\n%s</p>'\
+    header += '\n<p heading="1">\n%s\n</p>'\
         % get_term_element(title, title)
     parsed_doc = u'{header}\n{text}\n</doc>'.format(header=header, text=text)
     return parsed_doc
@@ -95,7 +95,7 @@ def parse_wikimarkup(id_number, title, url_prefix, text):
 
 def get_term_element(title, name):
     wuri = term2wuri(title)
-    term_element = '<term wuri="%s">%s</term>\n' % (wuri, name)
+    term_element = '<term wuri="%s">%s</term>' % (wuri, name)
     return term_element
 
 
@@ -217,8 +217,8 @@ for tag, repl in placeholder_tags.items():
 preformatted = re.compile(r'^ .*?$', re.MULTILINE)
 
 # Match external links (space separates second optional parameter)
-externalLink = re.compile(r'\[\w+.*? (.*?)\]')
-externalLinkNoAnchor = re.compile(r'\[\w+[&\]]*\]')
+externalLink = re.compile(r'\[\w+.*? (.*?)\]', flags=re.UNICODE)
+externalLinkNoAnchor = re.compile(r'\[\w+[&\]]*\]', flags=re.UNICODE)
 
 # Matches bold/italic
 bold_italic = re.compile(r"'''''([^']*?)'''''")
@@ -309,7 +309,10 @@ def dropSpans(matches, text):
 # Can be nested [[File:..|..[[..]]..|..]], [[Category:...]], etc.
 # We first expand inner ones, than remove enclosing ones.
 #
-wikiLink = re.compile(r'\[\[([^[]*?)(?:\|([^[]*?))?\]\](\w*)')
+
+# \w needs to be interpreted as a unicode for most languages to work properly
+wikiLink = re.compile(r'\[\[([^[]*?)(?:\|([^[]*?))?\]\](\w*)',
+    flags=re.UNICODE)
 
 parametrizedLink = re.compile(r'\[\[.*?\]\]')
 
@@ -417,7 +420,8 @@ def clean(text):
     text = dots.sub('...', text)
     text = re.sub(u' (,:\.\)\]»)', r'\1', text)
     text = re.sub(u'(\[\(«) ', r'\1', text)
-    text = re.sub(r'\n\W+?\n', '\n', text)  # lines with only punctuations
+    # lines with only punctuations
+    text = re.sub(r'\n\W+?\n', '\n', text, flags=re.UNICODE)
     text = text.replace(',,', ',').replace(',.', '.')
     return text
 

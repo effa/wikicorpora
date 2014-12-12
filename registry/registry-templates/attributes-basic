@@ -1,13 +1,10 @@
 #tagset=basic
-# attirubtes for languages without morfologic tool (i.e. tokenized only)
+#(attirubtes for languages without morfologic tool (i.e. tokenized only))
 
 ATTRIBUTE word {{
     TYPE "FD_FGD"
 }}
-# ????
-#ATTRIBUTE gdex {{
-#    TYPE "FD_FGD"
-#}}
+
 ATTRIBUTE   lc {{
         LABEL   "word (lowercase)"
         DYNAMIC  utf8lowercase

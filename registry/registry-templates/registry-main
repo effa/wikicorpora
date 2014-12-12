@@ -7,8 +7,6 @@ LANGUAGE "{language}"
 INFOHREF "http://www.sketchengine.co.uk/documentation/wiki/Corpora/wiki-{iso}"
 VERTICAL "{vertical_path}"
 
-# TODO: WSDEF WSATTR WSSTRIP TERMBASE TERMDEF DEFFILTERLINK LPOSLIST WPOSLIST
-
 TAGSETDOC "{tagsetdoc}"
 
 #=== Attributes ===
@@ -17,11 +15,84 @@ TAGSETDOC "{tagsetdoc}"
 
 #=== Structures ===
 
-{structures}
+# document
+STRUCTURE doc {{
+    ATTRIBUTE id {{
+        LABEL "Wiki page ID"
+        TYPE "UNIQUE"
+    }}
+    ATTRIBUTE url {{
+        LABEL "Wiki page URL"
+        TYPE "UNIQUE"
+    }}
+    ATTRIBUTE title {{
+        LABEL "Wiki page title"
+    }}
+    # dynamic attributes
+    ATTRIBUTE wordcount
+    ATTRIBUTE tld {{
+        LABEL "Top level domain"
+        DYNAMIC url2domain
+        DYNLIB   internal
+        ARG1     "1"
+        FUNTYPE  i
+        FROMATTR url
+        TYPE     index
+    }}
+}}
+
+# section
+STRUCTURE section {{
+    TYPE "file64"
+    ATTRIBUTE level
+    ATTRIBUTE title
+}}
+
+# paragraph
+STRUCTURE p {{
+    TYPE "file64"
+    ATTRIBUTE heading
+}}
+
+# sentence
+STRUCTURE s {{
+    TYPE "file64"
+    #ATTRIBUTE id???
+}}
+
+# glue
+STRUCTURE g {{
+    TYPE "file64"
+    DISPLAYTAG 0
+    DISPLAYBEGIN "_EMPTY_"
+}}
+
+# term
+STRUCTURE term {{
+    ATTRIBUTE name {{
+        LABEL "term name"
+    }}
+    ATTRIBUTE uncertainty {{
+        LABEL "uncertainty level (0 = humnan annotated, 1 = derived from article, 2 = derived globally)"
+        DEFAULTVALUE 0
+    }}
+}}
+
+DOCSTRUCTURE "doc"
+DEFAULTATTR "lc"
+
+# TODO: WordSketches: WSDEF WSATTR WSSTRIP TERMBASE TERMDEF
+# TODO: DEFFILTERLINK
 
 #=== Controlling display in concordances ===
 
-#HARDCUT 0
-#MAXCONTEXT 100
-#MAXDETAIL 100
-#WRAPDETAIL p
+SHORTREF "=doc.title,#"
+HARDCUT 0
+MAXCONTEXT 100
+MAXDETAIL 0
+STRUCTCTX p
+#WRAPDETAIL "p,section"?
+
+#=== Controlling the subcorpus creation interface ===
+
+SUBCORPATTRS "doc.url|doc.title"

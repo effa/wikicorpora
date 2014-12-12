@@ -44,7 +44,7 @@ class WikiCorpus(object):
     ARTICLE_NS = '0'
 
     # basic set of structures in a vertical file
-    _BASIC_STRUCTURES = {'doc', 'p', 's', 'g', 'term'}
+    #_BASIC_STRUCTURES = {'doc', 'p', 's', 'g', 'term'}
 
     def __init__(self, language):
         """Initalization of WikiCorpus instance
@@ -151,14 +151,11 @@ class WikiCorpus(object):
         """Returns tagset of the corpus.
 
         @return: [registry.tagsets.tagset] || None
-        @throws: CorpusException
+        @throws: RegistryException
         """
         # first, if _tagset is None, update the tagset ifnormation
         if self._tagset is None:
-            try:
-                self._tagset = get_registry_tagset(self.get_registry_path())
-            except IOError as exc:
-                raise CorpusException("Couldn't find tagset.\n" + repr(exc))
+            self._tagset = get_registry_tagset(self.get_registry_path())
         return self._tagset
 
     def get_url_prefix(self):
@@ -369,9 +366,14 @@ class WikiCorpus(object):
         try:
             print 'Terms occurences inference in {name} started ...'.format(
                 name=self.get_corpus_name())
+
             # TODO: jmeno vertikalu bez termu - vzit z konfiguarku
             original_vertical_path = vertical_path + '.before-inference'
             call(('cp', vertical_path, original_vertical_path))
+
+            # find tagset (throws exception if registry file not found)
+            tagset = self.get_tagset()
+
             with open(original_vertical_path) as input_file:
                 with open(vertical_path, 'w') as output_file:
                     for line in input_file:
@@ -384,15 +386,19 @@ class WikiCorpus(object):
                         # check if the end of document is reached
                         if line == '</doc>':
                             vertical = VerticalDocument(document,
-                                tagset=self.get_tagset(),
+                                tagset=tagset,
                                 terms_inference=True)
                             output_file.write(str(vertical))
+
             print 'Terms occurences inference in {name} finished.'.format(
                 name=self.get_corpus_name())
+
         except CorpusException as exc:
             raise CorpusException('Terms inference failed: ' + exc.message)
+
         except RegistryException as exc:
             raise CorpusException('Terms inference failed: ' + exc.message)
+
         except LanguageProcessorException as exc:
             raise CorpusException('Terms inference failed: ' + exc.message)
 
@@ -404,8 +410,8 @@ class WikiCorpus(object):
             lang=self.language(),
             vertical_path=self.get_vertical_path(),
             compiled_path=self.get_compiled_corpus_path(),
-            tagset=self.get_tagset(),
-            structures=WikiCorpus._BASIC_STRUCTURES)
+            tagset=self.get_tagset())
+            #structures=WikiCorpus._BASIC_STRUCTURES)
 
     def compile_corpus(self):
         """ Compiles given corpora

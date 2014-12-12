@@ -4,6 +4,7 @@
 from __future__ import unicode_literals
 from utils.language_utils import get_language_name
 from tagsets import get_tagset_by_name
+import errno
 import os
 import re
 
@@ -17,8 +18,7 @@ TEMPLATE_DIR = os.path.join(BASE, 'registry-templates')
 TAGSET_RE = re.compile(r'^#tagset=(\w*)')
 
 
-def store_registry(path, lang, vertical_path, compiled_path,
-        tagset, structures):
+def store_registry(path, lang, vertical_path, compiled_path, tagset):
     """Stores registry to file.
 
     :path: [unicode] path to registry file
@@ -26,18 +26,20 @@ def store_registry(path, lang, vertical_path, compiled_path,
     :vertical_path: [unicode] path to vertical file
     :compiled_path: [unicode] path to directory with compiled corpus
     :tagset: [Tagset] which tagset is used in corpus
-    :structures: [set of unicodes] which structures are used in corpus
     """
-    # structures
-    structures_configuration = []
-    for structure_name in structures:
-        template_file = 'structure-{name}'.format(name=structure_name)
-        config_str = render_registry_template(template_file)
-        structures_configuration.append(config_str)
-    structures_configuration = '\n'.join(structures_configuration)
+
+    ## structures - commented out, structures were moved to registry-main
+    #structures_configuration = []
+    #for structure_name in structures:
+    #    template_file = 'structure-{name}'.format(name=structure_name)
+    #    config_str = render_registry_template(template_file)
+    #    structures_configuration.append(config_str)
+    #structures_configuration = '\n'.join(structures_configuration)
+
     # attributes
     template_file = 'attributes-{name}'.format(name=tagset.name)
     attributes_configuration = render_registry_template(template_file)
+
     # complete registry file
     registry_string = render_registry_template('registry-main',
         language=get_language_name(lang),
@@ -45,8 +47,8 @@ def store_registry(path, lang, vertical_path, compiled_path,
         compiled_corpus_path=compiled_path,
         vertical_path=vertical_path,
         tagsetdoc=tagset.doc,  # TODO: co kdyz prazdny
-        attributes=attributes_configuration,
-        structures=structures_configuration)
+        attributes=attributes_configuration)
+
     # store registry string
     with open(path, 'w') as registry_file:
         registry_file.write(registry_string)
@@ -57,8 +59,15 @@ def get_registry_tagset(path):
 
     :throws: RegistryException if registry not found
     """
-    with open(path) as registry_file:
-        registry_lines = registry_file.readlines()
+    try:
+        with open(path) as registry_file:
+            registry_lines = registry_file.readlines()
+    except IOError as exc:
+        if exc.errno == errno.ENOENT:
+            raise RegistryException('Registry file not found.')
+        else:
+            raise RegistryException('IOError on attempt to read registry.')
+
     for line in registry_lines:
         match = TAGSET_RE.search(line)
         if match:

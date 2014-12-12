@@ -15,11 +15,10 @@ class TAGSETS:
     """
     BASIC = Tagset(
         name='basic',
-        doc='TODO....')
-    # TODO: zkontrolovat:
+        doc='')
     DESAMB = Tagset(
         name='desamb',
-        doc='http://nlp.fi.muni.cz/projekty/ajka/tags.pdf')
+        doc='https://www.sketchengine.co.uk/documentation/wiki/tagsets/czech')
     TREETAGGER = Tagset(
         name='treetagger',
         doc='https://www.sketchengine.co.uk/documentation/wiki/tagsets/penn')

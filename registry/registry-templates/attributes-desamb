@@ -1,22 +1,44 @@
 #tagset=desamb
-# attributes for czech corpus (unitok + desamb combination)
+#(attributes for czech corpus (unitok + desamb combination))
 
-# TODO: dodelat (lemma, lempos, lemma_lc, gdex)
-#GDEXDEFAULTCONF "/corpora/gdex/configurations/English_lemmatized"
+# TODO:  LPOSLIST WPOSLIST
 
 ATTRIBUTE word {{
     TYPE "FD_FGD"
+    LOCALE "cs_CZ.UTF-8"
 }}
+
+ATTRIBUTE lemma {{
+    TYPE "FD_FGD"
+    LOCALE "cs_CZ.UTF-8"
+}}
+
 ATTRIBUTE tag {{
     TYPE "FD_FGD"
 }}
+
 ATTRIBUTE   lc {{
-        LABEL   "word (lowercase)"
+        LABEL   "word in lowercase"
         DYNAMIC  utf8lowercase
         DYNLIB   internal
-        ARG1     "C"
+        ARG1     "cs_CZ.UTF-8"
         FUNTYPE  s
         FROMATTR word
         TYPE     index
         TRANSQUERY      yes
 }}
+
+ATTRIBUTE   lemma_lc {{
+    LABEL   "lemma in lowercase"
+    DYNAMIC  utf8lowercase
+    DYNLIB   internal
+    ARG1     "cs_CZ.UTF-8"
+    FUNTYPE  s
+    FROMATTR lemma
+    TYPE     index
+    TRANSQUERY      yes
+}}
+
+
+GDEXDEFAULTCONF "/corpora/gdex/configurations/Slavic_non_lemmatized"
+WSDEF "/corpora/wsdef/czech-ajka-6.1.wsdef.txt"

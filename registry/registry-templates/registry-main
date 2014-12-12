@@ -39,11 +39,30 @@ STRUCTURE doc {{
         FROMATTR url
         TYPE     index
     }}
+    ATTRIBUTE t2ld {{
+    LABEL "Second level domain"
+    DYNAMIC url2domain
+    DYNLIB   internal
+    ARG1     "2"
+    FUNTYPE  i
+    FROMATTR url
+    TYPE     index
+    }}
+    ATTRIBUTE urldomain {{
+        LABEL "Web domain"
+        DYNAMIC url2domain
+        DYNLIB   internal
+        ARG1     "0"
+        FUNTYPE  i
+        FROMATTR url
+        TYPE     index
+    }}
 }}
 
 # section
 STRUCTURE section {{
     TYPE "file64"
+    #HIERARCHICAL = ""
     ATTRIBUTE level
     ATTRIBUTE title
 }}
@@ -51,13 +70,14 @@ STRUCTURE section {{
 # paragraph
 STRUCTURE p {{
     TYPE "file64"
-    ATTRIBUTE heading
+    ATTRIBUTE heading {{
+        DEFAULT 0
+    }}
 }}
 
 # sentence
 STRUCTURE s {{
     TYPE "file64"
-    #ATTRIBUTE id???
 }}
 
 # glue
@@ -69,11 +89,11 @@ STRUCTURE g {{
 
 # term
 STRUCTURE term {{
-    ATTRIBUTE name {{
-        LABEL "term name"
+    ATTRIBUTE wuri {{
+        LABEL "term wuri (last part of Wikipedia URI)"
     }}
     ATTRIBUTE uncertainty {{
-        LABEL "uncertainty level (0 = humnan annotated, 1 = derived from article, 2 = derived globally)"
+        LABEL "uncertainty level"
         DEFAULTVALUE 0
     }}
 }}
@@ -95,4 +115,4 @@ STRUCTCTX p
 
 #=== Controlling the subcorpus creation interface ===
 
-SUBCORPATTRS "doc.url|doc.title"
+#SUBCORPATTRS "doc.url|doc.title"?

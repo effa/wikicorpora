@@ -1,5 +1,5 @@
-corpus-name:                'wiki-{lang}'
-sample-corpus-name:         'wiki-{lang}-sample-{size}'
+corpus-name:                'wiki_{lang}'
+sample-corpus-name:         'wiki_{lang}{size}'
 extensions:
     compressed-dump:        'dump.xml.bz2'
     uncompressed-dump:      'dump.xml'

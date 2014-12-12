@@ -217,7 +217,7 @@ class VerticalDocument(object):
 
     def __unicode__(self):
         # NOTE: some lines are Tokens and some are strings
-        return '\n'.join(map(unicode, self._lines))
+        return '\n'.join(map(unicode, self._lines)) + '\n'
 
     def get(self, index):
         """Returns line (Token or sgml tag in unicode) on given index

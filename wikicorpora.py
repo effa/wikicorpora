@@ -19,17 +19,22 @@ TOOL_DESCRIPTION = 'WikiCorpora is a tool for building corpora from Wikipedia.'
 def main():
     """ Main function handling calling this script with arguments
     """
-    parser = argparse.ArgumentParser(description=(TOOL_DESCRIPTION))
+    parser = argparse.ArgumentParser()  # description=(TOOL_DESCRIPTION))
 
-    # language arguments
-    language_group = parser.add_argument_group('corpus language')
-    language_group.add_argument('-l', '--language', metavar='L',
+    # corpus specification arguments
+    #language_group = parser.add_argument_group('corpus language')
+    #language_group.add_argument('-l', '--language', metavar='L',
+    #    help='2-letter code of language (ISO-639-1)')
+    specification_group = parser.add_argument_group('corpus specification')
+    specification_group.add_argument('language', nargs='?',
         help='2-letter code of language (ISO-639-1)')
+    specification_group.add_argument('size', nargs='?',
+        help='sample size specification')
 
     # sample options
-    sample_group = parser.add_argument_group('sample options')
-    sample_group.add_argument('-s', '--size', type=int,
-        help='sample size specification', metavar='N')
+    sample_group = parser.add_argument_group('sampling tasks')
+    #sample_group.add_argument('-s', '--size', type=int,
+    #    help='sample size specification', metavar='N')
     specific_or_not_group = sample_group.add_mutually_exclusive_group()
     specific_or_not_group.add_argument('--create-sample',
         action='store_true',
@@ -39,7 +44,7 @@ def main():
         help='create sample from selected articles')
 
     # download options
-    download_group = parser.add_argument_group('download options')
+    download_group = parser.add_argument_group('downloading tasks')
     soft_or_force_group = download_group.add_mutually_exclusive_group()
     soft_or_force_group.add_argument('--soft-download', action='store_true',
         help='download dump if not already downloaded')
@@ -47,18 +52,19 @@ def main():
         help='download dump (even if a dump already exists)')
 
     # options concerning phases
-    phases_group = parser.add_argument_group('corpus processing phases')
+    phases_group = parser.add_argument_group('corpus processing tasks')
     phases_group.add_argument('--prevertical', '-p', action='store_true',
         help='process dump to prevertical')
     phases_group.add_argument('--vertical', '-v', action='store_true',
         help='process prevertical to vertical')
     phases_group.add_argument('--terms-inference', '-t', action='store_true',
         help='infere all terms occurences')
-    phases_group.add_argument('--all-phases', '-a', action='store_true',
+    phases_group.add_argument('--all-processing-tasks', '-a',
+        action='store_true',
         help='execute all corpus processing steps')
 
     # compilaton options
-    compilation_group = parser.add_argument_group('compilation options')
+    compilation_group = parser.add_argument_group('compilation tasks')
     compilation_group.add_argument('--compile', '-c', action='store_true',
         help='create configuration file and compile corpus')
     compilation_group.add_argument('--check', action='store_true',
@@ -74,13 +80,16 @@ def main():
     parser.add_argument('--info', action='store_true',
         help='print corpus summary')
 
+    # set own usage descriptin
+    parser.usage = 'wikicorpora.py [language] [size] [TASKS]'
+
     args = parser.parse_args()
 
     # if no action is specified, we will print corpus info
     no_action = not any([args.force_download, args.soft_download,
         args.create_sample, args.create_own_sample,
         args.prevertical, args.vertical,
-        args.terms_inference, args.all_phases,
+        args.terms_inference, args.all_processing_tasks,
         args.compile, args.check, args.query])
 
     # sample_size has to be either int or None
@@ -156,15 +165,15 @@ def main():
             corpus.create_sample_dump()
 
         # parsing dump (preverticalization)
-        if args.prevertical or args.all_phases:
+        if args.prevertical or args.all_processing_tasks:
             corpus.create_prevertical()
 
         # tokonenization and tagging (verticalization)
-        if args.vertical or args.all_phases:
+        if args.vertical or args.all_processing_tasks:
             corpus.create_vertical()
 
         # terms occurences inference
-        if args.terms_inference or args.all_phases:
+        if args.terms_inference or args.all_processing_tasks:
             corpus.infere_terms_occurences()
 
         # corpus compilation
@@ -203,13 +212,17 @@ def list_all_corpora():
               #'--du',         # for directories display content size
               '--noreport'])  # without summary about number of files/dirs
 
-        # compile corpora
+        # registry files
+        print '\nAll registry files:'
+        call(['tree', environment.registry_path(),
+              '--noreport'])  # without summary about number of files/dirs
+
+        # compiled corpora
         print '\nAll compiled corpora:'
         call(['tree', environment.compiled_corpora_path(),
-              #'-h',           # human readable sizes
-              '-d',           # directories only
-              #'--du',         # for directories display content size
-              '--noreport'])  # without summary about number of files/dirs
+              '-L', '1',        # one level only (do not descend)
+              '-d',             # directories only
+              '--noreport'])    # without summary about number of files/dirs
     except OSError:
         print "You need to have 'tree' installed"\
             + " for listing corpora."

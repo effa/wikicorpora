@@ -1,7 +1,7 @@
 #tagset=desamb
-#(attributes for czech corpus (unitok + desamb combination))
+#(attributes for czech corpus (unitok and desamb combination))
 
-# TODO:  LPOSLIST WPOSLIST
+# TODO: WPOSLIST
 
 ATTRIBUTE word {{
     TYPE "FD_FGD"

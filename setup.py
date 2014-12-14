@@ -20,7 +20,7 @@ def load_project_root():
 
 
 def project_path(path):
-    """Returns absolute path of :path: relative to project root
+    """Returns absolute path of :path: which is relative to project root
 
     @param path: relative path to a file (relative from project root)
     @return: absolute path of the file

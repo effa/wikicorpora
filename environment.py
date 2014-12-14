@@ -62,6 +62,14 @@ class EnvironmentConfiguration(DoubleConfiguration):
             tt_script = tt_template.format(lang=language)
         return tt_script
 
+    def get_sentencetagger_path(self):
+        """Returns path to sentence-tagger script
+
+        Raises:
+            ConfigurationException if there si no path for sentence-tagger
+        """
+        return self.get_nonempty('tools', 'sentence-tagger')
+
     def get_unitok_path(self):
         """Returns path to unitok
 

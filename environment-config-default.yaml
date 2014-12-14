@@ -4,6 +4,7 @@ paths:
     compiled-corpora:   './manatee'
 tools:
     unitok:             ''
+    sentence-tagger:    ''
     desamb:             ''
     treetagger:         ''
     treetagger-en:      ''

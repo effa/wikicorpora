@@ -27,6 +27,7 @@ paths:
     compiled-corpora:   '<path to directory for compiled corpora>'
 tools:
     unitok:             '<path to unitok>'
+    sentence-tagger:    '<path to sentence-tagger script>'
     desamb:             '<path to desamb>'
     treetagger:         '<path to treetagger scripts (using substituable {lang})>'
     treetagger-en:      '<path to special treetagger script for english>'

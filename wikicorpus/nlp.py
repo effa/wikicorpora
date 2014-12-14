@@ -136,8 +136,9 @@ class NaturalLanguageProcessor(object):
             self.treetagger_morfologization(prevertical_path, vertical_path)
             return TAGSETS.TREETAGGER
         else:
-            # for other languages, at least tokenize them
+            # for other languages, at least tokenize them and tag sentences
             self.tokenize(prevertical_path, vertical_path)
+            self.tag_sentences(vertical_path)
             return TAGSETS.BASIC
 
     def desamb_morfologization(self, input_path, output_path):
@@ -162,6 +163,27 @@ class NaturalLanguageProcessor(object):
             call(('mv', tmp_output_path, output_path))
         except OSError:
             raise LanguageProcessorException('OSError when calling desamb')
+
+    def tag_sentences(self, vertical_path):
+        """Tag sentences in tokenized vertical file.
+
+        :vertical_path: unicode
+            path to vertical file
+        """
+        try:
+            tmp_output_path = vertical_path + '.tmp'
+            sentence_tagger_cmd = '{tagger} <{inp} >{outp}'\
+                .format(tagger=environment.get_sentencetagger_path(),
+                        inp=vertical_path,
+                        outp=tmp_output_path)
+            task = Popen(sentence_tagger_cmd, shell=True)
+            task.wait()
+            if task.returncode != 0:
+                raise LanguageProcessorException('sentence-tagger failed')
+            call(('mv', tmp_output_path, vertical_path))
+        except OSError:
+            raise LanguageProcessorException(
+                'OSError when calling sentence tagger')
 
     def tokenize(self, prevertical_path, vertical_path):
         """Tokenizes prevertical.

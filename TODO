@@ -1,13 +1,15 @@
 Must
 ----
-- vytvoreni konfiguraku
 - dotazovani (parametry pro corpquery,  zapsat par prikladu, napr. do README)
 - sestaveni korpusu pro aj a cj a rozjeti na Sketch Engine
-- dokumentace (jednotne), vcetne vygenerovani
-- vyresit problem treetaggeru: "... konec vety. <term>Pojem</term> dalsi veta"
+- vyresit problem treetaggeru: "... konec vety. <term>Pojem</term> dalsi veta",
+  podoby problem nastava nekdy i u tag_sentences.py
+- vyresit zanorujici se <section> tagy
+- registry - desamb: doplnit WPOSLIST, (+ gdex??)
 
 Should
 ------
+- dokumentace (jednotne), vcetne vygenerovani
 - volitelne logovani na standardni vystup / do souboru (daneho nejlepe
   konfiguracnim souborem, spise nez argumentem)
 - stranky projektu (staci na GH) s odkazem na demo na Sketch Engine

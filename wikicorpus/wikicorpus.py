@@ -439,8 +439,11 @@ class WikiCorpus(object):
 
         @param query: query string in CQL
         """
-        # TODO: vhodne parametry pri volani corpquery
-        call(('corpquery', self.get_registry_path(), query))
+        call(('corpquery', self.get_registry_path(), query,
+            '-h', '10',     # limit of 10 results,
+            '-c', '10',     # left and right context of 10 words
+            '-a', 'word',   # only show words in the result
+            '-s', 'p,doc'))  # only show p and doc structures
 
     # ------------------------------------------------------------------------
     #

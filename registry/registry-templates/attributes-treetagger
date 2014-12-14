@@ -50,3 +50,5 @@ ATTRIBUTE gdex {{
 
 WPOSLIST ",adjective,JJ.?,adverb,RB.?.,conjunction,CC,determiner,DT,noun,N.*,noun singular,NN,noun plural,NNS,preposition,IN,pronoun,PP,verb,V..?|MD"
 LPOSLIST ",adjective,-j,adverb,-a,conjunction,-c,noun,-n,preposition,-p,pronoun,-d,verb,-v"
+
+GDEXDEFAULTCONF "/corpora/gdex/configurations/English_lemmatized"

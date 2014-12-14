@@ -1,11 +1,10 @@
 Must
 ----
-- dotazovani (parametry pro corpquery,  zapsat par prikladu, napr. do README)
 - sestaveni korpusu pro aj a cj a rozjeti na Sketch Engine
 - vyresit problem treetaggeru: "... konec vety. <term>Pojem</term> dalsi veta",
   podoby problem nastava nekdy i u tag_sentences.py
 - vyresit zanorujici se <section> tagy
-- registry - desamb: doplnit WPOSLIST, (+ gdex??)
+- registry - desamb: doplnit WPOSLIST
 
 Should
 ------
@@ -13,9 +12,6 @@ Should
 - volitelne logovani na standardni vystup / do souboru (daneho nejlepe
   konfiguracnim souborem, spise nez argumentem)
 - stranky projektu (staci na GH) s odkazem na demo na Sketch Engine
-- vyresit namespacy poradne (pokud muzou byt vnorene)
-- unit testy
-- prehlednou strukturu projektu
 - dalsi testy pro inferenci pojmu
 - vypis informaci o korpusu (--info)
 
@@ -27,18 +23,13 @@ Could
   pojmenovanych entit (rozsireni soucasne inference)
 - vylepseni parsovani wikimarkupu, napr. seznamy
 - dalsi testy pro wikimarkup parsing
-- existujici korpusy z Wikipedia, podobne projekty
-- projit svoje zalozky k projektu wikicorpora
+- podobne projekty, existujici korpusy z Wikipedie, zalozky
 - rozpoznavani dalsich pojmenovanych entit (zrovna na wiki neni zasadni)
 - zvazit pouziti bezpecnejsich defused packages pro parsovani XML + bezpecnost
   obecne (je to Wikipedie, takze tam muze byt uplne cokoliv, treba "</doc>")
 - vyzkouset jine pristupy parsovani xml
 - pohlidat, aby skript koncil slusne (napr. pokud neexistuje konfigurak, tak to
   jasne prohlasit, misto vyhozeni top level vyjimky)
-- do dokumentace pridat popis, jak musi vypadat konfiguracni soubor
-  (config.yaml) + rozumne osetreni toho, kdyz tak vypadat nebude
-- vyfaktorovani spolecne funkcionality z create_prevertical a create_dump
-  (zbaveni se duplicity kodu), mozna trida Dump (nebo jen modul)?
 - kontrola stability pameti pri pruchodu celym dumpem (pri specifickem
   samplovani) a pri prevertikalizaci
 
@@ -55,5 +46,5 @@ Want
 - WikiCorpus: kontrola, zda predany jazyk je mezi iso kody
 - WikiCorpus jako potomek obecnejsi tridy korpus (ktera se pozdeji taky bude
   hodit)
-- umoznit, aby i vzorkove dumpy mohli byt komprimovane
 - stranky s redirectem: vyuzit jejich title (aktualne je proste ignorujeme)
+- vyuzit specialni Wiki strnaky (listings)

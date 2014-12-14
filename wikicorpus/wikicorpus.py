@@ -278,6 +278,9 @@ class WikiCorpus(object):
         REDIRECT_TAG = qualified_name('redirect', namespace)
         NS_TAG = qualified_name('ns', namespace)
 
+        print 'Preverticalization of {name} started...'.format(
+            name=self.get_corpus_name())
+
         # iterate through xml and build a sample file
         with open(prevertical_path, 'w') as prevertical_file:
             with self._open_dump() as dump_file:

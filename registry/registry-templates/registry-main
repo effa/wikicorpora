@@ -4,7 +4,7 @@ INFO        "{language} Wikipedia Corpus built from http://{iso}.wikipedia.org"
 PATH     "{compiled_corpus_path}"
 ENCODING "UTF-8"
 LANGUAGE "{language}"
-INFOHREF "http://www.sketchengine.co.uk/documentation/wiki/Corpora/wiki-{iso}"
+INFOHREF "https://github.com/effa/wikicorpora/wiki/corpora"
 VERTICAL "{vertical_path}"
 
 TAGSETDOC "{tagsetdoc}"
@@ -62,9 +62,9 @@ STRUCTURE doc {{
 # section
 STRUCTURE section {{
     TYPE "file64"
-    #HIERARCHICAL = ""
     ATTRIBUTE level
     ATTRIBUTE title
+    NESTED 1
 }}
 
 # paragraph

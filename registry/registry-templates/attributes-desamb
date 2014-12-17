@@ -1,8 +1,6 @@
 #tagset=desamb
 #(attributes for czech corpus (unitok and desamb combination))
 
-# TODO: WPOSLIST
-
 ATTRIBUTE word {{
     TYPE "FD_FGD"
     LOCALE "cs_CZ.UTF-8"
@@ -17,7 +15,7 @@ ATTRIBUTE tag {{
     TYPE "FD_FGD"
 }}
 
-ATTRIBUTE   lc {{
+ATTRIBUTE lc {{
         LABEL   "word in lowercase"
         DYNAMIC  utf8lowercase
         DYNLIB   internal
@@ -28,7 +26,7 @@ ATTRIBUTE   lc {{
         TRANSQUERY      yes
 }}
 
-ATTRIBUTE   lemma_lc {{
+ATTRIBUTE lemma_lc {{
     LABEL   "lemma in lowercase"
     DYNAMIC  utf8lowercase
     DYNLIB   internal
@@ -40,5 +38,7 @@ ATTRIBUTE   lemma_lc {{
 }}
 
 
-GDEXDEFAULTCONF "/corpora/gdex/configurations/Slavic_non_lemmatized"
+#GDEXDEFAULTCONF "/corpora/gdex/configurations/Slavic_non_lemmatized"
+
+# TODO: WordSketeches settings
 WSDEF "/corpora/wsdef/czech-ajka-6.1.wsdef.txt"

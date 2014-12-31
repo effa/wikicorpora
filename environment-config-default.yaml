@@ -2,6 +2,7 @@ paths:
     verticals:          './vert'
     registry:           './registry'
     compiled-corpora:   './manatee'
+    logfile:            './wikicorpora.log'
 tools:
     unitok:             ''
     sentence-tagger:    ''

@@ -7,6 +7,7 @@ from lxml import etree
 from utils.progressbar import ProgressBar
 from utils.xml_utils import qualified_name
 from wikicorpus import WikiCorpus, CorpusException
+import logging
 
 
 class SampleWikiCorpus(WikiCorpus):
@@ -166,12 +167,11 @@ class SampleWikiCorpus(WikiCorpus):
 
         # check if sample is of required size
         if pages < self.sample_size():
-            # TODO: logging
-            print 'Failed to create sample of {number} pages.'.format(
-                number=self.sample_size())
+            logging.warning('Failed to create sample of {n} pages.'.format(
+                n=self.sample_size()))
             if articles:
-                print 'Following articles not found:'
-                print '\n'.join(['- ' + title for title in articles])
+                logging.warning('Following articles not found:' +
+                    '\n'.join(['- ' + title for title in articles]))
 
         # write sample xml to file
         with open(sample_path, 'w') as sample_file:
@@ -179,9 +179,8 @@ class SampleWikiCorpus(WikiCorpus):
                 pretty_print=True,
                 xml_declaration=True))
 
-        # log info (TODO: logging)
-        print 'Sample of {pages} pages created\nat: {path}'.format(
-            pages=pages, path=sample_path)
+        logging.info('Sample of {pages} pages created at: {path}'.format(
+            pages=pages, path=sample_path))
 
     # ------------------------------------------------------------------------
     #  magic methods

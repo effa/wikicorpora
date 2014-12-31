@@ -2,11 +2,13 @@
 # encoding: utf-8
 
 from __future__ import unicode_literals
+from configuration.configuration import ConfigurationException
 from environment import environment
 from subprocess import call
 from wikicorpus.samplewikicorpus import SampleWikiCorpus
 from wikicorpus.wikicorpus import WikiCorpus, CorpusException
 import argparse
+import logging
 
 """
 This is a main file for wikicorpora command line application.
@@ -19,6 +21,25 @@ TOOL_DESCRIPTION = 'WikiCorpora is a tool for building corpora from Wikipedia.'
 def main():
     """ Main function handling calling this script with arguments
     """
+    # logging setting: logging to both file and standard output
+    try:
+        logging.basicConfig(
+            filename=environment.get_logfile_path(),
+            format='%(asctime)s %(levelname)-8s %(message)s',
+            level=logging.DEBUG)
+    except ConfigurationException as exc:
+        print exc.message
+        return
+
+    # create handler for standard output (with INFO level)
+    console = logging.StreamHandler()
+    console.setLevel(logging.INFO)
+    formatter = logging.Formatter('%(levelname)s: %(message)s')
+    console.setFormatter(formatter)
+    # add the handler to the root logger
+    logging.getLogger('').addHandler(console)
+
+    # argument parsing
     parser = argparse.ArgumentParser()  # description=(TOOL_DESCRIPTION))
 
     # corpus specification arguments
@@ -73,8 +94,6 @@ def main():
         help='print concordances of a given CQL query')
 
     # general options
-    #parser.add_argument('--logfile',
-    #    help='path to logfile')
     parser.add_argument('--usage', action='store_true',
         help='show program usage')
     parser.add_argument('--info', action='store_true',
@@ -150,10 +169,6 @@ def main():
         # download dump
         if args.soft_download or args.force_download:
             corpus.download_dump(force=args.force_download)
-
-        # extract dump (only force if download is forced as well)
-        #if args.extract
-        #    corpus.extract_dump(force=args.force_download)
 
         # sampling
         if args.create_own_sample:

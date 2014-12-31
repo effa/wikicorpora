@@ -84,7 +84,7 @@ Build corpus of Czech Wikipedia, including downloading and compilation
 
 Build corpus of Czech Wikipedia, but without downloading and compilation
 
-    $ wikicorpora.py cs --processing-tasks
+    $ wikicorpora.py cs --all-processing-tasks
 
 Create prevertical from Slovak Wikipedia, including downloading if necessary
 
@@ -207,6 +207,7 @@ paths:
     verticals:          '<path to directory for all verticals>'
     registry:           '<path to directory for registry files'
     compiled-corpora:   '<path to directory for compiled corpora>'
+    log-file:           '<path to log file>'
 tools:
     unitok:             '<path to unitok>'
     sentence-tagger:    '<path to sentence-tagger script>'
@@ -222,6 +223,7 @@ paths:
     verticals:          '/nlp/projekty/wiki2corpus/vert'
     registry:           '/nlp/projekty/wiki2corpus/registry'
     compiled-corpora:   '/nlp/projekty/wiki2corpus/manatee'
+    log-file:           '/nlp/projekty/wiki2corpus/wikicorpora.log'
 tools:
     unitok:             '/corpora/ske-toolkit/unitok.py'
     sentence-tagger:    '/corpora/ske-toolkit/tag_sentences.py'

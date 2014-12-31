@@ -46,7 +46,7 @@ class Configuration(object):
 
         :*args: key (or sequence of keys in case of nesting)
 
-        :throws: ConfigurationExcpetion if key is not in configuration or
+        :throws: ConfigurationException if key is not in configuration or
             if the item is empty
         """
         item = self.get(*args)

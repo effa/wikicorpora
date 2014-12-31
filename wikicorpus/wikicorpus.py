@@ -19,6 +19,7 @@ from verticaldocument import VerticalDocument
 from wikiextractor import parse_wikimarkup
 import errno
 import bz2
+import logging
 import os
 
 
@@ -235,16 +236,14 @@ class WikiCorpus(object):
         # select dump path
         dump_path = self.get_dump_path()
         if os.path.exists(dump_path) and not force:
-            # TODO: use logging instead of prins (everywhere)
-            print 'Dump {name} already exists.'.format(name=dump_path)
+            logging.info('Dump {name} already exists.'.format(name=dump_path))
             return
 
         # select dump url
         dump_url = WikiCorpus.DUMP_URL_GENERAL.format(lang=self.language())
 
-        # TODO: logging
-        print 'Started downloading {l}-wiki dump\n from: {url}\n into: {path}'\
-            .format(l=self.language(), url=dump_url, path=dump_path)
+        logging.info('Started downloading {l}-wiki dump from {url}'
+            .format(l=self.language(), url=dump_url))
 
         # find MD5 checksum
         md5_url = WikiCorpus.MD5_URL_GENERAL.format(lang=self.language())
@@ -254,17 +253,15 @@ class WikiCorpus(object):
                 md5sum = file_md5
                 break
         else:
-            # TODO logging
-            print 'no matching MD5 checksum for the dump found'
+            logging.warning('no matching MD5 checksum for the dump found')
             md5sum = None
 
         # downloading
         download_large_file(dump_url, dump_path, md5sum=md5sum)
 
-        # TODO: logging
-        print 'Downloading of {lang}-wiki dump finished'.format(
+        logging.info('Downloading of {lang}-wiki dump finished'.format(
             lang=self.language(),
-            path=dump_path)
+            path=dump_path))
 
     def create_prevertical(self):
         """ Parses dump (outer XML, inner Wiki Markup) and creates prevertical
@@ -278,8 +275,8 @@ class WikiCorpus(object):
         REDIRECT_TAG = qualified_name('redirect', namespace)
         NS_TAG = qualified_name('ns', namespace)
 
-        print 'Preverticalization of {name} started...'.format(
-            name=self.get_corpus_name())
+        logging.info('Preverticalization of {name} started...'.format(
+            name=self.get_corpus_name()))
 
         # iterate through xml and build a sample file
         with open(prevertical_path, 'w') as prevertical_file:
@@ -325,9 +322,8 @@ class WikiCorpus(object):
                 del context
         progressbar.finish()
 
-        # log info (TODO: logging)
-        print 'Prevertical of {name} created\n at: {path}'.format(
-            name=self.get_corpus_name(), path=prevertical_path)
+        logging.info('Prevertical of {name} created at: {path}'.format(
+            name=self.get_corpus_name(), path=prevertical_path))
 
     def create_vertical(self):
         """ Creates a vertical file.
@@ -341,8 +337,8 @@ class WikiCorpus(object):
         if not self.prevertical_file_exists():
             raise CorpusException('Verticalization failed: '
                 + 'Missing prevertical file.')
-        print 'Verticalization of {name} started...'.format(
-            name=self.get_corpus_name())
+        logging.info('Verticalization of {name} started...'.format(
+            name=self.get_corpus_name()))
         try:
             # create vertical file
             with NaturalLanguageProcessor(self.language()) as lp:
@@ -351,9 +347,9 @@ class WikiCorpus(object):
                 #self._structures = WikiCorpus._BASIC_STRUCTURES
             # create registry file
             self.create_registry()
-            print 'Vertical of {name} created\n at: {path}'.format(
+            logging.info('Vertical of {name} created at: {path}'.format(
                 name=self.get_corpus_name(),
-                path=vertical_path)
+                path=vertical_path))
         except ConfigurationException as exc:
             raise CorpusException('Verticalization failed: ' + exc.message)
         except LanguageProcessorException as exc:
@@ -367,8 +363,8 @@ class WikiCorpus(object):
         """
         vertical_path = self.get_vertical_path()
         try:
-            print 'Terms occurences inference in {name} started ...'.format(
-                name=self.get_corpus_name())
+            logging.info('Terms occurences inference in {name} started'.format(
+                name=self.get_corpus_name()))
 
             # TODO: jmeno vertikalu bez termu - vzit z konfiguarku
             original_vertical_path = vertical_path + '.before-inference'
@@ -393,8 +389,8 @@ class WikiCorpus(object):
                                 terms_inference=True)
                             output_file.write(str(vertical))
 
-            print 'Terms occurences inference in {name} finished.'.format(
-                name=self.get_corpus_name())
+            logging.info('Terms occurences inference in {name} finished.'
+                .format(name=self.get_corpus_name()))
 
         except CorpusException as exc:
             raise CorpusException('Terms inference failed: ' + exc.message)
@@ -414,7 +410,6 @@ class WikiCorpus(object):
             vertical_path=self.get_vertical_path(),
             compiled_path=self.get_compiled_corpus_path(),
             tagset=self.get_tagset())
-            #structures=WikiCorpus._BASIC_STRUCTURES)
 
     def compile_corpus(self):
         """ Compiles given corpora
@@ -426,8 +421,7 @@ class WikiCorpus(object):
         task.wait()
         if task.returncode != 0:
             raise CorpusException('Compilation failed.')
-        print 'Corpus is compiled.'
-        print 'Location:', self.get_compiled_corpus_path()
+        logging.info('Corpus compiled:' + self.get_compiled_corpus_path())
 
     def check_corpus(self):
         """Prints compiled corpus status generated by corpcheck.

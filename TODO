@@ -5,13 +5,11 @@ Must
   /corpora/ske-toolkit/tag_sentences.py), napr. pro:
     "... konec vety. <term>Pojem</term> dalsi veta" / vert/problem.vert
     (tento skritp vola i tree_tagger skripty)
-- jak z kospusu vytahnout 1 dokument (napsat si demo)
+- jak z korpusu vytahnout 1 dokument (napsat si demo)
 
 Should
 ------
 - dokumentace (jednotne), vcetne vygenerovani
-- volitelne logovani na standardni vystup / do souboru (daneho nejlepe
-  konfiguracnim souborem, spise nez argumentem)
 - stranky projektu (staci na GH) s odkazem na demo na Sketch Engine
 - registry -> WordSketches
 - dalsi testy pro inferenci pojmu

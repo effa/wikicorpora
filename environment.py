@@ -78,5 +78,12 @@ class EnvironmentConfiguration(DoubleConfiguration):
         """
         return self.get_nonempty('tools', 'unitok')
 
+    def get_logfile_path(self):
+        """Returns path to logfile
+
+        Raises:
+            ConfigurationException if there si no path for logfile
+        """
+        return self.get_nonempty('paths', 'logfile')
 # create environment singleton
 environment = EnvironmentConfiguration()

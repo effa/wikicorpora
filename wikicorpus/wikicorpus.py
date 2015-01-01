@@ -55,9 +55,6 @@ class WikiCorpus(object):
         # TODO: check if language is in dictionary of iso codes
         self._language = language
 
-        ## TODO: logging
-        #self._logfile = logfile
-
         # load configuration
         self._configuration = Configuration(WikiCorpus.CORPUS_CONFIG_PATH)
 
@@ -442,18 +439,37 @@ class WikiCorpus(object):
             '-a', 'word',   # only show words in the result
             '-s', 'p,doc'))  # only show p and doc structures
 
-    # ------------------------------------------------------------------------
-    #
-    # ------------------------------------------------------------------------
-
     def print_info(self):
         """ Returns corpus summary
         """
-        # TODO: implement this function
-        # pokud uz ma konfiguraci/zkompilovany, vyuzit
-        #  * corpinfo [OPTIONS] CORPNAME
-        #  * lsslex, [lsclex]
-        print 'corpus name:', self.get_corpus_name()
+        # check if corpus exists
+        verticals_path = self.get_uncompiled_corpus_path()
+        if not os.listdir(verticals_path):
+            print 'Corpus %s does not exist.' % self.get_corpus_name()
+            return
+
+        print 'Corpus name:', self.get_corpus_name()
+
+        # verticals
+        print 'Vertical files:', verticals_path
+        call(('ls', '-lhtcr', verticals_path))
+
+        # registry
+        registry_path = self.get_registry_path()
+        if os.path.isfile(registry_path):
+            print 'Registry:', registry_path
+        else:
+            print 'Registry: no'
+            # if there is no registry file, it can't be compiled
+            return
+
+        # compilation
+        compiled_path = self.get_compiled_corpus_path()
+        print 'Compiled:',
+        if os.listdir(compiled_path):
+            print compiled_path
+        else:
+            print 'no'
 
     # ------------------------------------------------------------------------
     #  private methods

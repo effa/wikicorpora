@@ -207,7 +207,7 @@ paths:
     verticals:          '<path to directory for all verticals>'
     registry:           '<path to directory for registry files'
     compiled-corpora:   '<path to directory for compiled corpora>'
-    logfile:           '<path to log file>'
+    logfile:            '<path to log file>'
 tools:
     unitok:             '<path to unitok>'
     sentence-tagger:    '<path to sentence-tagger script>'
@@ -223,7 +223,7 @@ paths:
     verticals:          '/nlp/projekty/wiki2corpus/vert'
     registry:           '/nlp/projekty/wiki2corpus/registry'
     compiled-corpora:   '/nlp/projekty/wiki2corpus/manatee'
-    logfile:           '/nlp/projekty/wiki2corpus/wikicorpora.log'
+    logfile:            '/nlp/projekty/wiki2corpus/wikicorpora.log'
 tools:
     unitok:             '/corpora/ske-toolkit/unitok.py'
     sentence-tagger:    '/corpora/ske-toolkit/tag_sentences.py'

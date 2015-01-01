@@ -9,11 +9,9 @@ Must
 
 Should
 ------
-- dokumentace (jednotne), vcetne vygenerovani
 - stranky projektu (staci na GH) s odkazem na demo na Sketch Engine
 - registry -> WordSketches
 - dalsi testy pro inferenci pojmu
-- vypis informaci o korpusu (--info)
 
 
 Could
@@ -21,24 +19,18 @@ Could
 - rozpoznavani datumu (zavest specialni strukturu?), ale vyuzit jiz oznacenych
   dat (i datumy muzou mit na wiki svoje WURI), pripadne i rozpoznavani dalsich
   pojmenovanych entit (rozsireni soucasne inference)
-- vylepseni parsovani wikimarkupu, napr. seznamy
+- vylepseni parsovani wikimarkupu, napr. seznamy, mozna i vyzkouset jine
+  parsery WikiMarkupu
 - dalsi testy pro wikimarkup parsing
 - podobne projekty, existujici korpusy z Wikipedie, zalozky
 - rozpoznavani dalsich pojmenovanych entit (zrovna na wiki neni zasadni)
 - zvazit pouziti bezpecnejsich defused packages pro parsovani XML + bezpecnost
   obecne (je to Wikipedie, takze tam muze byt uplne cokoliv, treba "</doc>")
 - vyzkouset jine pristupy parsovani xml
-- pohlidat, aby skript koncil slusne (napr. pokud neexistuje konfigurak, tak to
-  jasne prohlasit, misto vyhozeni top level vyjimky)
-- kontrola stability pameti pri pruchodu celym dumpem (pri specifickem
-  samplovani) a pri prevertikalizaci
 
 
 Want
 ----
-- vytvaret vzorkove dumpy v unicode misto ASCII
-- vyzkouset jine parsery WikiMarkupu, dalsi vylepsovani parsovani (seznamy
-  atp.)
 - pri moznosti predelavani jiz existujiciho korpusu brat v uvahu data zmen
   prerekvizit a aktualniho souboru (jako make)
 - prubezna aktualizace korpusu? (jednak wiki se porad rozsiruje/meni, jednak by

@@ -207,7 +207,7 @@ paths:
     verticals:          '<path to directory for all verticals>'
     registry:           '<path to directory for registry files'
     compiled-corpora:   '<path to directory for compiled corpora>'
-    log-file:           '<path to log file>'
+    logfile:           '<path to log file>'
 tools:
     unitok:             '<path to unitok>'
     sentence-tagger:    '<path to sentence-tagger script>'

@@ -223,7 +223,7 @@ paths:
     verticals:          '/nlp/projekty/wiki2corpus/vert'
     registry:           '/nlp/projekty/wiki2corpus/registry'
     compiled-corpora:   '/nlp/projekty/wiki2corpus/manatee'
-    log-file:           '/nlp/projekty/wiki2corpus/wikicorpora.log'
+    logfile:           '/nlp/projekty/wiki2corpus/wikicorpora.log'
 tools:
     unitok:             '/corpora/ske-toolkit/unitok.py'
     sentence-tagger:    '/corpora/ske-toolkit/tag_sentences.py'

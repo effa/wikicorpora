@@ -63,5 +63,5 @@ class TestVerticalDocument(unittest.TestCase):
             tagset = get_tagset_by_name(tagset)
             vertical_document = VerticalDocument(vert_text, tagset,
                 terms_inference=terms_inference)
-            self.assertEqual(result, unicode(vertical_document),
+            self.assertEqual(result, unicode(vertical_document).strip(),
                 msg='failed test case "{label}"'.format(label=label))

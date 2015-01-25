@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # =============================================================================
-#  Modified by Tomas Effenberger (2014)
+#  Modified by Tomas Effenberger (2014 - 2015)
 #
 # =============================================================================
 #  Version: 2.6 (Oct 14, 2013)
@@ -446,12 +446,14 @@ def compact(text):
             title = m.group(2)
             lev = len(m.group(1))
             if keepSections:
-                # close previous sections
-                while len(openSections) > 0 and openSections[-1] >= lev:
-                    openSections.pop()
-                    page.append("</section>")
-                page.append('<section level="%s" title="%s">' % (lev, title))
-                openSections.append(lev)
+                # only mark section at the top level to omit nested structures
+                if lev == 2:  # <h2>
+                    # close previous sections
+                    while len(openSections) > 0 and openSections[-1] >= lev:
+                        openSections.pop()
+                        page.append("</section>")
+                    page.append('<section anchor="%s">' % term2wuri(title))
+                    openSections.append(lev)
                 page.append('<p heading="1">%s</p>' % (title))
                 continue
             if title and title[-1] not in '!?':

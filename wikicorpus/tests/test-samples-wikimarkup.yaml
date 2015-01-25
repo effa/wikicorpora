@@ -61,17 +61,17 @@
   text: |
         introduction
 
-        ==first headline==
+        ==First headline==
 
         paragraph1
 
-        ===subheadline===
+        ===Subheadline===
 
         paragraph2
 
         paragraph3
 
-        ==second headline==
+        ==Second headline==
 
         paragraph4
   result: |
@@ -82,13 +82,12 @@
           <p>
           introduction
           </p>
-          <section level="2" title="first headline">
-          <p heading="1">first headline</p>
+          <section anchor="First_headline">
+          <p heading="1">First headline</p>
           <p>
           paragraph1
           </p>
-          <section level="3" title="subheadline">
-          <p heading="1">subheadline</p>
+          <p heading="1">Subheadline</p>
           <p>
           paragraph2
           </p>
@@ -96,9 +95,8 @@
           paragraph3
           </p>
           </section>
-          </section>
-          <section level="2" title="second headline">
-          <p heading="1">second headline</p>
+          <section anchor="Second_headline">
+          <p heading="1">Second headline</p>
           <p>
           paragraph4
           </p>

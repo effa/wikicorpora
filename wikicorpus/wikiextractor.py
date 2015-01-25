@@ -111,8 +111,11 @@ ignoredTags = [
     'sub', 'sup', 'tt', 'u', 'var',
 ]
 
-placeholder_tags = {'math': 'formula', 'code': 'codice'}
+placeholder_tags = {'math': '==formula==', 'code': '==code=='}
 
+template_placeholders = {
+    'math': ('math', '==formula=='),
+    'mvar': ('math', '==formula==')}
 
 ###
 ## Normalize title
@@ -211,7 +214,7 @@ placeholder_tag_patterns = []
 for tag, repl in placeholder_tags.items():
     pattern = re.compile(r'<\s*%s(\s*| [^>]+?)>.*?<\s*/\s*%s\s*>' % (tag, tag),
         re.DOTALL | re.IGNORECASE)
-    placeholder_tag_patterns.append((pattern, repl))
+    placeholder_tag_patterns.append((pattern, tag, repl))
 
 # Match preformatted lines
 preformatted = re.compile(r'^ .*?$', re.MULTILINE)
@@ -291,6 +294,71 @@ def dropNested(text, openDelim, closeDelim):
     return res
 
 
+def expandTemplates(text, openDelim='{{', closeDelim='}}'):
+    # templates discovery - copied from dropNested() function
+    openRE = re.compile(openDelim)
+    closeRE = re.compile(closeDelim)
+    # partition text in separate blocks { } { }
+    matches = []                # pairs (s, e) for each partition
+    nest = 0                    # nesting level
+    start = openRE.search(text, 0)
+    if not start:
+        return text
+    end = closeRE.search(text, start.end())
+    next = start
+    while end:
+        next = openRE.search(text, next.end())
+        if not next:            # termination
+            while nest:         # close all pending
+                nest -= 1
+                end0 = closeRE.search(text, end.end())
+                if end0:
+                    end = end0
+                else:
+                    break
+            matches.append((start.start(), end.end()))
+            break
+        while end.end() < next.start():
+            # { } {
+            if nest:
+                nest -= 1
+                # try closing more
+                last = end.end()
+                end = closeRE.search(text, end.end())
+                if not end:     # unbalanced
+                    if matches:
+                        span = (matches[0][0], last)
+                    else:
+                        span = (start.start(), last)
+                    matches = [span]
+                    break
+            else:
+                matches.append((start.start(), end.end()))
+                # advance start, find next close
+                start = next
+                end = closeRE.search(text, next.end())
+                break           # { }
+        if next != start:
+            # { { }
+            nest += 1
+    # collect text outside partitions
+    res = ''
+    start = 0
+    for s, e in matches:
+        res += text[start:s]
+        parts = text[s + 2:e - 2].split('|', 1)
+        if len(parts) == 2:
+            for keyword in template_placeholders:
+                if parts[0] == keyword:
+                    tag = template_placeholders[keyword][0]
+                    placeholder = template_placeholders[keyword][1]
+                    res += '<{tag}>{inside}</{tag}>'.format(
+                        tag=tag, inside=placeholder)
+        start = e
+    res += text[start:]
+    return res
+
+
 def dropSpans(matches, text):
     """Drop from text the blocks identified in matches"""
     matches.sort()
@@ -343,7 +411,8 @@ def clean(text):
     # FIXME: templates should be expanded
     # Drop transclusions (template, parser functions)
     # See: http://www.mediawiki.org/wiki/Help:Templates
-    text = dropNested(text, r'{{', r'}}')
+    # ... implemented template expansion
+    text = expandTemplates(text)
 
     # Drop tables
     text = dropNested(text, r'{\|', r'\|}')
@@ -400,11 +469,11 @@ def clean(text):
         text = pattern.sub('', text)
 
     # Expand placeholders
-    for pattern, placeholder in placeholder_tag_patterns:
-        index = 1
+    for pattern, tag, placeholder in placeholder_tag_patterns:
         for match in pattern.finditer(text):
-            text = text.replace(match.group(), '%s_%d' % (placeholder, index))
-            index += 1
+            replace_text = '<{tag}>{inside}</{tag}>'.format(
+                tag=tag, inside=placeholder)
+            text = text.replace(match.group(), replace_text)
 
     text = text.replace('<<', u'«').replace('>>', u'»')
 

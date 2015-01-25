@@ -131,3 +131,45 @@
           </p>
           </doc>
 # ----------------------------------------------------------------------------
+- id:         8
+  title:      removing references in text
+  url_prefix: http://en.wikipedia.org/wiki
+  text:       'Text with note<ref name="sth">some notes</ref> and note<ref name="sth"/>.'
+  result: |
+          <doc id="8" url="http://en.wikipedia.org/wiki/Removing_references_in_text" title="removing references in text">
+          <p heading="1">
+          <term wuri="Removing_references_in_text">removing references in text</term>
+          </p>
+          <p>
+          Text with note and note.
+          </p>
+          </doc>
+# ----------------------------------------------------------------------------
+- id:         9
+  title:      formula
+  url_prefix: http://en.wikipedia.org/wiki
+  text:       'Text with some formula <math>\sum_{n=0}^\infty \frac{x^n}{n!}</math> and following text.'
+  result: |
+          <doc id="9" url="http://en.wikipedia.org/wiki/Formula" title="formula">
+          <p heading="1">
+          <term wuri="Formula">formula</term>
+          </p>
+          <p>
+          Text with some formula <math>==formula==</math> and following text.
+          </p>
+          </doc>
+# ----------------------------------------------------------------------------
+- id:         10
+  title:      inline math
+  url_prefix: http://en.wikipedia.org/wiki
+  text:       "It follows that {{math|''x''<sup>2</sup> &ge; 0}} for real {{mvar|x}}."
+  result: |
+          <doc id="10" url="http://en.wikipedia.org/wiki/Inline_math" title="inline math">
+          <p heading="1">
+          <term wuri="Inline_math">inline math</term>
+          </p>
+          <p>
+          It follows that <math>==formula==</math> for real <math>==formula==</math>.
+          </p>
+          </doc>
+# ----------------------------------------------------------------------------

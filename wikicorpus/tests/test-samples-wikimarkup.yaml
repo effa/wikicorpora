@@ -173,3 +173,17 @@
           </p>
           </doc>
 # ----------------------------------------------------------------------------
+- id:         11
+  title:      convert
+  url_prefix: http://en.wikipedia.org/wiki
+  text:       "text text {{convert|10|m|ft}} text {{convert|3|by|6|ft}}"
+  result: |
+          <doc id="11" url="http://en.wikipedia.org/wiki/Convert" title="convert">
+          <p heading="1">
+          <term wuri="Convert">convert</term>
+          </p>
+          <p>
+          text text 10 m text 3 by 6 ft
+          </p>
+          </doc>
+# ----------------------------------------------------------------------------

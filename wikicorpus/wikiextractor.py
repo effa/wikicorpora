@@ -294,6 +294,14 @@ def dropNested(text, openDelim, closeDelim):
     return res
 
 
+def isNumber(string):
+    """
+    Vraci True, pokud string nejspise reprezentuje cislo
+    (pripousti i zapisy jako -1.234, 1/2, 1,234,567, 2+1//2)
+    """
+    return set(string).issubset(set('+-0123456789./'))
+
+
 def expandTemplates(text, openDelim='{{', closeDelim='}}'):
     # templates discovery - copied from dropNested() function
     openRE = re.compile(openDelim)
@@ -344,16 +352,30 @@ def expandTemplates(text, openDelim='{{', closeDelim='}}'):
     # collect text outside partitions
     res = ''
     start = 0
+
     for s, e in matches:
         res += text[start:s]
-        parts = text[s + 2:e - 2].split('|', 1)
-        if len(parts) == 2:
+        parts = text[s + 2:e - 2].split('|')
+        if len(parts) >= 2:
+            # NOTE: Only the most common templates are handled,
+            # more systematic approach would be better.
+            # templates to replace
             for keyword in template_placeholders:
                 if parts[0] == keyword:
                     tag = template_placeholders[keyword][0]
                     placeholder = template_placeholders[keyword][1]
                     res += '<{tag}>{inside}</{tag}>'.format(
                         tag=tag, inside=placeholder)
+            # templates to expand
+            if parts[0] == 'convert':
+                if len(parts) >= 3 and isNumber(parts[1]):
+                    if len(parts) >= 4 and isNumber(parts[3]):
+                        res += '{a} {sep} {b} {un}'.format(
+                            a=parts[1], sep=parts[2], b=parts[3], un=parts[4])
+                    else:
+                        res += '{value} {unit}'.format(
+                            value=parts[1], unit=parts[2])
+
         start = e
     res += text[start:]
     return res

@@ -187,3 +187,73 @@
           </p>
           </doc>
 # ----------------------------------------------------------------------------
+- id:         12
+  title:      entity
+  url_prefix: http://en.wikipedia.org/wiki
+  text:       "&amp;lt;"
+  result: |
+          <doc id="12" url="http://en.wikipedia.org/wiki/Entity" title="entity">
+          <p heading="1">
+          <term wuri="Entity">entity</term>
+          </p>
+          <p>
+          <
+          </p>
+          </doc>
+# ----------------------------------------------------------------------------
+- id:         13
+  title:      image
+  url_prefix: http://cs.wikipedia.org/wiki
+  text:   |
+          [[Soubor:02 École Militaire.jpg|thumb|Průčelí hlavní budovy]]
+          text
+  result: |
+          <doc id="13" url="http://cs.wikipedia.org/wiki/Image" title="image">
+          <p heading="1">
+          <term wuri="Image">image</term>
+          </p>
+          <p>
+          text
+          </p>
+          </doc>
+# ----------------------------------------------------------------------------
+- id:         14
+  title:      list
+  url_prefix: http://en.wikipedia.org/wiki
+  text:   |
+          * aaa
+          * bbb
+          ** cc
+          ** dd
+          * eee
+  result: |
+          <doc id="14" url="http://en.wikipedia.org/wiki/List" title="list">
+          <p heading="1">
+          <term wuri="List">list</term>
+          </p>
+
+          </doc>
+# ----------------------------------------------------------------------------
+- id:         15
+  title:      table
+  url_prefix: http://en.wikipedia.org/wiki
+  text:   |
+          text before a table
+
+          {|
+          |Orange||Apple||more
+          |-
+          |Bread||Pie||more
+          |-
+          |Butter||Ice<br/>cream||and<br/>more
+          |}
+  result: |
+          <doc id="15" url="http://en.wikipedia.org/wiki/Table" title="table">
+          <p heading="1">
+          <term wuri="Table">table</term>
+          </p>
+          <p>
+          text before a table
+          </p>
+          </doc>
+# ----------------------------------------------------------------------------

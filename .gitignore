@@ -1,5 +1,6 @@
 # Local environment configuration
 environment-config.yaml
+configuration-example-alba.yaml
 
 # Ephemeral info
 questions.txt

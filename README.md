@@ -216,20 +216,4 @@ tools:
     treetagger-en:      '<path to special treetagger script for english>'
 ```
 
-Example configuration which can be used on Alba:
-
-```
-paths:
-    verticals:          '/nlp/projekty/wiki2corpus/vert'
-    registry:           '/nlp/projekty/wiki2corpus/registry'
-    compiled-corpora:   '/nlp/projekty/wiki2corpus/manatee'
-    logfile:            '/nlp/projekty/wiki2corpus/wikicorpora.log'
-tools:
-    unitok:             '/corpora/ske-toolkit/unitok.py'
-    sentence-tagger:    '/corpora/ske-toolkit/tag_sentences.py'
-    desamb:             '/corpora/programy/desamb.utf8.majka.sh'
-    treetagger:         '/opt/TreeTagger/tools/tt-{lang}.sh'
-    treetagger-en:      '/opt/TreeTagger/tools/tt-english_v2.sh'
-```
-
 As a fallback, `environment-config-default.yaml` is used.

@@ -53,7 +53,7 @@ TERM_TAG = re.compile(r"""
 #        $
 #        """, re.VERBOSE)
 
-UNTOUCHABLE_AREA_TAGS = {'term', 'math'}
+UNTOUCHABLE_AREA_TAGS = {'term', 'math', 'code'}
 
 # -----------------------------------------------------------------------------
 #  Token class

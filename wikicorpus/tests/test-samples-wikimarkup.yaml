@@ -257,3 +257,23 @@
           </p>
           </doc>
 # ----------------------------------------------------------------------------
+- id:         16
+  title:      empty section
+  url_prefix: http://en.wikipedia.org/wiki
+  text:   |
+          some text
+
+          ==See Also==
+          * this is effectively an empty section
+
+          ==References==
+  result: |
+          <doc id="16" url="http://en.wikipedia.org/wiki/Empty_section" title="empty section">
+          <p heading="1">
+          <term wuri="Empty_section">empty section</term>
+          </p>
+          <p>
+          some text
+          </p>
+          </doc>
+# ----------------------------------------------------------------------------

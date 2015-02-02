@@ -524,6 +524,7 @@ def compact(text):
     page = []                   # list of paragraph
     headers = {}                # Headers for unfilled sections
     emptySection = False        # empty sections are discarded
+    #emptySection = True
     #inList = False              # whether opened <UL>
     openSections = []           # stack of open sections (their levels)
 
@@ -542,7 +543,8 @@ def compact(text):
                     # close previous sections
                     while len(openSections) > 0 and openSections[-1] >= lev:
                         openSections.pop()
-                        page.append("</section>")
+                        close_section(page)
+                        #page.append("</section>")
                     page.append('<section anchor="%s">' % term2wuri(title))
                     openSections.append(lev)
                 page.append('<p heading="1">%s</p>' % (title))
@@ -586,9 +588,21 @@ def compact(text):
 
     # close all sections
     for i in range(len(openSections)):
-        page.append('</section>')
+        #page.append('</section>')
+        close_section(page)
 
     return page
+
+
+def close_section(page):
+    """
+    Append closing section tag. But if the section is empty (with headline),
+    remove the section.
+    """
+    if page[-2].startswith('<section'):
+        del page[-2:]
+    else:
+        page.append('</section>')
 
 
 def handle_unicode(entity):

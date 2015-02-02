@@ -53,6 +53,7 @@ TERM_TAG = re.compile(r"""
 #        $
 #        """, re.VERBOSE)
 
+UNTOUCHABLE_AREA_TAGS = {'term', 'math'}
 
 # -----------------------------------------------------------------------------
 #  Token class
@@ -262,7 +263,7 @@ class VerticalDocument(object):
         new_lines = []
         new_term_rest_length = 0
         new_term_reading = False
-        old_term_reading = False
+        untouchable_area_reading = False
         for i, line in enumerate(self._lines):
             if is_sgml_tag(line):
                 # ignore sentence tags, if inside <term>
@@ -270,12 +271,13 @@ class VerticalDocument(object):
                 if not new_term_reading or not re.search(r'^</?s', line):
                     new_lines.append(line)
                 # inside old terms, swith of new term search
-                if line.startswith('<term'):
-                    old_term_reading = True
-                elif line == '</term>':
-                    old_term_reading = False
+                for tag in UNTOUCHABLE_AREA_TAGS:
+                    if line.startswith('<%s' % tag):
+                        untouchable_area_reading = True
+                    elif line == ('</%s>' % tag):
+                        untouchable_area_reading = False
             else:
-                if not new_term_reading and not old_term_reading:
+                if not new_term_reading and not untouchable_area_reading:
                     term_wuri, term_length = self._longest_matching_term(i)
                     if term_length > 0:
                         term_tag = '<term wuri="{name}" uncertainty="1">'\
@@ -301,7 +303,8 @@ def is_sgml_tag(line):
 
     :line: unicode || Token
     """
-    # TODO: a co kdyz je < ve vstupnim textu???
+    # TODO: a co kdyz je < ve vstupnim textu? (ale pro nase uceli to asi nicemu
+    # nevadi, ze to ma obcas False Positives)
     if isinstance(line, Token):
         return False
     return line.startswith('<')

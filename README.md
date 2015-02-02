@@ -50,11 +50,11 @@ optional arguments:
 
 ### Some common use cases
 
-Download dump for Czech Wikipedi, unless already dowloaded:
+Download dump for Czech Wikipedia, unless already dowloaded:
 
     $ wikicorpora.py cs --soft-download
 
-Download dump for Czech Wikipedi, even if already dowloaded:
+Download dump for Czech Wikipedia, even if already dowloaded:
 
     $ wikicorpora.py cs --force-download
 

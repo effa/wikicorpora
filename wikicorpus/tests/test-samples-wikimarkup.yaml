@@ -155,7 +155,7 @@
           <term wuri="Formula">formula</term>
           </p>
           <p>
-          Text with some formula <math>==formula==</math> and following text.
+          Text with some formula <math>__FORMULA__</math> and following text.
           </p>
           </doc>
 # ----------------------------------------------------------------------------
@@ -169,7 +169,7 @@
           <term wuri="Inline_math">inline math</term>
           </p>
           <p>
-          It follows that <math>==formula==</math> for real <math>==formula==</math>.
+          It follows that <math>__FORMULA__</math> for real <math>__FORMULA__</math>.
           </p>
           </doc>
 # ----------------------------------------------------------------------------
@@ -268,7 +268,9 @@
           some text
 
           ==See Also==
-          * this is effectively an empty section
+          {|
+          | this is effectively an empty section
+          |}
 
           ==References==
   result: |

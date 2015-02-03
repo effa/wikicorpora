@@ -111,11 +111,11 @@ ignoredTags = [
     'sub', 'sup', 'tt', 'u', 'var',
 ]
 
-placeholder_tags = {'math': '==formula==', 'code': '==code=='}
+placeholder_tags = {'math': '__FORMULA__', 'code': '__CODE__'}
 
 template_placeholders = {
-    'math': ('math', '==formula=='),
-    'mvar': ('math', '==formula==')}
+    'math': ('math', '__FORMULA__'),
+    'mvar': ('math', '__FORMULA__')}
 
 ###
 ## Normalize title

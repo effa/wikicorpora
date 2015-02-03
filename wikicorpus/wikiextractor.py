@@ -567,6 +567,9 @@ def compact(text):
                 page.append(title)
         # handle lists
         elif line[0] in '*#:;':
+            match = re.match('^[*#:;]+\s(.*)$', line)
+            if match:
+                page.append('<p>%s</p>' % match.group(1))
             if keepSections:
                 continue
         # Drop residuals of lists

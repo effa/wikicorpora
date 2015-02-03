@@ -279,7 +279,7 @@ class WikiCorpus(object):
         with open(prevertical_path, 'w') as prevertical_file:
             with self._open_dump() as dump_file:
                 context = etree.iterparse(dump_file, events=('end',))
-                progressbar = ProgressBar(self.get_dump_length())
+                #progressbar = ProgressBar(self.get_dump_length())
                 last_title = None
                 id_number = 0
                 # skip first page in full (copressed) dump since it's Main Page
@@ -307,7 +307,7 @@ class WikiCorpus(object):
                             self.get_url_prefix(), elem.text) + '\n'
                         prevertical_file.write(parsed_doc.encode('utf-8'))
                         # approximate work done by positin in dump file
-                        progressbar.update(dump_file.tell())
+                        #progressbar.update(dump_file.tell())
 
                     # cleanup
                     elem.clear()
@@ -317,7 +317,7 @@ class WikiCorpus(object):
                         while ancestor.getprevious() is not None:
                             del ancestor.getparent()[0]
                 del context
-        progressbar.finish()
+        #progressbar.finish()
 
         logging.info('Prevertical of {name} created at: {path}'.format(
             name=self.get_corpus_name(), path=prevertical_path))

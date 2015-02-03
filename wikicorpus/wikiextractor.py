@@ -364,16 +364,16 @@ def expandTemplates(text, openDelim='{{', closeDelim='}}'):
                 if parts[0] == keyword:
                     tag = template_placeholders[keyword][0]
                     placeholder = template_placeholders[keyword][1]
-                    res += '<{tag}>{inside}</{tag}>'.format(
+                    res += u'<{tag}>{inside}</{tag}>'.format(
                         tag=tag, inside=placeholder)
             # templates to expand
             if parts[0] == 'convert':
                 if len(parts) >= 3 and isNumber(parts[1]):
-                    if len(parts) >= 4 and isNumber(parts[3]):
-                        res += '{a} {sep} {b} {un}'.format(
+                    if len(parts) >= 5 and isNumber(parts[3]):
+                        res += u'{a} {sep} {b} {un}'.format(
                             a=parts[1], sep=parts[2], b=parts[3], un=parts[4])
                     else:
-                        res += '{value} {unit}'.format(
+                        res += u'{value} {unit}'.format(
                             value=parts[1], unit=parts[2])
 
         start = e
@@ -493,7 +493,7 @@ def clean(text):
     # Expand placeholders
     for pattern, tag, placeholder in placeholder_tag_patterns:
         for match in pattern.finditer(text):
-            replace_text = '<{tag}>{inside}</{tag}>'.format(
+            replace_text = u'<{tag}>{inside}</{tag}>'.format(
                 tag=tag, inside=placeholder)
             text = text.replace(match.group(), replace_text)
 

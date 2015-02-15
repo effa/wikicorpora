@@ -8,11 +8,11 @@ from environment import environment
 from lxml import etree
 from nlp import NaturalLanguageProcessor, LanguageProcessorException
 from registry.registry import store_registry
-from registry.registry import get_registry_tagset, RegistryException
+from registry.registry import RegistryException
 from setup import project_path
 from subprocess import Popen, call
 from utils.downloader import download_large_file, get_online_file
-from utils.progressbar import ProgressBar
+#from utils.progressbar import ProgressBar
 from utils.system_utils import makedirs
 from utils.xml_utils import qualified_name
 from verticaldocument import VerticalDocument
@@ -44,9 +44,6 @@ class WikiCorpus(object):
     # Wikipedia namespace number label for articles
     ARTICLE_NS = '0'
 
-    # basic set of structures in a vertical file
-    #_BASIC_STRUCTURES = {'doc', 'p', 's', 'g', 'term'}
-
     def __init__(self, language):
         """Initalization of WikiCorpus instance
 
@@ -59,7 +56,7 @@ class WikiCorpus(object):
         self._configuration = Configuration(WikiCorpus.CORPUS_CONFIG_PATH)
 
         # vertical info
-        self._tagset = None
+        #self._tagset = None
         #self._structures = None  # always _BASIC_STRUCTURES
 
     # ------------------------------------------------------------------------
@@ -98,11 +95,12 @@ class WikiCorpus(object):
         Note: For compressed dumps, this is larger number than file size.
         """
         if self.is_dump_compressed():
-            print 'Calculating uncompressed dump length...'
-            with self._open_dump() as dump_file:
-                dump_file.seek(0, os.SEEK_END)
-                length = dump_file.tell()
-                return length
+            raise NotImplemented('calculated uncompressed dump length is not supported')
+            #print 'Calculating uncompressed dump length...'
+            #with self._open_dump() as dump_file:
+            #    dump_file.seek(0, os.SEEK_END)
+            #    length = dump_file.tell()
+            #    return length
         else:
             return os.path.getsize(self.get_dump_path())
 
@@ -145,16 +143,16 @@ class WikiCorpus(object):
             self.get_corpus_name())
         return path
 
-    def get_tagset(self):
-        """Returns tagset of the corpus.
+    #def get_tagset(self):
+    #    """Returns tagset of the corpus.
 
-        @return: [registry.tagsets.tagset] || None
-        @throws: RegistryException
-        """
-        # first, if _tagset is None, update the tagset ifnormation
-        if self._tagset is None:
-            self._tagset = get_registry_tagset(self.get_registry_path())
-        return self._tagset
+    #    @return: [registry.tagsets.tagset] || None
+    #    @throws: RegistryException
+    #    """
+    #    # first, if _tagset is None, update the tagset ifnormation
+    #    if self._tagset is None:
+    #        self._tagset = get_registry_tagset(self.get_registry_path())
+    #    return self._tagset
 
     def get_url_prefix(self):
         """Returns url prefix for all articles in the corpus.
@@ -339,8 +337,8 @@ class WikiCorpus(object):
         try:
             # create vertical file
             with NaturalLanguageProcessor(self.language()) as lp:
-                tags = lp.create_vertical_file(prevertical_path, vertical_path)
-                self._tagset = tags
+                lp.create_vertical_file(prevertical_path, vertical_path)
+                #self._tagset = tags
                 #self._structures = WikiCorpus._BASIC_STRUCTURES
             # create registry file
             self.create_registry()
@@ -358,20 +356,22 @@ class WikiCorpus(object):
         During terms-inference some postprocessing is done as well
         (removing desamb hacks, using actual numbers as lemmata).
         """
+        if self.language != 'en':
+            raise CorpusException('terms inference is currently supported only for English')
+
         vertical_path = self.get_vertical_path()
         try:
             logging.info('Terms occurences inference in {name} started'.format(
                 name=self.get_corpus_name()))
 
-            # TODO: jmeno vertikalu bez termu - vzit z konfiguarku
-            original_vertical_path = vertical_path + '.before-inference'
-            call(('cp', vertical_path, original_vertical_path))
+            output_path = vertical_path + '.after-inference'
+            #call(('cp', vertical_path, original_vertical_path))
 
             # find tagset (throws exception if registry file not found)
-            tagset = self.get_tagset()
+            #tagset = self.get_tagset()
 
-            with open(original_vertical_path) as input_file:
-                with open(vertical_path, 'w') as output_file:
+            with open(vertical_path) as input_file:
+                with open(output_path, 'w') as output_file:
                     for line in input_file:
                         line = line.decode('utf-8').strip()
                         # TODO: ?osetrit prazdne radky a podobne veci??
@@ -382,7 +382,7 @@ class WikiCorpus(object):
                         # check if the end of document is reached
                         if line == '</doc>':
                             vertical = VerticalDocument(document,
-                                tagset=tagset,
+                                #tagset=tagset,
                                 terms_inference=True)
                             output_file.write(str(vertical))
 

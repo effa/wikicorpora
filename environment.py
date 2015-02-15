@@ -39,44 +39,44 @@ class EnvironmentConfiguration(DoubleConfiguration):
         """
         return self.get('paths', 'verticals')
 
-    def get_desamb_path(self):
-        """Returns path to desamb
+    #def get_desamb_path(self):
+    #    """Returns path to desamb
 
-        Raises:
-            ConfigurationException if there si no path for desamb
-        """
-        return self.get_nonempty('tools', 'desamb')
+    #    Raises:
+    #        ConfigurationException if there si no path for desamb
+    #    """
+    #    return self.get_nonempty('tools', 'desamb')
 
-    def get_treetagger_path(self, language):
-        """Returns path to a treetagger script
+    #def get_treetagger_path(self, language):
+    #    """Returns path to a treetagger script
 
-        Raises:
-            ConfigurationException if there si no path for treetagger
-        """
-        assert len(language) > 2, 'full language name needed'
-        # english has a new version of a treetagger script which should be used
-        if language == 'english':
-            tt_script = self.get_nonempty('tools', 'treetagger-en')
-        else:
-            tt_template = self.get_nonempty('tools', 'treetagger')
-            tt_script = tt_template.format(lang=language)
-        return tt_script
+    #    Raises:
+    #        ConfigurationException if there si no path for treetagger
+    #    """
+    #    assert len(language) > 2, 'full language name needed'
+    #    # english has a new version of a treetagger script which should be used
+    #    if language == 'english':
+    #        tt_script = self.get_nonempty('tools', 'treetagger-en')
+    #    else:
+    #        tt_template = self.get_nonempty('tools', 'treetagger')
+    #        tt_script = tt_template.format(lang=language)
+    #    return tt_script
 
-    def get_sentencetagger_path(self):
-        """Returns path to sentence-tagger script
+    #def get_sentencetagger_path(self):
+    #    """Returns path to sentence-tagger script
 
-        Raises:
-            ConfigurationException if there si no path for sentence-tagger
-        """
-        return self.get_nonempty('tools', 'sentence-tagger')
+    #    Raises:
+    #        ConfigurationException if there si no path for sentence-tagger
+    #    """
+    #    return self.get_nonempty('tools', 'sentence-tagger')
 
-    def get_unitok_path(self):
-        """Returns path to unitok
+    #def get_unitok_path(self):
+    #    """Returns path to unitok
 
-        Raises:
-            ConfigurationException if there si no path for unitok
-        """
-        return self.get_nonempty('tools', 'unitok')
+    #    Raises:
+    #        ConfigurationException if there si no path for unitok
+    #    """
+    #    return self.get_nonempty('tools', 'unitok')
 
     def get_logfile_path(self):
         """Returns path to logfile
@@ -85,5 +85,6 @@ class EnvironmentConfiguration(DoubleConfiguration):
             ConfigurationException if there si no path for logfile
         """
         return self.get_nonempty('paths', 'logfile')
-# create environment singleton
+
+# create environment instance
 environment = EnvironmentConfiguration()

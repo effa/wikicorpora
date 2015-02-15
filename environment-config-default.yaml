@@ -3,11 +3,11 @@ paths:
     registry:           './registry'
     compiled-corpora:   './manatee'
     logfile:            './wikicorpora.log'
-tools:
-    unitok:             ''
-    sentence-tagger:    ''
-    desamb:             ''
-    treetagger:         ''
-    treetagger-en:      ''
+#tools:
+#    unitok:             ''
+#    sentence-tagger:    ''
+#    desamb:             ''
+#    treetagger:         ''
+#    treetagger-en:      ''
 
 

@@ -55,6 +55,7 @@ TERM_TAG = re.compile(r"""
 
 UNTOUCHABLE_AREA_TAGS = {'term', 'math', 'code'}
 
+
 # -----------------------------------------------------------------------------
 #  Token class
 # -----------------------------------------------------------------------------
@@ -148,7 +149,7 @@ class VerticalDocument(object):
 
     """Class for in-memory representation of one document in vertical format"""
 
-    def __init__(self, lines, tagset, terms_inference=False):
+    def __init__(self, lines, terms_inference=False):
         """
         :lines: [list<unicode>] OR unicode
         :tagset: [registry.Tagset]
@@ -162,7 +163,10 @@ class VerticalDocument(object):
 
         # building representation of vertical (store lines, tranform tokens to
         # Token objects) and trie of all terms in text
-        self._tagset = tagset
+
+        # only English supported for now -> use treetagger tagset
+        self._tagset = TAGSETS.TREETAGGER
+
         self._lines = []
         self._termstrie = TermsTrie()
         reading_term = False
@@ -203,7 +207,7 @@ class VerticalDocument(object):
                     reading_term = False
             else:
                 # use Token class to represent tokens
-                token = Token(line, tagset)
+                token = Token(line, self._tagset)
                 self._lines.append(token)
                 # if reading a term, remember the lemma
                 if reading_term:

@@ -25,7 +25,6 @@ corpus specification:
 
 sampling tasks:
   --create-sample       create sample from first N articles
-  --create-own-sample   create sample from selected articles
 
 downloading tasks:
   --soft-download       download dump if not already downloaded
@@ -35,7 +34,6 @@ corpus processing tasks:
   --prevertical, -p           process dump to prevertical
   --vertical, -v              process prevertical to vertical
   --terms-inference, -t       infere all terms occurences
-  --all-processing-tasks, -a  execute all corpus processing steps
 
 compilation tasks:
   --compile, -c         create configuration file and compile corpus
@@ -66,13 +64,6 @@ Create sample, including dump downloading if necessary
 
     $ wikicorpora.py en 10 --soft-download --create-sample
 
-Create sample of selected article from Czech Wikipedia
-
-    $ wikicorpora.py cs 3 --create-own-sample
-    Title 1: Jan Hus
-    Title 2: Husitské války
-    Title 3: Bitva u Lipan
-
 Create vertical from sample corpus of 10 articles from English Wikipedia,
 assuming the sample was already created, but prevertical wasn't:
 
@@ -80,11 +71,11 @@ assuming the sample was already created, but prevertical wasn't:
 
 Build corpus of Czech Wikipedia, including downloading and compilation
 
-    $ wikicorpora.py cs --force-download --all-processing-tasks --compile
+    $ wikicorpora.py cs --force-download --prevertical --vertical --compile
 
 Build corpus of Czech Wikipedia, but without downloading and compilation
 
-    $ wikicorpora.py cs --all-processing-tasks
+    $ wikicorpora.py cs --prevertical --vertical
 
 Create prevertical from Slovak Wikipedia, including downloading if necessary
 
@@ -208,12 +199,6 @@ paths:
     registry:           '<path to directory for registry files'
     compiled-corpora:   '<path to directory for compiled corpora>'
     logfile:            '<path to log file>'
-tools:
-    unitok:             '<path to unitok>'
-    sentence-tagger:    '<path to sentence-tagger script>'
-    desamb:             '<path to desamb>'
-    treetagger:         '<path to treetagger scripts (using substituable {lang})>'
-    treetagger-en:      '<path to special treetagger script for english>'
 ```
 
 As a fallback, `environment-config-default.yaml` is used.

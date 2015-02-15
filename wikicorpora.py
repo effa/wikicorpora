@@ -5,6 +5,7 @@ from __future__ import unicode_literals
 from configuration.configuration import ConfigurationException
 from environment import environment
 from subprocess import call
+#from utils.language_utils import get_language_name
 from wikicorpus.samplewikicorpus import SampleWikiCorpus
 from wikicorpus.wikicorpus import WikiCorpus, CorpusException
 import argparse
@@ -48,7 +49,7 @@ def main():
     #    help='2-letter code of language (ISO-639-1)')
     specification_group = parser.add_argument_group('corpus specification')
     specification_group.add_argument('language', nargs='?',
-        help='2-letter code of language (ISO-639-1)')
+        help='2-letter language code (ISO-639-1)')
     specification_group.add_argument('size', nargs='?',
         help='sample size specification')
 
@@ -60,9 +61,9 @@ def main():
     specific_or_not_group.add_argument('--create-sample',
         action='store_true',
         help='create sample from first N articles')
-    specific_or_not_group.add_argument('--create-own-sample',
-        action='store_true',
-        help='create sample from selected articles')
+    #specific_or_not_group.add_argument('--create-own-sample',
+    #    action='store_true',
+    #    help='create sample from selected articles')
 
     # download options
     download_group = parser.add_argument_group('downloading tasks')
@@ -80,9 +81,9 @@ def main():
         help='process prevertical to vertical')
     phases_group.add_argument('--terms-inference', '-t', action='store_true',
         help='infere all terms occurences')
-    phases_group.add_argument('--all-processing-tasks', '-a',
-        action='store_true',
-        help='execute all corpus processing steps')
+    #phases_group.add_argument('--all-processing-tasks', '-a',
+    #    action='store_true',
+    #    help='execute all corpus processing steps')
 
     # compilaton options
     compilation_group = parser.add_argument_group('compilation tasks')
@@ -106,89 +107,96 @@ def main():
 
     # if no action is specified, we will print corpus info
     no_action = not any([args.force_download, args.soft_download,
-        args.create_sample, args.create_own_sample,
+        args.create_sample,
         args.prevertical, args.vertical,
-        args.terms_inference, args.all_processing_tasks,
+        args.terms_inference,
         args.compile, args.check, args.query])
 
     # sample_size has to be either int or None
     sample_size = int(args.size) if args.size else None
 
-    try:
-        # no language specified (can be either mistake or command for info
-        # about all corpora or a call without any parameters)
-        if not args.language:
-            # if size or an action is specified, then a language is
-            # probably ommited by mistake
-            if args.size or not no_action:
-                # print error message and command usage
-                print 'No language specified (-l XX or --language=XX).'
-                parser.print_usage()
-            # if it's a call with --info option, show all corpora
-            elif args.info:
-                list_all_corpora()
-            # if it's a call with --usage option, show usage
-            elif args.usage:
-                parser.print_usage()
-            # otherwise it's empty call -> show short help and usage
-            else:
-                print TOOL_DESCRIPTION
-                parser.print_usage()
-                print 'For usage description use "wikicorpora.py --help".'
-            return
+    # no language specified (can be either mistake or command for info
+    # about all corpora or a call without any parameters)
+    if not args.language:
+        # if size or an action is specified, then a language is
+        # probably ommited by mistake
+        if args.size or not no_action:
+            # print error message and command usage
+            print 'No language specified (-l XX or --language=XX).'
+            parser.print_usage()
+        # if it's a call with --info option, show all corpora
+        elif args.info:
+            list_all_corpora()
+        # if it's a call with --usage option, show usage
+        elif args.usage:
+            parser.print_usage()
+        # otherwise it's empty call -> show short help and usage
+        else:
+            print TOOL_DESCRIPTION
+            parser.print_usage()
+            print 'For detailed description use "wikicorpora.py --help".'
+        return
 
+    # transform language code to the language name
+    #if len(args.language) <= 2:
+    #    language = get_language_name(args.language, capitalized=False)
+    #else:
+    #    language = args.language
+    language = args.language
+
+    try:
         # own sample
-        if args.create_own_sample:
-            # ask for titles
-            size = 0
-            titles = []
-            if sample_size:
-                print 'Input {n} titles for new sample.'\
-                    .format(n=args.size)
-            else:
-                print 'Input titles for new sample, '\
-                    + 'finish by entering an empty string.'
-            while not sample_size or size < sample_size:
-                title = raw_input('Title {n}: '.format(n=size + 1))
-                if title:
-                    titles.append(title.decode('utf-8'))
-                    size += 1
-                else:
-                    # if user inputs empty string and sample_size is not
-                    # specified, set sample_size to current size, which
-                    # makes the input loop terminate
-                    if not sample_size:
-                        sample_size = size
+        #if args.create_own_sample:
+        #    # ask for titles
+        #    size = 0
+        #    titles = []
+        #    if sample_size:
+        #        print 'Input {n} titles for new sample.'\
+        #            .format(n=args.size)
+        #    else:
+        #        print 'Input titles for new sample, '\
+        #            + 'finish by entering an empty string.'
+        #    while not sample_size or size < sample_size:
+        #        title = raw_input('Title {n}: '.format(n=size + 1))
+        #        if title:
+        #            titles.append(title.decode('utf-8'))
+        #            size += 1
+        #        else:
+        #            # if user inputs empty string and sample_size is not
+        #            # specified, set sample_size to current size, which
+        #            # makes the input loop terminate
+        #            if not sample_size:
+        #                sample_size = size
 
         # create corpus instance for given language (and sample_size)
         if sample_size:
-            corpus = SampleWikiCorpus(args.language, sample_size)
+            corpus = SampleWikiCorpus(language, sample_size)
         else:
-            corpus = WikiCorpus(args.language)
+            corpus = WikiCorpus(language)
 
         # download dump
         if args.soft_download or args.force_download:
             corpus.download_dump(force=args.force_download)
 
         # sampling
-        if args.create_own_sample:
-            corpus.create_sample_dump(titles)
-        elif args.create_sample:
+        #if args.create_own_sample:
+        #    corpus.create_sample_dump(titles)
+        if args.create_sample:
             if not sample_size:
                 raise CorpusException('Sample size (--sample-size=X) has to '
                     + ' be specified in order to create sample')
             corpus.create_sample_dump()
 
         # parsing dump (preverticalization)
-        if args.prevertical or args.all_processing_tasks:
+        if args.prevertical:
             corpus.create_prevertical()
 
         # tokonenization and tagging (verticalization)
-        if args.vertical or args.all_processing_tasks:
+        if args.vertical:
             corpus.create_vertical()
 
         # terms occurences inference
-        if args.terms_inference or args.all_processing_tasks:
+        if args.terms_inference:
             corpus.infere_terms_occurences()
 
         # corpus compilation

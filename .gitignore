@@ -2,7 +2,9 @@
 environment-config.yaml
 configuration-example-alba.yaml
 
-# Ephemeral info
+# Ephemeral info etc.
+info/
+local/
 questions.txt
 
 # Byte-compiled / optimized / DLL files

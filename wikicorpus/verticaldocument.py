@@ -149,7 +149,7 @@ class VerticalDocument(object):
 
     """Class for in-memory representation of one document in vertical format"""
 
-    def __init__(self, lines, terms_inference=False):
+    def __init__(self, lines, tagset=TAGSETS.TREETAGGER, terms_inference=False):
         """
         :lines: [list<unicode>] OR unicode
         :tagset: [registry.Tagset]
@@ -164,8 +164,9 @@ class VerticalDocument(object):
         # building representation of vertical (store lines, tranform tokens to
         # Token objects) and trie of all terms in text
 
-        # only English supported for now -> use treetagger tagset
-        self._tagset = TAGSETS.TREETAGGER
+        # only Treetagger, Desamb and Basic tagsets supported
+        assert tagset in [TAGSETS.BASIC, TAGSETS.DESAMB, TAGSETS.TREETAGGER]
+        self._tagset = tagset
 
         self._lines = []
         self._termstrie = TermsTrie()

@@ -79,7 +79,7 @@ def main():
         help='process dump to prevertical')
     phases_group.add_argument('--vertical', '-v', action='store_true',
         help='process prevertical to vertical')
-    phases_group.add_argument('--terms-inference', '-t', action='store_true',
+    phases_group.add_argument('--terms-inference', action='store_true',
         help='infere all terms occurences')
     #phases_group.add_argument('--all-processing-tasks', '-a',
     #    action='store_true',

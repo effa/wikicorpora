@@ -7,6 +7,7 @@ from contextlib import contextmanager
 from environment import environment
 from lxml import etree
 from nlp import NaturalLanguageProcessor, LanguageProcessorException
+from registry.tagsets import TAGSETS
 from registry.registry import store_registry
 from registry.registry import RegistryException
 from setup import project_path
@@ -369,6 +370,7 @@ class WikiCorpus(object):
 
             # find tagset (throws exception if registry file not found)
             #tagset = self.get_tagset()
+            tagset = TAGSETS.TREETAGGER
 
             with open(vertical_path) as input_file:
                 with open(output_path, 'w') as output_file:
@@ -382,7 +384,7 @@ class WikiCorpus(object):
                         # check if the end of document is reached
                         if line == '</doc>':
                             vertical = VerticalDocument(document,
-                                #tagset=tagset,
+                                tagset=tagset,
                                 terms_inference=True)
                             output_file.write(str(vertical))
 

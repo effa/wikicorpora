@@ -33,7 +33,7 @@ downloading tasks:
 corpus processing tasks:
   --prevertical, -p           process dump to prevertical
   --vertical, -v              process prevertical to vertical
-  --terms-inference, -t       infere all terms occurences
+  --terms-inference,          infere all terms occurences
 
 compilation tasks:
   --compile, -c         create configuration file and compile corpus

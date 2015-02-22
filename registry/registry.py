@@ -27,7 +27,7 @@ def store_registry(path, lang, vertical_path, compiled_path):
     :compiled_path: [unicode] path to directory with compiled corpus
     :tagset: [Tagset] which tagset is used in corpus
     """
-    language = get_language_name(lang, capitalized=False),
+    language = get_language_name(lang, capitalized=False)
     # NOTE: each language has its own template
     registry_string = render_registry_template('wiki_' + language,
         #language=get_language_name(lang),

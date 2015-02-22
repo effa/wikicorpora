@@ -357,7 +357,7 @@ class WikiCorpus(object):
         During terms-inference some postprocessing is done as well
         (removing desamb hacks, using actual numbers as lemmata).
         """
-        if self.language != 'en':
+        if self.language() != 'en':
             raise CorpusException('terms inference is currently supported only for English')
 
         vertical_path = self.get_vertical_path()
@@ -407,8 +407,7 @@ class WikiCorpus(object):
             path=self.get_registry_path(),
             lang=self.language(),
             vertical_path=self.get_vertical_path(),
-            compiled_path=self.get_compiled_corpus_path(),
-            tagset=self.get_tagset())
+            compiled_path=self.get_compiled_corpus_path())
 
     def compile_corpus(self):
         """ Compiles given corpora

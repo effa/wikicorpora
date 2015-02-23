@@ -5,6 +5,7 @@ configuration-example-alba.yaml
 # Ephemeral info etc.
 info/
 local/
+registry/registry-templates/*
 questions.txt
 
 # Byte-compiled / optimized / DLL files

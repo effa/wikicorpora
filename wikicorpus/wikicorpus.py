@@ -326,9 +326,18 @@ class WikiCorpus(object):
 
         Performes tokenization of prevertical and for some languages
         also morfologization (adding morfological tag and lemma/lempos)
+
+        NOTE: Kvuli bugu v TreeTaggeru je potreba udelat nechutny hack:
+          1) provest v prevertikalu nasledujici substituci:
+                </term>     --->  __TERM_END__
+          2) nechat TreeTagger vytvorit vertikal
+          3) presunout <term> a </term> na spravne misto s pouzitim vlozene
+                znacky __TERM_END__
         """
         prevertical_path = self.get_prevertical_path()
+        marked_prevert_path = prevertical_path + '.tmp'
         vertical_path = self.get_vertical_path()
+        tmp_vertical_path =  vertical_path + '.tmp'
         # check if prevertical file already exists
         if not self.prevertical_file_exists():
             raise CorpusException('Verticalization failed: '
@@ -336,13 +345,28 @@ class WikiCorpus(object):
         logging.info('Verticalization of {name} started...'.format(
             name=self.get_corpus_name()))
         try:
-            # create vertical file
-            with NaturalLanguageProcessor(self.language()) as lp:
-                lp.create_vertical_file(prevertical_path, vertical_path)
-                #self._tagset = tags
-                #self._structures = WikiCorpus._BASIC_STRUCTURES
-            # create registry file
-            self.create_registry()
+            if self.language() == 'en':
+                # ----------------------------------------------------------
+                # oprava bugu v treetaggeru, krok 1
+                self._mark_terms(prevertical_path, marked_prevert_path)
+                # ----------------------------------------------------------
+                # create vertical file
+                with NaturalLanguageProcessor(self.language()) as lp:
+                    lp.create_vertical_file(marked_prevert_path, tmp_vertical_path)
+                    #self._tagset = tags
+                    #self._structures = WikiCorpus._BASIC_STRUCTURES
+                # create registry file
+                self.create_registry()
+                # ----------------------------------------------------------
+                # oprava bugu v treetaggeru, krok 3
+                self._correct_terms(tmp_vertical_path, vertical_path)
+                call(('rm', marked_prevert_path, tmp_vertical_path))
+                # ----------------------------------------------------------
+            else:
+                with NaturalLanguageProcessor(self.language()) as lp:
+                    lp.create_vertical_file(prevertical_path, vertical_path)
+                self.create_registry()
+
             logging.info('Vertical of {name} created at: {path}'.format(
                 name=self.get_corpus_name(),
                 path=vertical_path))
@@ -350,6 +374,74 @@ class WikiCorpus(object):
             raise CorpusException('Verticalization failed: ' + exc.message)
         except LanguageProcessorException as exc:
             raise CorpusException('Verticalization failed: ' + exc.message)
+
+    def _mark_terms(self, prevert_path, marked_prevert_path):
+        cmd = "sed 's/<\/term>/ __TERM_END__/g' {fr} > {to}".format(
+            fr=prevert_path, to=marked_prevert_path)
+        task = Popen(cmd, shell=True)
+        task.wait()
+        if task.returncode != 0:
+            raise CorpusException('sed error')
+
+    def _correct_terms(self, input_path, output_path):
+        last_term_line = None
+        open_term = False
+        #state = 0  # = pocet radku spatne posunuteho termu
+        with open(input_path) as input_file:
+            with open(output_path, 'w') as output_file:
+                for encoded_line in input_file:
+                    line = encoded_line.decode('utf-8')
+
+                    if line.startswith('<term '):
+                        last_term_line = encoded_line
+                    elif line.startswith('</term>'):
+                            # ignore
+                            continue
+                    elif line.startswith('<s>'):
+                        output_file.write(encoded_line)
+                        if last_term_line:
+                            output_file.write(last_term_line)
+                            last_term_line = None
+                            open_term = True
+                    elif line.startswith('__TERM_END__') and open_term:
+                        output_file.write(str('</term>\n'))
+                        open_term = False
+                    elif line.startswith('<'):
+                        output_file.write(encoded_line)
+                    else:
+                        if last_term_line:
+                            output_file.write(last_term_line)
+                            last_term_line = None
+                            open_term = True
+                        output_file.write(encoded_line)
+
+                    # if state == 0 and line.startswith('<term '):
+                    #     last_term_line = encoded_line
+                    #     state += 1
+                    # elif state == 1 and line.startswith('</term>'):
+                    #     state += 1
+                    # elif line.startswith('</term>'):
+                    #     # ignore
+                    #     continue
+                    # elif state == 1 and line.startswith('__TERM_END__'):
+                    #     # empty term
+                    #     state = 0
+                    #     last_term_line = None
+                    # elif state == 2 and line.startswith('<s>'):
+                    #     output_file.write(encoded_line)
+                    #     output_file.write(last_term_line)
+                    #     last_term_line = None
+                    #     state = 0
+                    # elif state == 2 and line.startswith('<'):
+                    #     output_file.write(encoded_line)
+                    # elif line.startswith('__TERM_END__'):
+                    #     output_file.write(str('</term>\n'))
+                    # else:
+                    #     if last_term_line:
+                    #         output_file.write(last_term_line)
+                    #         last_term_line = None
+                    #     state = 0
+                    #     output_file.write(encoded_line)
 
     def infere_terms_occurences(self):
         """ Labels all occurences of terms in morfolgized vertical
@@ -361,11 +453,12 @@ class WikiCorpus(object):
             raise CorpusException('terms inference is currently supported only for English')
 
         vertical_path = self.get_vertical_path()
+
         try:
             logging.info('Terms occurences inference in {name} started'.format(
                 name=self.get_corpus_name()))
 
-            output_path = vertical_path + '.after-inference'
+            output_path = vertical_path + '.terms'
             #call(('cp', vertical_path, original_vertical_path))
 
             # find tagset (throws exception if registry file not found)

@@ -73,6 +73,11 @@ Build corpus of Czech Wikipedia, including downloading and compilation
 
     $ wikicorpora.py cs --force-download --prevertical --vertical --compile
 
+Short version of command for preverticalization, verticalization and
+compilation
+
+    $ wikicorpora.py cs -pvc
+
 Build corpus of Czech Wikipedia, but without downloading and compilation
 
     $ wikicorpora.py cs --prevertical --vertical
@@ -85,7 +90,7 @@ Create vertical from prevertical of Slovak Wikipedia
 
     $ wikicorpora.py sk --vertical
 
-Perform terms inference on vertical of Slovak Wikipedia
+Inferre terms in prevertical of Slovak Wikipedia
 
     $ wikicorpora.py sk --terms-inference
 

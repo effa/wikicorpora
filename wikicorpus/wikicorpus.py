@@ -300,6 +300,8 @@ class WikiCorpus(object):
                         if skip:
                             skip = False
                             continue
+                        if not elem.text or not last_title:
+                            continue
                         # new id
                         id_number += 1
                         parsed_doc = parse_wikimarkup(id_number, last_title,

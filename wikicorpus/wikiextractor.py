@@ -567,7 +567,7 @@ def compact(text):
                 page.append(title)
         # handle lists
         elif line[0] in '*#:;':
-            match = re.match('^[*#:;]+\s(.*)$', line)
+            match = re.match('^[*#:;]+\s(.+)$', line)
             if match:
                 page.append('<p>%s</p>' % match.group(1))
             if keepSections:
@@ -586,7 +586,7 @@ def compact(text):
             headers.clear()
             page.append(line)   # first line
             emptySection = False
-        elif not emptySection:
+        elif not emptySection and len(line) >= 2:
             page.append("<p>\n%s\n</p>" % (line))
 
     # close all sections
